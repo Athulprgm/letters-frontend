@@ -16,8 +16,8 @@ export default function AdminLoginPage() {
   const login = useAuthStore((state) => state.login);
   const { settings } = useSettingsStore();
 
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('letters@2020');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
             <label className="block font-bold text-[var(--text)] uppercase text-[10px] mb-1">
-              Admin Username
+              Admin Username or Email
             </label>
             <div className="relative">
               <FontAwesomeIcon icon={faUser} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-xs" />
@@ -73,7 +73,8 @@ export default function AdminLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="Enter username or email"
+                autoComplete="username"
                 className="w-full pl-9 pr-3.5 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--olive)]"
               />
             </div>
@@ -90,7 +91,8 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Enter admin password"
+                autoComplete="current-password"
                 className="w-full pl-9 pr-3.5 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--olive)]"
               />
             </div>
