@@ -208,23 +208,18 @@ export default function AdminDashboardPage() {
       {/* 1. MINIMAL EXECUTIVE HEADER (NO DOTS) */}
       {/* ========================================================================= */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--border)]">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-[var(--card)] border border-[var(--border)] p-1.5 flex items-center justify-center shadow-xs flex-shrink-0">
-            <img src="/logo.png" alt="Letters" className="w-full h-full object-contain" />
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text)]">
+              Store Executive Dashboard
+            </h1>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+              Live Operations
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text)]">
-                Store Executive Dashboard
-              </h1>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                Live Operations
-              </span>
-            </div>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
-              Fulfillment velocity, sales revenue metrics, and inventory overview for {settings.brandName || 'Letters'}.
-            </p>
-          </div>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            Fulfillment velocity, sales revenue metrics, and inventory overview for {settings.brandName || 'Letters'}.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">

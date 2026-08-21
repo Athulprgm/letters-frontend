@@ -182,17 +182,17 @@ export default function AdminLayout({ children }) {
         <div className="flex flex-col h-full overflow-hidden">
           
           {/* Brand Header */}
-          <div className="p-5 border-b border-[var(--border)] flex items-center justify-between">
+          <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 flex items-center justify-center flex-shrink-0 -ml-2">
-                <img src="/logo.png" alt="Letters" className="w-full h-full object-contain scale-110 drop-shadow-md" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--bg)] border border-[var(--border)] p-1.5 flex items-center justify-center flex-shrink-0 shadow-xs">
+                <img src="/logo.png" alt="Letters" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h2 className="font-bold text-sm text-[var(--text)] tracking-tight leading-none">
-                  {settings.brandName || 'Letters Store'}
+                  {settings.brandName || 'Letters'}
                 </h2>
                 <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span className="text-[10px] font-semibold text-[var(--text-muted)]">Store Admin</span>
                 </div>
               </div>
@@ -312,17 +312,12 @@ export default function AdminLayout({ children }) {
         
         {/* Desktop Top Bar */}
         <header className="hidden md:flex items-center justify-between px-8 py-3 bg-[var(--card)] border-b border-[var(--border)] sticky top-0 z-30 shadow-xs">
-          <div className="flex items-center gap-3">
-            <Link to="/admin" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
-              <div className="w-10 h-10 flex items-center justify-center -ml-1">
-                <img src="/logo.png" alt="Letters Logo" className="w-full h-full object-contain scale-110 drop-shadow-sm" />
-              </div>
-              <span className="font-bold text-xs text-[var(--text)] tracking-tight">
-                {settings.brandName || 'Letters'}
-              </span>
+          <div className="flex items-center gap-2 text-xs">
+            <Link to="/admin" className="font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
+              Admin
             </Link>
-            <FontAwesomeIcon icon={faChevronRight} className="text-[9px] text-[var(--text-muted)] opacity-60" />
-            <span className="font-bold text-xs text-[var(--text)]">{getCurrentPageTitle()}</span>
+            <FontAwesomeIcon icon={faChevronRight} className="text-[9px] text-[var(--text-muted)] opacity-50" />
+            <span className="font-bold text-[var(--text)]">{getCurrentPageTitle()}</span>
           </div>
 
           <div className="flex items-center gap-3">
