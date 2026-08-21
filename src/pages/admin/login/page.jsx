@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
         
         {/* Brand Header */}
         <div className="text-center">
-          <div className="w-12 h-12 rounded-xl bg-[var(--bg)] border border-[var(--border)] p-2 flex items-center justify-center mx-auto mb-3 shadow-xs">
+          <div className="w-14 h-14 flex items-center justify-center mx-auto mb-2">
             <img src="/logo.png" alt="Letters" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-xl font-bold text-[var(--text)] tracking-tight">

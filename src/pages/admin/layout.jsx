@@ -184,7 +184,7 @@ export default function AdminLayout({ children }) {
           {/* Brand Header */}
           <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg)] border border-[var(--border)] p-1.5 flex items-center justify-center flex-shrink-0 shadow-xs">
+              <div className="w-11 h-11 flex items-center justify-center flex-shrink-0">
                 <img src="/logo.png" alt="Letters" className="w-full h-full object-contain" />
               </div>
               <div>
