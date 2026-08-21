@@ -114,7 +114,7 @@ export default function AdminLoginPage() {
             <span>Secure administrator login</span>
           </p>
           <div>
-            <Link href="/" className="text-[11px] font-semibold text-[var(--olive)] hover:underline">
+            <Link to="/" className="text-[11px] font-semibold text-[var(--olive)] hover:underline">
               ← Return to Online Store
             </Link>
           </div>

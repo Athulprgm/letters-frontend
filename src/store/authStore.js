@@ -54,7 +54,7 @@ export const useAuthStore = create((set, get) => ({
         const trimmed = (usernameOrEmail || '').trim().toLowerCase();
         if (
           (trimmed === 'admin' || trimmed === 'admin@letters.com') &&
-          (password === 'letters@2020' || password === 'admin123')
+          password === 'letters@2020'
         ) {
           const user = { username: 'admin', email: 'admin@letters.com', role: 'Store Owner' };
           if (typeof window !== 'undefined') {
@@ -71,7 +71,7 @@ export const useAuthStore = create((set, get) => ({
       const trimmed = (usernameOrEmail || '').trim().toLowerCase();
       if (
         (trimmed === 'admin' || trimmed === 'admin@letters.com') &&
-        (password === 'letters@2020' || password === 'admin123')
+        password === 'letters@2020'
       ) {
         const user = { username: 'admin', email: 'admin@letters.com', role: 'Store Owner' };
         if (typeof window !== 'undefined') {
