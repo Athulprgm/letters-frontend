@@ -1,0 +1,589 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Great+Vibes&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&family=Pinyon+Script&display=swap');
+@import "tailwindcss";
+
+
+@theme {
+  /* Cream Shades */
+  --color-warm-cream: #FAF6EE;
+  --color-soft-cream: #F2ECE0;
+  --color-pure-cream: #FFFCF5;
+  --color-cream-border: #E5DCCD;
+
+  /* Olive Green Shades */
+  --color-olive-dark: #232D20;
+  --color-olive: #4A5F3A;
+  --color-olive-sage: #5B744B;
+  --color-olive-muted: #5E6A56;
+  --color-olive-light: #7E976E;
+
+  /* Maroon Shades */
+  --color-maroon: #721C28;
+  --color-maroon-hover: #8F2636;
+  --color-maroon-deep: #4A101A;
+  --color-maroon-light: #F7EBEB;
+
+  /* Chandanam / Sandalwood Light Orange */
+  --color-chandanam: #E5A04D;
+  --color-chandanam-light: #F3B868;
+  --color-chandanam-dark: #CD8632;
+  --color-chandanam-soft: #FDF2E2;
+
+  /* Legacy aliases for compatibility */
+  --color-warm-ivory: #FAF6EE;
+  --color-champagne-gold: #E5A04D;
+  --color-antique-gold: #CD8632;
+  --color-muted-sage: #5B744B;
+}
+
+:root {
+  /* ── Light Mode: Warm Luxury Cream ── */
+  --bg:          #FAF7F0;        /* Warm parchment canvas */
+  --bg-subtle:   #F0E9DC;        /* Slightly deeper cream surface */
+  --bg-deep:     #E8DED0;        /* Terracotta-cream divider bg */
+  --card:        #FFFDF7;        /* Pure warm white card */
+  --card-hover:  #F7F0E5;        /* Card hover warmth */
+  --border:      #DDD2BF;        /* Warm neutral border */
+  --border-dark: #1F291C;        /* Deep olive charcoal border */
+
+  /* Text */
+  --text:        #1A2417;        /* Near-black warm forest */
+  --text-muted:  #5A6754;        /* Warm olive taupe */
+  --text-faint:  #95A08E;        /* Faintest label text */
+
+  /* Brand */
+  --accent:      #3A4F34;        /* Deep regal olive */
+  --accent-hover:#273524;        /* Deeper hover */
+  --accent-light:#5A7249;        /* Sage highlight */
+  --olive:       #3A4F34;
+  --olive-hover: #273524;
+  --success:     #5A7249;
+
+  /* Accents */
+  --chandanam:        #D4922A;   /* Warmer, richer sandalwood */
+  --chandanam-light:  #E8A84A;
+  --chandanam-dark:   #B07220;
+  --maroon:           #6B1A26;
+  --maroon-hover:     #891F31;
+  --maroon-dark:      #43101A;
+  --maroon-light:     #F8EAEC;
+  --accent-secondary: #6B1A26;
+
+  /* Utility */
+  --shadow-sm:   0 1px 3px rgba(26,36,23,0.06);
+  --shadow-md:   0 4px 16px rgba(26,36,23,0.10);
+  --shadow-lg:   0 12px 40px rgba(26,36,23,0.14);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modern Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3E5337, #5B744B);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5B744B, #7E9C6F);
+}
+
+/* Typography Classes */
+.font-heading {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+.font-editorial {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+.font-serif-luxury {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+.font-serif-subtle {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+.font-sans-ui {
+  font-family: 'Manrope', sans-serif;
+}
+.font-doodle {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+}
+.font-brand-calligraphy,
+.font-calligraphy,
+.font-script-brand {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+}
+.font-signature {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+}
+
+
+/* ============================
+   MODERN BUTTON SYSTEM
+   ============================ */
+
+/* Primary Dominant Olive Green Button */
+.gold-btn, .primary-pill-btn, .olive-btn {
+  background: linear-gradient(135deg, #384C32 0%, #4D6444 50%, #2F412A 100%);
+  background-size: 200% 200%;
+  color: #FAF6EE;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid rgba(77, 100, 68, 0.5);
+  box-shadow: 0 2px 14px rgba(47, 65, 42, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.gold-btn::before, .primary-pill-btn::before, .olive-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.gold-btn:hover::before, .primary-pill-btn:hover::before, .olive-btn:hover::before {
+  transform: translateX(100%);
+}
+.gold-btn:hover, .primary-pill-btn:hover, .olive-btn:hover {
+  background-position: 100% 100%;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(47, 65, 42, 0.45);
+  color: #FFFCF5;
+}
+.gold-btn:active, .primary-pill-btn:active, .olive-btn:active {
+  transform: scale(0.97) translateY(0);
+}
+
+/* Chandanam Light Orange Button */
+.chandanam-btn {
+  background: linear-gradient(135deg, #E5A04D 0%, #F3B868 50%, #E5A04D 100%);
+  color: #1F291C;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid rgba(229, 160, 77, 0.45);
+  box-shadow: 0 2px 12px rgba(229, 160, 77, 0.3);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.chandanam-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -5px rgba(229, 160, 77, 0.45);
+}
+
+/* Regal Maroon Button */
+.maroon-btn, .maroon-pill-btn {
+  background: linear-gradient(135deg, #721C28 0%, #8F2636 50%, #721C28 100%);
+  background-size: 200% 200%;
+  color: #FAF6EE;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid rgba(114, 28, 40, 0.4);
+  box-shadow: 0 2px 12px rgba(114, 28, 40, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.maroon-btn:hover, .maroon-pill-btn:hover {
+  background-position: 100% 100%;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(114, 28, 40, 0.45);
+}
+.maroon-btn:active, .maroon-pill-btn:active {
+  transform: scale(0.97) translateY(0);
+}
+
+.rose-btn, .secondary-pill-btn {
+  background: var(--card);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.5);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.rose-btn:hover, .secondary-pill-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--olive);
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px -3px rgba(58, 79, 52, 0.2);
+}
+.rose-btn:active, .secondary-pill-btn:active {
+  transform: scale(0.97);
+}
+
+.outline-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: 9999px;
+  box-shadow: none !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.outline-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--olive);
+  color: var(--olive);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px -4px rgba(62, 83, 55, 0.25);
+}
+.outline-btn:active {
+  transform: scale(0.97);
+}
+
+/* Dark Charcoal Button */
+.charcoal-btn {
+  background: linear-gradient(135deg, #1F291C, #2C3B27);
+  color: #FAF6EE;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.charcoal-btn:hover {
+  background: linear-gradient(135deg, #3E5337, #5B744B);
+  color: #FFFCF5;
+  border-color: rgba(91, 116, 75, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -5px rgba(62, 83, 55, 0.4);
+}
+
+/* ============================
+   MODERN CARD SYSTEM
+   ============================ */
+
+.card-minimal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 3px rgba(31, 41, 28, 0.03), 0 0 0 0 transparent;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.card-minimal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, transparent);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+.card-minimal:hover {
+  border-color: transparent;
+  box-shadow: 0 20px 40px -12px rgba(31, 41, 28, 0.12), 0 8px 16px -8px rgba(31, 41, 28, 0.06);
+  transform: translateY(-4px);
+}
+.card-minimal:hover::before {
+  background: linear-gradient(135deg, var(--olive), rgba(62, 83, 55, 0.3));
+}
+
+/* Glass Card */
+.card-glass {
+  background: rgba(255, 252, 245, 0.7);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(229, 220, 205, 0.6);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px -4px rgba(35, 45, 32, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -8px rgba(35, 45, 32, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* ============================
+   MODERN BADGES
+   ============================ */
+
+.badge-minimal, .badge-pill {
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--bg-subtle), var(--card));
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Chandanam Light Orange Badge */
+.badge-gold, .badge-chandanam {
+  border: 1px solid rgba(229, 160, 77, 0.4);
+  background: linear-gradient(135deg, rgba(229, 160, 77, 0.14), rgba(229, 160, 77, 0.06));
+  color: #A36015;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(229, 160, 77, 0.12);
+}
+
+/* Regal Maroon Badge */
+.badge-maroon {
+  border: 1px solid rgba(114, 28, 40, 0.35);
+  background: linear-gradient(135deg, rgba(114, 28, 40, 0.12), rgba(114, 28, 40, 0.05));
+  color: #721C28;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(114, 28, 40, 0.1);
+}
+
+/* Olive Green & Sage Badge */
+.badge-sage, .badge-success, .badge-green, .badge-olive {
+  border: 1px solid rgba(74, 95, 58, 0.35);
+  background: linear-gradient(135deg, rgba(74, 95, 58, 0.14), rgba(74, 95, 58, 0.06));
+  color: #4A5F3A;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(74, 95, 58, 0.1);
+}
+
+/* ============================
+   ANIMATED GRADIENT BACKGROUNDS
+   ============================ */
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 160, 77, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(229, 160, 77, 0); }
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* ============================
+   MODERN DECORATIVE ELEMENTS
+   ============================ */
+
+.modern-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border: none;
+  opacity: 0.5;
+}
+
+.section-fade-in {
+  animation: slide-up-fade 0.6s ease-out both;
+}
+
+/* Noise Texture Overlay */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Modern Gradient Orbs */
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+/* Modern glass effect for navbars and floating elements */
+.glass-nav {
+  background: rgba(250, 247, 240, 0.88);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+}
+
+/* Modern image with gradient overlay */
+.image-overlay {
+  position: relative;
+}
+.image-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+}
+
+/* ============================
+   INFINITE MARQUEE
+   ============================ */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ============================
+   FORM INPUT SYSTEM
+   ============================ */
+
+.input-warm {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--text);
+  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+  width: 100%;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  outline: none;
+}
+.input-warm::placeholder {
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+.input-warm:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(58, 79, 52, 0.12);
+}
+
+/* ============================
+   SECTION RHYTHM
+   ============================ */
+
+.section-pad {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* ============================
+   MODERN SELECTION STYLES
+   ============================ */
+::selection {
+  background: rgba(229, 160, 77, 0.28);
+  color: var(--text);
+}
+
