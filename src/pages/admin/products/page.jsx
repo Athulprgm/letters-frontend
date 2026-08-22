@@ -20,6 +20,7 @@ import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { compressImage } from '@/src/utils/imageCompressor';
 import { faTag } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdminProductsPage() {
@@ -118,22 +119,27 @@ export default function AdminProductsPage() {
     setIsNewProductModal(true);
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File size exceeds 5MB. Please choose a smaller image.');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('File size exceeds 15MB. Please choose a smaller image.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        setFormData((prev) => ({ ...prev, imageUrl: reader.result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, 1200, 1200, 0.82);
+      setFormData((prev) => ({ ...prev, imageUrl: compressed }));
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData((prev) => ({ ...prev, imageUrl: reader.result }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleFormSubmit = async (e) => {

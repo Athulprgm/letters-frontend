@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { compressImage } from '@/src/utils/imageCompressor';
 
 export default function AdminCategoriesPage() {
   const { categories, fetchCategories, addCategory, updateCategory, deleteCategory, toggleCategoryStatus, resetCategories } = useCategoryStore();
