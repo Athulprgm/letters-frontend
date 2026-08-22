@@ -71,7 +71,7 @@ export default function CartPage() {
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
-  const estimatedShipping = subtotal >= freeShippingThreshold ? 0 : 80;
+  const estimatedShipping = 0;
   const finalTotal = Math.max(0, subtotal - discountAmount + (subtotal > 0 ? estimatedShipping : 0));
 
   const handleWhatsAppQuickCart = () => {
