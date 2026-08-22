@@ -12,7 +12,7 @@ export const defaultSettings = {
   heroDescription: 'Thoughtfully curated hampers, bouquets and personalized gifts for the moments that matter most.',
   whatsappNumber: '917559085513',
   phoneNumber: '+91 75590 85513',
-  email: 'hello@lettersgifting.com',
+  email: 'ameenaaami770@gmail.com',
   address: 'LETTERS Gifting Studio, Kerala, India',
   instagram: 'https://www.instagram.com/le_tte_rs_?igsi=MWtkYTVhc204MTUyMw==',
   announcementText: '✨ Handcrafted with love • Express delivery available for special occasions • WhatsApp ordering enabled',
