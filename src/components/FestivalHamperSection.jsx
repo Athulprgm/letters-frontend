@@ -54,13 +54,8 @@ export default function FestivalHamperSection() {
     return currentFestival.products.filter((p) => p.active !== false && p.enabled !== false);
   }, [currentFestival]);
 
-  // Edge case: If no eligible festival (neither ACTIVE nor PRE_BOOKING), do not render
-  if (isLoaded && (!currentFestival || (!isActive && !isPreBooking))) {
-    return null;
-  }
-
-  // If initial load or still fetching and no data, render null to prevent layout shifts
-  if (!currentFestival) {
+  // Strictly render ONLY if admin added an active/pre-booking festival with products
+  if (!isLoaded || !currentFestival || (!isActive && !isPreBooking) || activeProducts.length === 0) {
     return null;
   }
 
