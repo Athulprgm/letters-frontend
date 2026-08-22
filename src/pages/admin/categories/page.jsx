@@ -70,22 +70,27 @@ export default function AdminCategoriesPage() {
     setIsModalOpen(true);
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image file size must be under 5MB');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Image file size must be under 15MB');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        setFormData((prev) => ({ ...prev, image: reader.result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, 1000, 1000, 0.82);
+      setFormData((prev) => ({ ...prev, image: compressed }));
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData((prev) => ({ ...prev, image: reader.result }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
