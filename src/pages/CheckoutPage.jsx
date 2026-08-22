@@ -15,9 +15,13 @@ import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { items, getSubtotal, clearCart } = useCartStore();
   const { createOrder, generateWhatsAppMessage } = useOrderStore();
-  const { getWhatsAppUrl } = useSettingsStore();
+  const { settings, getWhatsAppUrl } = useSettingsStore();
+
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const [form, setForm] = useState({
     fullName: '',
@@ -188,14 +192,16 @@ export default function CheckoutPage() {
                 {createdOrder.items.map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center text-[var(--text)] text-xs">
                     <span>{item.name} × {item.quantity}</span>
-                    <span className="font-bold">₹{item.price * item.quantity}</span>
+                    {showPrices && <span className="font-bold">₹{item.price * item.quantity}</span>}
                   </div>
                 ))}
               </div>
 
               <div className="pt-2 border-t border-[var(--border)] flex justify-between font-bold text-sm text-[var(--text)]">
-                <span>Total:</span>
-                <span className="font-heading text-base text-[var(--olive)]">₹{createdOrder.total}</span>
+                <span>{showPrices ? 'Total:' : 'Pricing:'}</span>
+                <span className="font-heading text-base text-[var(--olive)]">
+                  {showPrices ? `₹${createdOrder.total}` : inquiryLabel}
+                </span>
               </div>
 
               <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1">
@@ -477,7 +483,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                       <span className="font-bold text-[var(--text)] whitespace-nowrap">
-                        ₹{(item.price * item.quantity).toLocaleString()}
+                        {showPrices ? `₹${(item.price * item.quantity).toLocaleString()}` : inquiryLabel}
                       </span>
                     </div>
                   ))}
@@ -486,22 +492,26 @@ export default function CheckoutPage() {
                 {/* Price Breakdown */}
                 <div className="pt-2 border-t border-[var(--border)] space-y-2 text-xs">
                   <div className="flex justify-between text-[var(--text-muted)]">
-                    <span>Items Subtotal</span>
-                    <span className="font-semibold text-[var(--text)]">₹{subtotal.toLocaleString()}</span>
+                    <span>{showPrices ? 'Items Subtotal' : 'Selected Items'}</span>
+                    <span className="font-semibold text-[var(--text)]">
+                      {showPrices ? `₹${subtotal.toLocaleString()}` : `${items.reduce((s, i) => s + i.quantity, 0)} Items`}
+                    </span>
                   </div>
                   <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Delivery Packaging</span>
-                    <span className="font-semibold text-[var(--text)]">
-                      {deliveryCharge === 0 ? <span className="text-emerald-600">FREE</span> : `₹${deliveryCharge}`}
+                    <span className="font-semibold text-emerald-600">
+                      Complimentary Express
                     </span>
                   </div>
                 </div>
 
                 {/* Total */}
                 <div className="pt-3 border-t border-[var(--border)] flex justify-between items-baseline">
-                  <span className="text-xs font-semibold text-[var(--text)]">Total Payable</span>
-                  <span className="font-heading text-2xl font-bold text-[var(--text)]">
-                    ₹{total.toLocaleString()}
+                  <span className="text-xs font-semibold text-[var(--text)]">
+                    {showPrices ? 'Total Payable' : 'Pricing Status'}
+                  </span>
+                  <span className="font-heading text-xl sm:text-2xl font-bold text-[var(--text)]">
+                    {showPrices ? `₹${total.toLocaleString()}` : inquiryLabel}
                   </span>
                 </div>
 

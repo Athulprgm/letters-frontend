@@ -35,8 +35,11 @@ export default function DealsPage() {
   const { products } = useProductStore();
   const { festivals, showcaseFestival, fetchFestivals } = useFestivalStore();
   const { saleBanner, fetchSaleBanner } = useSaleBannerStore();
-  const { getWhatsAppUrl } = useSettingsStore();
+  const { settings, getWhatsAppUrl } = useSettingsStore();
   const addToCart = useCartStore((state) => state.addToCart);
+
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [sortBy, setSortBy] = useState('discount-high');
@@ -176,10 +179,6 @@ export default function DealsPage() {
 
     return list;
   }, [allDeals, selectedFilter, sortBy, searchQuery]);
-
-  const { settings, getWhatsAppUrl } = useSettingsStore();
-  const showPrices = settings.showPricesGlobally !== false;
-  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleAddToCart = (item, e) => {
     e.preventDefault();

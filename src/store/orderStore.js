@@ -136,16 +136,21 @@ export const useOrderStore = create((set, get) => ({
 
   generateWhatsAppMessage: (order) => {
     const settings = useSettingsStore.getState().settings;
+    const showPrices = settings.showPricesGlobally !== false;
+    const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
     let itemsText = '';
     (order.items || []).forEach((item, index) => {
-      itemsText += `${index + 1}. ${item.name} × ${item.quantity} — ₹${item.price * item.quantity}\n`;
+      const priceStr = showPrices ? ` — ₹${item.price * item.quantity}` : '';
+      itemsText += `${index + 1}. ${item.name} × ${item.quantity}${priceStr}\n`;
       if (item.customization?.recipientName || item.customization?.personalizedMessage) {
         itemsText += `   ↳ For: ${item.customization.recipientName || 'N/A'}${item.customization.personalizedMessage ? ` | Msg: "${item.customization.personalizedMessage}"` : ''}\n`;
       }
     });
 
-    const message = `*${settings.orderMessagePrefix || 'New Order — LETTERS'}*
+    const totalText = showPrices ? `*Total Amount:* ₹${order.total}` : `*Pricing Status:* ${inquiryLabel} / Custom Quote`;
+
+    const message = `*${settings.orderMessagePrefix || 'Order Inquiry — LETTERS'}*
 Order ID: #${order.id}
 
 *Customer:*
@@ -156,9 +161,9 @@ Order ID: #${order.id}
 • Preferred Delivery: ${order.deliveryDate || 'Standard'}
 • Occasion: ${order.occasion || 'Celebration'}
 
-*Items Ordered:*
+*Items Selected:*
 ${itemsText}
-*Total Amount:* ₹${order.total}
+${totalText}
 
 *Customization Details:*
 ${order.customization || 'None'}
@@ -166,7 +171,7 @@ ${order.customization || 'None'}
 *Special Instructions:*
 ${order.specialInstructions || 'None'}
 
-Please confirm this order.`;
+Please confirm details and share dispatch timeline.`;
 
     return message;
   },

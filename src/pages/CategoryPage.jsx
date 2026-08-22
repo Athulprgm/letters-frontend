@@ -5,15 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGift, faArrowRight, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { useProductStore } from '@/src/store/productStore';
+import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
 
 export default function CategoryPage(props) {
   const routerParams = useParams();
   const slug = props.params?.slug || routerParams?.slug;
 
-
   const { categories } = useCategoryStore();
   const { products } = useProductStore();
+  const { settings } = useSettingsStore();
+  const showPrices = settings.showPricesGlobally !== false;
+
   const [sortBy, setSortBy] = useState('featured');
 
   const currentCategory = useMemo(() => {
@@ -33,12 +36,12 @@ export default function CategoryPage(props) {
             (currentCategory && p.category.toLowerCase() === currentCategory.name.toLowerCase()))
       )
       .sort((a, b) => {
-        if (sortBy === 'price-low') return a.price - b.price;
-        if (sortBy === 'price-high') return b.price - a.price;
+        if (showPrices && sortBy === 'price-low') return a.price - b.price;
+        if (showPrices && sortBy === 'price-high') return b.price - a.price;
         if (sortBy === 'rating') return (b.rating || 5) - (a.rating || 5);
         return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       });
-  }, [products, slug, currentCategory, sortBy]);
+  }, [products, slug, currentCategory, sortBy, showPrices]);
 
   if (!currentCategory) {
     return (
@@ -129,8 +132,12 @@ export default function CategoryPage(props) {
             >
               <option value="featured">Featured Picks</option>
               <option value="rating">Top Customer Rated</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
+              {showPrices && (
+                <>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </>
+              )}
             </select>
           </div>
         </div>
