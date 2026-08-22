@@ -65,6 +65,42 @@ export function evaluateShowcaseFestival(festivals = [], currentDate = new Date(
   return null;
 }
 
+// Helper to safely write to localStorage without throwing QuotaExceededError
+const safeSaveLocalStorage = (key, data) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    try {
+      if (Array.isArray(data)) {
+        // Strip large base64 images to prevent quota overflow
+        const lightweight = data.map((f) => {
+          const item = { ...f };
+          if (typeof item.banner === 'string' && item.banner.startsWith('data:')) {
+            delete item.banner;
+          }
+          if (typeof item.bannerImage === 'string' && item.bannerImage.startsWith('data:')) {
+            delete item.bannerImage;
+          }
+          if (Array.isArray(item.products)) {
+            item.products = item.products.map((p) => {
+              const prod = { ...p };
+              if (typeof prod.image === 'string' && prod.image.startsWith('data:')) {
+                delete prod.image;
+              }
+              return prod;
+            });
+          }
+          return item;
+        });
+        localStorage.setItem(key, JSON.stringify(lightweight));
+      }
+    } catch (innerErr) {
+      console.warn('localStorage quota reached for festivals:', innerErr);
+    }
+  }
+};
+
 export const useFestivalStore = create((set, get) => ({
   festivals: defaultFestivals,
   showcaseFestival: evaluateShowcaseFestival(defaultFestivals),
@@ -90,22 +126,32 @@ export const useFestivalStore = create((set, get) => ({
     try {
       const res = await fetch(apiUrl(`/api/festivals?t=${Date.now()}`), {
         cache: 'no-store',
-        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' },
+        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Accept': 'application/json' },
       });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.festivals)) {
-        const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
-        set({
-          festivals: data.festivals,
-          showcaseFestival: resolved,
-          isLoaded: true,
-        });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
+      if (res.ok) {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (parseErr) {
+          console.warn('Invalid JSON from festivals endpoint:', text.slice(0, 100));
+          return;
         }
+
+        if (data && data.success && Array.isArray(data.festivals)) {
+          const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
+          set({
+            festivals: data.festivals,
+            showcaseFestival: resolved,
+            isLoaded: true,
+          });
+          safeSaveLocalStorage('letters_festivals_list', data.festivals);
+        }
+      } else {
+        console.warn(`Festivals API returned HTTP status ${res.status}`);
       }
     } catch (e) {
-      console.warn('Using cached festival data', e);
+      console.warn('Using cached festival data due to network error:', e);
     }
   },
 
@@ -138,9 +184,7 @@ export const useFestivalStore = create((set, get) => ({
     const resolved = evaluateShowcaseFestival(updatedList);
 
     set({ festivals: updatedList, showcaseFestival: resolved, isLoaded: true });
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('letters_festivals_list', JSON.stringify(updatedList));
-    }
+    safeSaveLocalStorage('letters_festivals_list', updatedList);
 
     try {
       const res = await fetch(apiUrl('/api/festivals'), {
@@ -152,9 +196,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
         return data.festival;
       }
     } catch (e) {
@@ -177,9 +219,7 @@ export const useFestivalStore = create((set, get) => ({
     });
     const resolved = evaluateShowcaseFestival(updatedList);
     set({ festivals: updatedList, showcaseFestival: resolved, isLoaded: true });
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('letters_festivals_list', JSON.stringify(updatedList));
-    }
+    safeSaveLocalStorage('letters_festivals_list', updatedList);
 
     try {
       const res = await fetch(apiUrl('/api/festivals'), {
@@ -191,9 +231,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
       }
     } catch (e) {
       console.error(e);
@@ -205,9 +243,7 @@ export const useFestivalStore = create((set, get) => ({
     const updatedList = currentList.filter((f) => f.id !== id);
     const resolved = evaluateShowcaseFestival(updatedList);
     set({ festivals: updatedList, showcaseFestival: resolved, isLoaded: true });
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('letters_festivals_list', JSON.stringify(updatedList));
-    }
+    safeSaveLocalStorage('letters_festivals_list', updatedList);
 
     try {
       const res = await fetch(apiUrl(`/api/festivals?id=${id}`), { method: 'DELETE' });
@@ -215,9 +251,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
       }
     } catch (e) {
       console.error(e);
@@ -235,9 +269,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
         return data.product;
       }
     } catch (e) {
@@ -260,9 +292,7 @@ export const useFestivalStore = create((set, get) => ({
     });
     const resolved = evaluateShowcaseFestival(updatedList);
     set({ festivals: updatedList, showcaseFestival: resolved, isLoaded: true });
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('letters_festivals_list', JSON.stringify(updatedList));
-    }
+    safeSaveLocalStorage('letters_festivals_list', updatedList);
     return newProduct;
   },
 
@@ -282,9 +312,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
       }
     } catch (e) {
       console.error(e);
@@ -300,9 +328,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
       }
     } catch (e) {
       console.error(e);
@@ -324,9 +350,7 @@ export const useFestivalStore = create((set, get) => ({
       if (data.success && data.festivals) {
         const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
         set({ festivals: data.festivals, showcaseFestival: resolved, isLoaded: true });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('letters_festivals_list', JSON.stringify(data.festivals));
-        }
+        safeSaveLocalStorage('letters_festivals_list', data.festivals);
       }
     } catch (e) {
       console.error(e);
