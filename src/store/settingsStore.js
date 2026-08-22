@@ -115,7 +115,7 @@ export const useSettingsStore = create((set, get) => ({
 
             if (needsServerSync) {
               fetch(apiUrl('/api/settings'), {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(merged),
               }).catch(() => {});
@@ -147,7 +147,7 @@ export const useSettingsStore = create((set, get) => ({
 
     try {
       await fetch(apiUrl('/api/settings'), {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSettings),
       });
@@ -165,7 +165,7 @@ export const useSettingsStore = create((set, get) => ({
     set({ settings: defaultSettings });
     try {
       await fetch(apiUrl('/api/settings'), {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(defaultSettings),
       });
