@@ -39,9 +39,12 @@ export default function BestSellers() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   const { settings, getWhatsAppUrl } = useSettingsStore();
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleQuickWhatsAppOrder = (product) => {
-    const message = `Hello ${settings.brandName}, I'm interested in ordering this bestseller: *${product.name}* (${product.price}). Please share delivery details.`;
+    const priceText = showPrices ? ` (${product.price})` : '';
+    const message = `Hello ${settings.brandName}, I'm interested in inquiring about this bestseller: *${product.name}*${priceText}. Please share pricing, customization, and delivery details.`;
     window.open(getWhatsAppUrl(message), '_blank');
   };
 
@@ -101,7 +104,9 @@ export default function BestSellers() {
                     <h3 className="font-heading text-lg font-bold text-[var(--text)] group-hover:text-[var(--accent)] transition-colors duration-200">
                       {item.name}
                     </h3>
-                    <span className="font-heading text-base font-bold text-[var(--olive)] whitespace-nowrap">{item.price}</span>
+                    <span className="font-heading text-xs sm:text-sm font-bold text-[var(--olive)] whitespace-nowrap">
+                      {showPrices ? item.price : inquiryLabel}
+                    </span>
                   </div>
                   <p className="text-[var(--text-muted)] text-[11.5px] leading-relaxed font-normal">
                     {item.desc}

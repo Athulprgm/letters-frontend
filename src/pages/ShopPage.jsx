@@ -480,21 +480,23 @@ export default function ShopPage() {
               </div>
 
               {/* Mobile Price Slider */}
-              <div className="pt-4 border-t border-[var(--border)]">
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-bold text-[var(--text)]">Max Budget</span>
-                  <span className="font-bold text-[var(--olive)]">₹{maxPrice.toLocaleString()}</span>
+              {showPrices && (
+                <div className="pt-4 border-t border-[var(--border)]">
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-bold text-[var(--text)]">Max Budget</span>
+                    <span className="font-bold text-[var(--olive)]">₹{maxPrice.toLocaleString()}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="500"
+                    max="5000"
+                    step="100"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="w-full accent-[var(--olive)]"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-[var(--olive)]"
-                />
-              </div>
+              )}
 
               {/* Mobile Occasions */}
               <div className="pt-4 border-t border-[var(--border)]">

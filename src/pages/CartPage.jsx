@@ -63,6 +63,9 @@ export default function CartPage() {
     }
   };
 
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
   const estimatedShipping = subtotal >= freeShippingThreshold ? 0 : 80;
   const finalTotal = Math.max(0, subtotal - discountAmount + (subtotal > 0 ? estimatedShipping : 0));
@@ -72,21 +75,23 @@ export default function CartPage() {
 
     let itemsText = '';
     items.forEach((item, index) => {
-      itemsText += `${index + 1}. ${item.name} × ${item.quantity} — ₹${item.price * item.quantity}\n`;
+      const priceStr = showPrices ? ` — ₹${item.price * item.quantity}` : '';
+      itemsText += `${index + 1}. ${item.name} × ${item.quantity}${priceStr}\n`;
       if (item.customization?.recipientName || item.customization?.personalizedMessage) {
         itemsText += `   ↳ For: ${item.customization.recipientName || 'N/A'}${item.customization.personalizedMessage ? ` | Msg: "${item.customization.personalizedMessage}"` : ''}\n`;
       }
     });
 
-    const message = `*${settings.orderMessagePrefix || 'New Order — LETTERS'}*
-✦ *SHOPPING CART ORDER INQUIRY* ✦
+    const totalText = showPrices ? `*Subtotal:* ₹${subtotal}\n${appliedCoupon ? `*Discount (${appliedCoupon.code}):* -₹${discountAmount}\n` : ''}*Estimated Total:* ₹${finalTotal}` : `*Pricing:* ${inquiryLabel} / Custom Quote`;
+
+    const message = `*${settings.orderMessagePrefix || 'Bag Inquiry — LETTERS'}*
+✦ *SHOPPING CART INQUIRY* ✦
 
 *Cart Items:*
 ${itemsText}
-*Subtotal:* ₹${subtotal}
-${appliedCoupon ? `*Discount (${appliedCoupon.code}):* -₹${discountAmount}\n` : ''}*Estimated Total:* ₹${finalTotal}
+${totalText}
 
-Hello LETTERS Concierge, I would like to confirm my cart order with your atelier!`;
+Hello LETTERS Concierge, please share custom quote and confirmation for these items in my gifting bag!`;
 
     window.open(getWhatsAppUrl(message), '_blank');
   };
@@ -190,7 +195,7 @@ Hello LETTERS Concierge, I would like to confirm my cart order with your atelier
                       {item.name}
                     </h3>
                     <p className="text-xs font-bold text-[var(--olive)] font-heading">
-                      ₹{item.price.toLocaleString()} each
+                      {showPrices ? `₹${item.price.toLocaleString()} each` : inquiryLabel}
                     </p>
 
                     {/* Customization Details */}
@@ -236,8 +241,8 @@ Hello LETTERS Concierge, I would like to confirm my cart order with your atelier
 
                   {/* Subtotal for line item */}
                   <div className="text-right min-w-[70px]">
-                    <span className="font-heading text-base font-bold text-[var(--text)]">
-                      ₹{(item.price * item.quantity).toLocaleString()}
+                    <span className="font-heading text-sm sm:text-base font-bold text-[var(--text)]">
+                      {showPrices ? `₹${(item.price * item.quantity).toLocaleString()}` : inquiryLabel}
                     </span>
                   </div>
 
@@ -355,16 +360,20 @@ Hello LETTERS Concierge, I would like to confirm my cart order with your atelier
             <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-6 space-y-4 shadow-xs">
               <div className="border-b border-[var(--border)] pb-3">
                 <h2 className="font-heading text-lg font-bold text-[var(--text)]">Order Summary</h2>
-                <p className="text-[10.5px] text-[var(--text-muted)] mt-0.5">Verified price calculation</p>
+                <p className="text-[10.5px] text-[var(--text-muted)] mt-0.5">
+                  {showPrices ? 'Verified price calculation' : 'Gifting bag curation summary'}
+                </p>
               </div>
 
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between items-center text-[var(--text-muted)]">
-                  <span>Bag Subtotal</span>
-                  <span className="font-semibold text-[var(--text)]">₹{subtotal.toLocaleString()}</span>
+                  <span>Bag Items</span>
+                  <span className="font-semibold text-[var(--text)]">
+                    {showPrices ? `₹${subtotal.toLocaleString()}` : `${items.reduce((s, i) => s + i.quantity, 0)} Items Selected`}
+                  </span>
                 </div>
 
-                {appliedCoupon && (
+                {showPrices && appliedCoupon && (
                   <div className="flex justify-between items-center text-emerald-700 font-semibold">
                     <span>Coupon Discount ({appliedCoupon.code})</span>
                     <span>-₹{discountAmount.toLocaleString()}</span>
@@ -373,23 +382,23 @@ Hello LETTERS Concierge, I would like to confirm my cart order with your atelier
 
                 <div className="flex justify-between items-center text-[var(--text-muted)]">
                   <span>Pan-India Shipping</span>
-                  {estimatedShipping === 0 ? (
-                    <span className="text-[var(--olive)] font-bold bg-[var(--olive)]/10 px-2 py-0.5 rounded text-[11px]">
-                      FREE
-                    </span>
-                  ) : (
-                    <span className="font-semibold text-[var(--text)]">₹80</span>
-                  )}
+                  <span className="text-[var(--olive)] font-bold bg-[var(--olive)]/10 px-2 py-0.5 rounded text-[11px]">
+                    Complimentary Express
+                  </span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-[var(--border)] flex justify-between items-baseline">
                 <div>
-                  <span className="text-xs font-bold text-[var(--text)] block">Estimated Total</span>
-                  <span className="text-[10px] text-[var(--text-muted)]">Inclusive of all taxes</span>
+                  <span className="text-xs font-bold text-[var(--text)] block">
+                    {showPrices ? 'Estimated Total' : 'Pricing Status'}
+                  </span>
+                  <span className="text-[10px] text-[var(--text-muted)]">
+                    {showPrices ? 'Inclusive of all taxes' : 'Handwritten card included'}
+                  </span>
                 </div>
                 <span className="font-heading text-2xl font-bold text-[var(--text)]">
-                  ₹{finalTotal.toLocaleString()}
+                  {showPrices ? `₹${finalTotal.toLocaleString()}` : inquiryLabel}
                 </span>
               </div>
 

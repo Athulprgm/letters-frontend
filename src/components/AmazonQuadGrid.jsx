@@ -5,13 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faBolt, faWandMagicSparkles, faGift, faPercent } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '../store/productStore';
 import { useCategoryStore } from '../store/categoryStore';
+import { useSettingsStore } from '../store/settingsStore';
 
 export default function AmazonQuadGrid() {
   const { products } = useProductStore();
   const { categories } = useCategoryStore();
+  const { settings } = useSettingsStore();
+
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const dealProducts = products.filter((p) => p.active && (p.originalPrice > p.price || p.tag)).slice(0, 4);
-  const budgetProducts = products.filter((p) => p.active && p.price <= 1500).slice(0, 4);
+  const budgetProducts = products.filter((p) => p.active && (showPrices ? p.price <= 1500 : true)).slice(0, 4);
   const showcaseCategories = categories.filter((c) => c.enabled).slice(0, 4);
 
   if (dealProducts.length === 0 && budgetProducts.length === 0 && showcaseCategories.length === 0) {
@@ -28,37 +33,40 @@ export default function AmazonQuadGrid() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--maroon)] bg-[var(--maroon)]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <FontAwesomeIcon icon={faBolt} className="text-[9px]" /> Limited Deal
+                  <FontAwesomeIcon icon={faBolt} className="text-[9px]" /> Limited Curations
                 </span>
-                <span className="text-xs font-bold text-[var(--olive)]">Up to 35% Off</span>
+                {showPrices && <span className="text-xs font-bold text-[var(--olive)]">Special Offers</span>}
               </div>
               <h3 className="font-heading text-lg font-bold text-[var(--text)] mb-3 leading-snug">
-                Today's Gift Deals
+                Featured Curations
               </h3>
 
               {/* 4 Mini Thumbnails */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                {dealProducts.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/product/${p.slug}`}
-                    className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
-                  >
-                    <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
-                      <img
-                        src={p.images?.[0] || p.image}
-                        alt={p.name}
-                        className="w-full h-full object-cover group-hover/item:scale-108 transition-transform"
-                      />
-                    </div>
-                    <p className="text-[10px] font-semibold text-[var(--text)] line-clamp-1 group-hover/item:text-[var(--olive)]">
-                      {p.name}
-                    </p>
-                    <p className="text-[10.5px] font-bold text-[var(--olive)]">
-                      ₹{p.price.toLocaleString()}
-                    </p>
-                  </Link>
-                ))}
+                {dealProducts.map((p) => {
+                  const isItemPriceShown = showPrices && p.showPrice !== false;
+                  return (
+                    <Link
+                      key={p.id}
+                      href={`/product/${p.slug}`}
+                      className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
+                    >
+                      <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
+                        <img
+                          src={p.images?.[0] || p.image}
+                          alt={p.name}
+                          className="w-full h-full object-cover group-hover/item:scale-108 transition-transform"
+                        />
+                      </div>
+                      <p className="text-[10px] font-semibold text-[var(--text)] line-clamp-1 group-hover/item:text-[var(--olive)]">
+                        {p.name}
+                      </p>
+                      <p className="text-[10px] font-bold text-[var(--olive)]">
+                        {isItemPriceShown ? `₹${p.price.toLocaleString()}` : inquiryLabel}
+                      </p>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -113,38 +121,41 @@ export default function AmazonQuadGrid() {
             </Link>
           </div>
 
-          {/* Card 3: Affordable Luxury Under ₹1,499 */}
+          {/* Card 3: Affordable Luxury */}
           <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-5 flex flex-col justify-between shadow-xs hover:border-[var(--olive)]/40 transition-colors">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--olive)] bg-[var(--olive)]/10 px-2 py-0.5 rounded-full mb-1.5 inline-block">
-                Pocket Friendly
+                {showPrices ? 'Pocket Friendly' : 'Artisan Crafted'}
               </span>
               <h3 className="font-heading text-lg font-bold text-[var(--text)] mb-3 leading-snug">
-                Gifts Under ₹1,499
+                {showPrices ? 'Gifts Under ₹1,499' : 'Affordable Curations'}
               </h3>
 
               <div className="grid grid-cols-2 gap-2 mb-4">
-                {budgetProducts.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/product/${p.slug}`}
-                    className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
-                  >
-                    <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
-                      <img
-                        src={p.images?.[0] || p.image}
-                        alt={p.name}
-                        className="w-full h-full object-cover group-hover/item:scale-108 transition-transform"
-                      />
-                    </div>
-                    <p className="text-[10px] font-semibold text-[var(--text)] line-clamp-1 group-hover/item:text-[var(--olive)]">
-                      {p.name}
-                    </p>
-                    <p className="text-[10.5px] font-bold text-[var(--olive)]">
-                      ₹{p.price.toLocaleString()}
-                    </p>
-                  </Link>
-                ))}
+                {budgetProducts.map((p) => {
+                  const isItemPriceShown = showPrices && p.showPrice !== false;
+                  return (
+                    <Link
+                      key={p.id}
+                      href={`/product/${p.slug}`}
+                      className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
+                    >
+                      <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
+                        <img
+                          src={p.images?.[0] || p.image}
+                          alt={p.name}
+                          className="w-full h-full object-cover group-hover/item:scale-108 transition-transform"
+                        />
+                      </div>
+                      <p className="text-[10px] font-semibold text-[var(--text)] line-clamp-1 group-hover/item:text-[var(--olive)]">
+                        {p.name}
+                      </p>
+                      <p className="text-[10px] font-bold text-[var(--olive)]">
+                        {isItemPriceShown ? `₹${p.price.toLocaleString()}` : inquiryLabel}
+                      </p>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -152,7 +163,7 @@ export default function AmazonQuadGrid() {
               href="/shop"
               className="text-xs font-bold text-[var(--olive)] hover:underline flex items-center gap-1.5 pt-2 border-t border-[var(--border)]/60"
             >
-              <span>Shop budget gifts</span>
+              <span>{showPrices ? 'Shop budget gifts' : 'Shop curations'}</span>
               <FontAwesomeIcon icon={faArrowRight} className="text-[9px]" />
             </Link>
           </div>

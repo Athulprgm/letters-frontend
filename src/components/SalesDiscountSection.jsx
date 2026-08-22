@@ -157,6 +157,10 @@ export default function SalesDiscountSection() {
     })
     .slice(0, 8);
 
+  const { settings, getWhatsAppUrl } = useSettingsStore();
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
   const handleAddToCart = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -171,7 +175,10 @@ export default function SalesDiscountSection() {
     e.preventDefault();
     e.stopPropagation();
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const msg = `*Seasonal Offer Inquiry — LETTERS*\nItem: ${product.name}\nOffer Price: ₹${product.price} (Original: ₹${product.originalPrice || product.price})\nLink: ${origin}/product/${product.slug}\n\nHello LETTERS team! I would like to inquire about this offer with live photo preview.`;
+    const priceText = showPrices && product.showPrice !== false
+      ? `\nOffer Price: ₹${product.price} (Original: ₹${product.originalPrice || product.price})`
+      : `\nPricing: ${inquiryLabel}`;
+    const msg = `*Seasonal Offer Inquiry — LETTERS*\nItem: ${product.name}${priceText}\nLink: ${origin}/product/${product.slug}\n\nHello LETTERS team! I would like to inquire about this curated item with live photo preview.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
 
@@ -361,23 +368,23 @@ export default function SalesDiscountSection() {
           {[
             {
               id: 'under-999',
-              title: 'Curations Under ₹999',
+              title: showPrices ? 'Curations Under ₹999' : 'Affordable Mini Curations',
               sub: 'Bouquets & Mini Boxes',
-              tag: 'Budget Friendly',
+              tag: showPrices ? 'Budget Friendly' : 'Curated Mini',
               img: 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=500&q=80',
             },
             {
               id: 'chocolates',
               title: 'Artisan Chocolates',
               sub: 'Belgian Truffles & Rochers',
-              tag: 'Min 20% Off',
+              tag: showPrices ? 'Min 20% Off' : 'Gourmet Treats',
               img: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=500&q=80',
             },
             {
               id: 'keepsakes',
               title: 'Floating Photo Frames',
               sub: 'Prints & Brass Glass',
-              tag: 'From ₹699',
+              tag: showPrices ? 'From ₹699' : 'Handcrafted Frames',
               img: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=500&q=80',
             },
             {
@@ -437,7 +444,7 @@ export default function SalesDiscountSection() {
                 {activeTab === 'all'
                   ? 'All Discounted Curations'
                   : activeTab === 'under-999'
-                  ? 'Curations Under ₹999'
+                  ? (showPrices ? 'Curations Under ₹999' : 'Affordable Mini Curations')
                   : activeTab === 'chocolates'
                   ? 'Gourmet Chocolate Offers'
                   : activeTab === 'keepsakes'
@@ -450,7 +457,7 @@ export default function SalesDiscountSection() {
             <div className="flex flex-wrap items-center gap-1.5">
               {[
                 { id: 'all', label: 'All Offers' },
-                { id: 'under-999', label: 'Under ₹999' },
+                { id: 'under-999', label: showPrices ? 'Under ₹999' : 'Mini Hampers' },
                 { id: 'chocolates', label: 'Chocolates' },
                 { id: 'keepsakes', label: 'Frames' },
                 { id: 'bouquets', label: 'Bouquets' },
@@ -528,7 +535,7 @@ export default function SalesDiscountSection() {
                       </p>
 
                       <div className="flex items-baseline gap-2">
-                        {product.showPrice !== false ? (
+                        {showPrices && product.showPrice !== false ? (
                           <>
                             <span className="font-heading text-lg font-bold text-[var(--text)]">
                               ₹{product.price.toLocaleString()}
@@ -541,7 +548,7 @@ export default function SalesDiscountSection() {
                           </>
                         ) : (
                           <span className="text-xs font-bold text-[var(--chandanam-dark)] bg-[var(--chandanam-soft)] px-2 py-0.5 rounded">
-                            Price On Request
+                            {inquiryLabel}
                           </span>
                         )}
                       </div>

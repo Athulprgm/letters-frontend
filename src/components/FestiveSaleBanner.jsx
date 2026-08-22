@@ -203,6 +203,10 @@ export default function FestiveSaleBanner() {
       .slice(0, 8);
   }, [products, activeTab]);
 
+  const { settings, getWhatsAppUrl } = useSettingsStore();
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
   const handleAddToCart = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -217,7 +221,8 @@ export default function FestiveSaleBanner() {
     e.preventDefault();
     e.stopPropagation();
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const msg = `*Festive Deal Inquiry — LETTERS*\nItem: ${product.name}\nOffer Price: ₹${product.price} (Original: ₹${product.originalPrice || product.price})\nLink: ${origin}/product/${product.slug}\n\nHello LETTERS team! I would like to claim this Festive Sale Deal directly. Please share dispatch time and live photo preview.`;
+    const priceText = showPrices && product.showPrice !== false ? `\nOffer Price: ₹${product.price}` : `\nPricing: ${inquiryLabel}`;
+    const msg = `*Festive Deal Inquiry — LETTERS*\nItem: ${product.name}${priceText}\nLink: ${origin}/product/${product.slug}\n\nHello LETTERS team! I would like to inquire about this Festive Deal. Please share customization options, quote, dispatch time, and live photo preview.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
 
@@ -511,7 +516,7 @@ export default function FestiveSaleBanner() {
               id: 'vishu',
               title: 'Vishu Kani Crates',
               sub: 'Bell-Metal Uruli & Nuts',
-              offer: 'Starts ₹1,799',
+              offer: showPrices ? 'Starts ₹1,799' : 'Bespoke Curations',
               tag: 'Auspicious Vishu',
               img: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&w=600&q=80',
               accentColor: 'border-[#D4922A]/50 hover:border-[#D4922A]',
@@ -707,17 +712,25 @@ export default function FestiveSaleBanner() {
 
                       {/* Pricing Block */}
                       <div className="flex items-baseline gap-2 mb-3">
-                        <span className="font-heading text-lg font-bold text-[var(--maroon)]">
-                          ₹{product.price.toLocaleString()}
-                        </span>
-                        {product.originalPrice && product.originalPrice > product.price && (
-                          <span className="text-xs text-[var(--text-muted)] line-through">
-                            ₹{product.originalPrice.toLocaleString()}
+                        {showPrices && product.showPrice !== false ? (
+                          <>
+                            <span className="font-heading text-lg font-bold text-[var(--maroon)]">
+                              ₹{product.price.toLocaleString()}
+                            </span>
+                            {product.originalPrice && product.originalPrice > product.price && (
+                              <span className="text-xs text-[var(--text-muted)] line-through">
+                                ₹{product.originalPrice.toLocaleString()}
+                              </span>
+                            )}
+                            <span className="text-[10px] font-bold text-[#5A7249]">
+                              Save ₹{((product.originalPrice || Math.round(product.price * 1.25)) - product.price).toLocaleString()}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-heading text-sm font-bold text-[var(--olive)]">
+                            {inquiryLabel}
                           </span>
                         )}
-                        <span className="text-[10px] font-bold text-[#5A7249]">
-                          Save ₹{((product.originalPrice || Math.round(product.price * 1.25)) - product.price).toLocaleString()}
-                        </span>
                       </div>
 
                       {/* Claim progress bar */}

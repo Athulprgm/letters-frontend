@@ -177,6 +177,10 @@ export default function DealsPage() {
     return list;
   }, [allDeals, selectedFilter, sortBy, searchQuery]);
 
+  const { settings, getWhatsAppUrl } = useSettingsStore();
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
   const handleAddToCart = (item, e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -201,7 +205,10 @@ export default function DealsPage() {
     e.preventDefault();
     e.stopPropagation();
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const msg = `*Flash Deal Order — LETTERS*\nItem: ${item.name}\nOffer Price: ₹${item.price} (Original MRP: ₹${item.originalPrice})\nDiscount: ${item.discountPercent}% OFF\nLink: ${origin}/product/${item.slug}\n\nHello LETTERS team! I want to claim this Mega Sale deal. Please confirm live photo preview and dispatch.`;
+    const priceText = showPrices && item.showPrice !== false
+      ? `\nOffer Price: ₹${item.price} (Original MRP: ₹${item.originalPrice})\nDiscount: ${item.discountPercent}% OFF`
+      : `\nPricing: ${inquiryLabel}`;
+    const msg = `*Deal Inquiry — LETTERS*\nItem: ${item.name}${priceText}\nLink: ${origin}/product/${item.slug}\n\nHello LETTERS team! I would like to inquire about this curated deal. Please confirm customization and live photo preview.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
 
@@ -362,7 +369,7 @@ export default function DealsPage() {
                 { id: 'all', label: 'All Deals', icon: faTag },
                 { id: 'lightning', label: 'Lightning Deals', icon: faBolt },
                 { id: 'festival', label: 'Festival Hampers', icon: faGift },
-                { id: 'under-999', label: 'Under ₹999', icon: faPercent },
+                { id: 'under-999', label: showPrices ? 'Under ₹999' : 'Affordable Hampers', icon: faPercent },
                 { id: 'chocolates', label: 'Chocolates', icon: faBox },
                 { id: 'frames', label: 'Frames', icon: faImage },
                 { id: 'bouquets', label: 'Bouquets', icon: faLeaf },
@@ -393,9 +400,13 @@ export default function DealsPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="text-xs font-semibold px-3 py-2 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text)] focus:outline-none cursor-pointer"
               >
-                <option value="discount-high">Highest Discount %</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+                <option value="discount-high">Curated Specials</option>
+                {showPrices && (
+                  <>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                  </>
+                )}
               </select>
             </div>
 
@@ -431,12 +442,16 @@ export default function DealsPage() {
 
                   {/* Amazon/Flipkart Discount Badge */}
                   <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                    <span className="bg-[#721C28] text-white text-[10.5px] font-black px-2.5 py-0.5 rounded-md shadow-md tracking-wider">
-                      {item.discountPercent}% OFF
-                    </span>
-                    <span className="bg-black/75 backdrop-blur-md text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md shadow-xs">
-                      {item.tag}
-                    </span>
+                    {showPrices && item.showPrice !== false && (
+                      <span className="bg-[#721C28] text-white text-[10.5px] font-black px-2.5 py-0.5 rounded-md shadow-md tracking-wider">
+                        {item.discountPercent}% OFF
+                      </span>
+                    )}
+                    {item.tag && (
+                      <span className="bg-black/75 backdrop-blur-md text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md shadow-xs">
+                        {item.tag}
+                      </span>
+                    )}
                   </div>
 
                   {/* 1-Click WhatsApp Instant Order Button Overlay */}
@@ -461,7 +476,7 @@ export default function DealsPage() {
                         {item.category}
                       </span>
                       <span className="text-[9px] font-bold text-[#5A7249] bg-[#5A7249]/10 px-1.5 py-0.5 rounded">
-                        Limited Time Deal
+                        Special Curation
                       </span>
                     </div>
 
@@ -477,7 +492,7 @@ export default function DealsPage() {
 
                     {/* Price & Savings Display */}
                     <div className="space-y-1 mb-3">
-                      {item.showPrice ? (
+                      {showPrices && item.showPrice !== false ? (
                         <>
                           <div className="flex items-baseline gap-2">
                             <span className="font-heading text-xl font-black text-[var(--maroon)]">
@@ -497,7 +512,7 @@ export default function DealsPage() {
                         </>
                       ) : (
                         <span className="text-xs font-bold text-[var(--chandanam-dark)] bg-[var(--chandanam-soft)] px-2 py-0.5 rounded">
-                          Price On Request / WhatsApp Quote
+                          {inquiryLabel}
                         </span>
                       )}
                     </div>

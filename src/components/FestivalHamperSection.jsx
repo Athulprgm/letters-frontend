@@ -98,10 +98,14 @@ export default function FestivalHamperSection() {
     }, 1800);
   };
 
-  const handleWhatsAppOrder = (product, e, customNoteDetails = null) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
+  const handleWhatsAppOrder = (product, isPreBooking = false, customNoteDetails = null) => {
+    const currentFestival = showcaseFestival;
+    if (!currentFestival) {
+      alert('Please select a festival first');
+      return;
     }
     let noteText = '';
     if (customNoteDetails && customNoteDetails.recipient) {
@@ -112,11 +116,12 @@ export default function FestivalHamperSection() {
       ? `\n📌 *Order Type:* Pre-Booking (Festival Starts: ${currentFestival.startDate})`
       : '';
 
-    const priceText = product.showPrice === false
-      ? 'Price on Request'
-      : `₹${product.price?.toLocaleString()} ${product.originalPrice ? `(Original: ₹${product.originalPrice?.toLocaleString()})` : ''}`;
+    const isItemPriceShown = showPrices && product.showPrice !== false;
+    const priceText = isItemPriceShown
+      ? `₹${product.price?.toLocaleString()} ${product.originalPrice ? `(Original: ₹${product.originalPrice?.toLocaleString()})` : ''}`
+      : inquiryLabel;
 
-    const msg = `*${isPreBooking ? 'Festival Pre-Booking Inquiry' : 'Festival Hamper Inquiry'} — LETTERS Atelier*\n\n🌟 *Hamper:* ${product.title || product.name}\n💎 *Price:* ${priceText}\n🎉 *Festival:* ${currentFestival.name}\n📍 *Craft/Origin:* ${product.origin || 'Kerala Atelier'}${preBookingTag}${noteText}\n\nHello LETTERS team! I would like to ${isPreBooking ? 'pre-book' : 'order'} this artisanal Festival Hamper. Please share custom quote, delivery timeframes, and packaging details.`;
+    const msg = `*${isPreBooking ? 'Festival Pre-Booking Inquiry' : 'Festival Hamper Inquiry'} — LETTERS Atelier*\n\n🌟 *Hamper:* ${product.title || product.name}\n💎 *Pricing:* ${priceText}\n🎉 *Festival:* ${currentFestival.name}\n📍 *Craft/Origin:* ${product.origin || 'Kerala Atelier'}${preBookingTag}${noteText}\n\nHello LETTERS team! I would like to ${isPreBooking ? 'pre-book' : 'inquire about'} this artisanal Festival Hamper. Please share custom quote, delivery timeframes, and packaging details.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
 
@@ -318,7 +323,7 @@ export default function FestivalHamperSection() {
                         ) : null}
                       </div>
 
-                      {item.originalPrice && item.originalPrice > item.price && (
+                      {showPrices && item.showPrice !== false && item.originalPrice && item.originalPrice > item.price && (
                         <span className="absolute top-3 right-3 text-[9.5px] font-bold bg-[#721C28] text-white px-2 py-0.5 rounded-full shadow-2xs z-10">
                           Save ₹{(item.originalPrice - item.price).toLocaleString()}
                         </span>
@@ -382,7 +387,7 @@ export default function FestivalHamperSection() {
                         )}
 
                         {/* Price */}
-                        {item.showPrice !== false ? (
+                        {showPrices && item.showPrice !== false ? (
                           <div className="flex items-baseline gap-2">
                             <span className="font-heading text-lg font-bold text-[var(--text)]">
                               ₹{item.price?.toLocaleString()}
@@ -396,7 +401,7 @@ export default function FestivalHamperSection() {
                         ) : (
                           <div className="flex items-baseline gap-1.5">
                             <span className="text-xs sm:text-sm font-bold text-[var(--olive)]">
-                              Price on Request
+                              {inquiryLabel}
                             </span>
                           </div>
                         )}
@@ -651,7 +656,7 @@ export default function FestivalHamperSection() {
 
                     {/* Price & Action Row */}
                     <div className="flex items-center justify-between gap-4 pt-4 border-t border-[var(--border)]">
-                      {inspectItem.showPrice !== false ? (
+                      {showPrices && inspectItem.showPrice !== false ? (
                         <div>
                           <span className="text-[10px] text-[var(--text-muted)] block">Total Price:</span>
                           <div className="flex items-baseline gap-2">
@@ -669,7 +674,7 @@ export default function FestivalHamperSection() {
                         <div>
                           <span className="text-[10px] text-[var(--text-muted)] block">Pricing:</span>
                           <span className="text-lg font-bold text-[var(--olive)]">
-                            Price on Request
+                            {inquiryLabel}
                           </span>
                         </div>
                       )}

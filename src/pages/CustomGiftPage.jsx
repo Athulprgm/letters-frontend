@@ -47,9 +47,8 @@ export default function CustomGiftPage() {
 
   const handleAddToCart = () => {
     const customProduct = {
-      id: `custom-hamper-${selectedBase.id}-${selectedItems.map((i) => i.id).join('-')}`,
-      name: `Custom Curated Gift Hamper (${selectedBase.name})`,
-      slug: 'custom-gift-hamper',
+      id: `custom-gift-${Date.now()}`,
+      name: `Custom Gift Hamper (${selectedBase.name})`,
       price: totalAmount,
       image: selectedBase.image,
       category: 'Customized Gift',
@@ -64,12 +63,19 @@ export default function CustomGiftPage() {
   };
 
   const handleWhatsAppOrder = () => {
-    const itemsList = selectedItems.map((i, idx) => `  ${idx + 1}. ${i.name} (₹${i.price})`).join('\n');
-    const message = `*${settings.orderMessagePrefix || 'New Order — LETTERS'}*
+    const itemsList = selectedItems.map((i, idx) => {
+      const pText = showPrices ? ` (₹${i.price})` : '';
+      return `  ${idx + 1}. ${i.name}${pText}`;
+    }).join('\n');
+
+    const basePriceText = showPrices ? ` (₹${selectedBase.price})` : '';
+    const totalText = showPrices ? `₹${totalAmount}` : 'Quote on Request / Direct Confirmation';
+
+    const message = `*${settings.orderMessagePrefix || 'Custom Hamper Inquiry — LETTERS'}*
 ✦ *CUSTOM GIFT HAMPER INQUIRY* ✦
 
 *Base Packaging:*
-• ${selectedBase.name} (₹${selectedBase.price})
+• ${selectedBase.name}${basePriceText}
 
 *Selected Items:*
 ${itemsList || '  None'}
@@ -83,9 +89,9 @@ ${itemsList || '  None'}
 *Special Notes / Requests:*
 ${specialNotes || 'None'}
 
-*Calculated Total:* ₹${totalAmount}
+*Pricing:* ${totalText}
 
-Please review my custom configuration and confirm delivery timeline.`;
+Please review my custom configuration and share custom quotation & delivery timeline.`;
 
     window.open(getWhatsAppUrl(message), '_blank');
   };
@@ -151,7 +157,9 @@ Please review my custom configuration and confirm delivery timeline.`;
                     <div className="px-1 pb-1">
                       <h3 className="font-semibold text-sm text-[var(--text)] mb-0.5">{base.name}</h3>
                       <p className="text-[10.5px] text-[var(--text-muted)] mb-2">{base.desc}</p>
-                      <span className="text-sm font-bold text-[var(--olive)] font-heading">₹{base.price}</span>
+                      {showPrices && (
+                        <span className="text-sm font-bold text-[var(--olive)] font-heading">₹{base.price}</span>
+                      )}
                     </div>
                     {selectedBase.id === base.id && (
                       <div className="mt-1.5 flex items-center gap-1 text-[10px] font-semibold text-[var(--olive)] px-1">
@@ -201,7 +209,9 @@ Please review my custom configuration and confirm delivery timeline.`;
                           <span className="text-[9px] text-[var(--chandanam)] font-semibold">{item.category}</span>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-[var(--text)] whitespace-nowrap">₹{item.price}</span>
+                      {showPrices && (
+                        <span className="text-xs font-bold text-[var(--text)] whitespace-nowrap">₹{item.price}</span>
+                      )}
                     </div>
                   );
                 })}
@@ -276,19 +286,21 @@ Please review my custom configuration and confirm delivery timeline.`;
               
               <div className="pb-3 border-b border-[var(--border)]">
                 <h2 className="font-heading text-lg font-bold text-[var(--text)]">Hamper Summary</h2>
-                <p className="text-[10.5px] text-[var(--text-muted)] mt-0.5">Live pricing breakdown</p>
+                <p className="text-[10.5px] text-[var(--text-muted)] mt-0.5">
+                  {showPrices ? 'Live pricing breakdown' : 'Custom configuration summary'}
+                </p>
               </div>
 
               {/* Breakdown */}
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between items-center text-[var(--text)]">
                   <span className="font-semibold truncate max-w-[180px]">{selectedBase.name}</span>
-                  <span className="font-bold">₹{selectedBase.price}</span>
+                  {showPrices && <span className="font-bold">₹{selectedBase.price}</span>}
                 </div>
                 {selectedItems.map((item) => (
                   <div key={item.id} className="flex justify-between items-center text-[var(--text-muted)] text-[11px]">
                     <span className="truncate max-w-[180px]">· {item.name}</span>
-                    <span>₹{item.price}</span>
+                    {showPrices && <span>₹{item.price}</span>}
                   </div>
                 ))}
                 {selectedItems.length === 0 && (
@@ -298,8 +310,12 @@ Please review my custom configuration and confirm delivery timeline.`;
 
               {/* Total */}
               <div className="pt-4 border-t border-[var(--border)] flex justify-between items-baseline">
-                <span className="text-xs font-semibold text-[var(--text)]">Total</span>
-                <span className="font-heading text-2xl font-bold text-[var(--text)]">₹{totalAmount.toLocaleString()}</span>
+                <span className="text-xs font-semibold text-[var(--text)]">
+                  {showPrices ? 'Total' : 'Pricing Status'}
+                </span>
+                <span className="font-heading text-xl font-bold text-[var(--text)]">
+                  {showPrices ? `₹${totalAmount.toLocaleString()}` : inquiryLabel}
+                </span>
               </div>
 
               {/* Actions */}

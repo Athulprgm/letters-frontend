@@ -6,11 +6,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt, faClock, faArrowRight, faBagShopping, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '../store/productStore';
 import { useCartStore } from '../store/cartStore';
+import { useSettingsStore } from '../store/settingsStore';
 
 export default function FlashDealsRow() {
   const { products } = useProductStore();
   const addToCart = useCartStore((state) => state.addToCart);
+  const { settings } = useSettingsStore();
   const [addedIds, setAddedIds] = useState({});
+
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   // Countdown timer
   const [timeLeft, setTimeLeft] = useState({
@@ -98,9 +103,11 @@ export default function FlashDealsRow() {
                       alt={item.name}
                       className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-500"
                     />
-                    <span className="absolute top-1.5 left-1.5 text-[9px] font-bold bg-[var(--maroon)] text-white px-1.5 py-0.5 rounded shadow-2xs">
-                      {item.discount}% OFF
-                    </span>
+                    {showPrices && item.showPrice !== false && (
+                      <span className="absolute top-1.5 left-1.5 text-[9px] font-bold bg-[var(--maroon)] text-white px-1.5 py-0.5 rounded shadow-2xs">
+                        {item.discount}% OFF
+                      </span>
+                    )}
                   </Link>
 
                   <Link href={`/product/${item.slug}`} className="block">
@@ -110,12 +117,20 @@ export default function FlashDealsRow() {
                   </Link>
 
                   <div className="flex items-baseline gap-1.5 mb-3">
-                    <span className="font-heading text-sm font-bold text-[var(--text)]">
-                      ₹{item.price.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] text-[var(--text-muted)] line-through">
-                      ₹{item.originalPrice.toLocaleString()}
-                    </span>
+                    {showPrices && item.showPrice !== false ? (
+                      <>
+                        <span className="font-heading text-sm font-bold text-[var(--text)]">
+                          ₹{item.price.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] text-[var(--text-muted)] line-through">
+                          ₹{item.originalPrice.toLocaleString()}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-[11px] font-bold text-[var(--olive)]">
+                        {inquiryLabel}
+                      </span>
+                    )}
                   </div>
                 </div>
 
