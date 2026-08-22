@@ -5,6 +5,29 @@ import { apiUrl } from '@/src/config/api';
 
 export const initialOrders = defaultOrders;
 
+const safeSaveOrders = (orders) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('letters_orders', JSON.stringify(orders));
+  } catch (e) {
+    try {
+      // If full order details exceed quota, trim lightweight order list
+      const lightweight = orders.slice(0, 50).map((o) => ({
+        id: o.id,
+        customerName: o.customerName,
+        phone: o.phone,
+        whatsappNumber: o.whatsappNumber,
+        total: o.total,
+        status: o.status,
+        createdAt: o.createdAt,
+      }));
+      localStorage.setItem('letters_orders', JSON.stringify(lightweight));
+    } catch (inner) {
+      console.warn('localStorage full: keeping orders in memory only', inner);
+    }
+  }
+};
+
 export const useOrderStore = create((set, get) => ({
   orders: defaultOrders,
   isLoading: false,
@@ -16,11 +39,7 @@ export const useOrderStore = create((set, get) => ({
       const data = await res.json();
       if (data.success && Array.isArray(data.orders)) {
         set({ orders: data.orders, isLoading: false });
-        if (typeof window !== 'undefined') {
-          try {
-            localStorage.setItem('letters_orders', JSON.stringify(data.orders));
-          } catch (e) {}
-        }
+        safeSaveOrders(data.orders);
         return;
       }
     } catch (e) {
@@ -67,9 +86,7 @@ export const useOrderStore = create((set, get) => ({
 
     set((s) => {
       const updated = [newOrder, ...s.orders];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_orders', JSON.stringify(updated));
-      }
+      safeSaveOrders(updated);
       return { orders: updated };
     });
 

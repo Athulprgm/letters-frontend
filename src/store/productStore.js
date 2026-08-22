@@ -21,19 +21,31 @@ const safeSaveProducts = (products) => {
     localStorage.setItem('letters_products', JSON.stringify(products));
   } catch (e) {
     try {
-      // If quota exceeded, strip large base64 image strings
+      // If quota exceeded, strip large base64 image strings from localStorage cache
       const lightweight = products.map((p) => {
         const prod = { ...p };
         if (prod.images && Array.isArray(prod.images)) {
-          prod.images = prod.images.filter((img) => typeof img === 'string' && !img.startsWith('data:'));
+          prod.images = prod.images.map((img) =>
+            typeof img === 'string' && img.startsWith('data:') ? '' : img
+          ).filter(Boolean);
         }
         if (typeof prod.image === 'string' && prod.image.startsWith('data:')) {
-          delete prod.image;
+          prod.image = '';
         }
         return prod;
       });
       localStorage.setItem('letters_products', JSON.stringify(lightweight));
-    } catch (inner) {}
+    } catch (inner) {
+      try {
+        // Last resort: save lightweight product summaries without heavy strings
+        const minimal = products.slice(0, 30).map(({ id, slug, name, price, showPrice, active, category }) => ({
+          id, slug, name, price, showPrice, active, category
+        }));
+        localStorage.setItem('letters_products', JSON.stringify(minimal));
+      } catch (err) {
+        console.warn('localStorage full: keeping products in memory only', err);
+      }
+    }
   }
 };
 
@@ -122,9 +134,7 @@ export const useProductStore = create((set, get) => ({
 
     set((state) => {
       const updated = [newProd, ...state.products];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_products', JSON.stringify(updated));
-      }
+      safeSaveProducts(updated);
       return { products: updated };
     });
 
@@ -161,9 +171,7 @@ export const useProductStore = create((set, get) => ({
         }
         return p;
       });
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_products', JSON.stringify(updated));
-      }
+      safeSaveProducts(updated);
       return { products: updated };
     });
 
@@ -196,9 +204,7 @@ export const useProductStore = create((set, get) => ({
         }
         return p;
       });
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_products', JSON.stringify(updated));
-      }
+      safeSaveProducts(updated);
       return { products: updated };
     });
   },
@@ -214,9 +220,7 @@ export const useProductStore = create((set, get) => ({
         }).catch(console.error);
         return updatedProd;
       });
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_products', JSON.stringify(updated));
-      }
+      safeSaveProducts(updated);
       return { products: updated };
     });
   },
@@ -224,9 +228,7 @@ export const useProductStore = create((set, get) => ({
   deleteProduct: async (id) => {
     set((state) => {
       const updated = state.products.filter((p) => p.id !== id && p.slug !== id);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_products', JSON.stringify(updated));
-      }
+      safeSaveProducts(updated);
       return { products: updated };
     });
 
