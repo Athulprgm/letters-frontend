@@ -101,58 +101,75 @@ const safeSaveLocalStorage = (key, data) => {
   }
 };
 
-export const useFestivalStore = create((set, get) => ({
-  festivals: defaultFestivals,
-  showcaseFestival: evaluateShowcaseFestival(defaultFestivals),
-  festivalHampers: defaultFestivalHampers,
-  isLoaded: false,
-
-  fetchFestivals: async () => {
-    if (typeof window !== 'undefined') {
-      try {
-        const savedFestivals = localStorage.getItem('letters_festivals_list');
-        if (savedFestivals) {
-          const parsed = JSON.parse(savedFestivals);
-          const resolved = evaluateShowcaseFestival(parsed);
-          set({
-            festivals: parsed,
-            showcaseFestival: resolved,
-            isLoaded: true,
-          });
-        }
-      } catch (e) {}
-    }
-
+const getInitialFestivals = () => {
+  if (typeof window !== 'undefined') {
     try {
-      const res = await fetch(apiUrl(`/api/festivals?t=${Date.now()}`), {
-        cache: 'no-store',
-        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Accept': 'application/json' },
-      });
-      if (res.ok) {
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (parseErr) {
-          console.warn('Invalid JSON from festivals endpoint:', text.slice(0, 100));
-          return;
-        }
-
-        if (data && data.success && Array.isArray(data.festivals)) {
-          const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
-          set({
-            festivals: data.festivals,
-            showcaseFestival: resolved,
-            isLoaded: true,
-          });
-          safeSaveLocalStorage('letters_festivals_list', data.festivals);
-        }
-      } else {
-        console.warn(`Festivals API returned HTTP status ${res.status}`);
+      const savedFestivals = localStorage.getItem('letters_festivals_list');
+      if (savedFestivals) {
+        const parsed = JSON.parse(savedFestivals);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
-    } catch (e) {
-      console.warn('Using cached festival data due to network error:', e);
+    } catch (e) {}
+  }
+  return defaultFestivals;
+};
+
+const initialFestivalsList = getInitialFestivals();
+
+let inFlightFestivalsPromise = null;
+let lastFestivalsFetchedAt = 0;
+
+export const useFestivalStore = create((set, get) => ({
+  festivals: initialFestivalsList,
+  showcaseFestival: evaluateShowcaseFestival(initialFestivalsList),
+  festivalHampers: defaultFestivalHampers,
+  isLoaded: true,
+
+  fetchFestivals: async (force = false) => {
+    const now = Date.now();
+    if (!force && now - lastFestivalsFetchedAt < 15000 && get().festivals.length > 0) {
+      return get().festivals;
     }
+
+    if (inFlightFestivalsPromise) {
+      return inFlightFestivalsPromise;
+    }
+
+    inFlightFestivalsPromise = (async () => {
+      try {
+        const res = await fetch(apiUrl(`/api/festivals?t=${Date.now()}`), {
+          headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+          const text = await res.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (parseErr) {
+            return get().festivals;
+          }
+
+          if (data && data.success && Array.isArray(data.festivals)) {
+            const resolved = data.showcaseFestival || evaluateShowcaseFestival(data.festivals);
+            set({
+              festivals: data.festivals,
+              showcaseFestival: resolved,
+              isLoaded: true,
+            });
+            safeSaveLocalStorage('letters_festivals_list', data.festivals);
+            lastFestivalsFetchedAt = Date.now();
+            return data.festivals;
+          }
+        }
+      } catch (e) {
+        console.warn('Using cached festival data due to network error:', e);
+      } finally {
+        inFlightFestivalsPromise = null;
+      }
+      return get().festivals;
+    })();
+
+    return inFlightFestivalsPromise;
   },
 
   // Alias for backward-compatibility

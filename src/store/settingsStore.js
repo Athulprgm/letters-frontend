@@ -19,32 +19,73 @@ export const defaultSettings = {
   priceInquiryLabel: 'Price on Request',
 };
 
-export const useSettingsStore = create((set, get) => ({
-  settings: defaultSettings,
-  isLoaded: false,
-
-  fetchSettings: async () => {
+const getInitialSettings = () => {
+  if (typeof window !== 'undefined') {
     try {
-      const res = await fetch(apiUrl('/api/settings'));
-      const data = await res.json();
-      if (data.success && data.settings) {
-        set({ settings: data.settings, isLoaded: true });
-        return;
+      const saved = localStorage.getItem('letters_settings');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { ...defaultSettings, ...parsed };
+        }
       }
-    } catch (e) {
-      console.warn('Using client-side settings cache', e);
+    } catch (e) {}
+  }
+  return defaultSettings;
+};
+
+let inFlightSettingsPromise = null;
+let lastSettingsFetchedAt = 0;
+
+export const useSettingsStore = create((set, get) => ({
+  settings: getInitialSettings(),
+  isLoaded: true,
+
+  fetchSettings: async (force = false) => {
+    const now = Date.now();
+    if (!force && now - lastSettingsFetchedAt < 15000) {
+      return get().settings;
     }
 
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('letters_settings');
-        if (saved) {
-          set({ settings: { ...defaultSettings, ...JSON.parse(saved) }, isLoaded: true });
-          return;
-        }
-      } catch (e) {}
+    if (inFlightSettingsPromise) {
+      return inFlightSettingsPromise;
     }
-    set({ settings: defaultSettings, isLoaded: true });
+
+    inFlightSettingsPromise = (async () => {
+      try {
+        const res = await fetch(apiUrl(`/api/settings?t=${Date.now()}`), {
+          headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+          const text = await res.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (pe) {
+            return get().settings;
+          }
+
+          if (data && data.success && data.settings) {
+            const merged = { ...defaultSettings, ...data.settings };
+            set({ settings: merged, isLoaded: true });
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem('letters_settings', JSON.stringify(merged));
+              } catch (e) {}
+            }
+            lastSettingsFetchedAt = Date.now();
+            return merged;
+          }
+        }
+      } catch (e) {
+        console.warn('Using client-side settings cache', e);
+      } finally {
+        inFlightSettingsPromise = null;
+      }
+      return get().settings;
+    })();
+
+    return inFlightSettingsPromise;
   },
 
   updateSettings: async (newSettings) => {

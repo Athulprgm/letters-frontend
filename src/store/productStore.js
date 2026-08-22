@@ -2,41 +2,92 @@ import { create } from 'zustand';
 import { defaultProducts } from '@/src/data/initialData';
 import { apiUrl } from '@/src/config/api';
 
+const getInitialProducts = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('letters_products');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+  }
+  return defaultProducts;
+};
+
+const safeSaveProducts = (products) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('letters_products', JSON.stringify(products));
+  } catch (e) {
+    try {
+      // If quota exceeded, strip large base64 image strings
+      const lightweight = products.map((p) => {
+        const prod = { ...p };
+        if (prod.images && Array.isArray(prod.images)) {
+          prod.images = prod.images.filter((img) => typeof img === 'string' && !img.startsWith('data:'));
+        }
+        if (typeof prod.image === 'string' && prod.image.startsWith('data:')) {
+          delete prod.image;
+        }
+        return prod;
+      });
+      localStorage.setItem('letters_products', JSON.stringify(lightweight));
+    } catch (inner) {}
+  }
+};
+
+let inFlightProductsPromise = null;
+let lastProductsFetchedAt = 0;
+
 export const initialProducts = defaultProducts;
 
 export const useProductStore = create((set, get) => ({
-  products: defaultProducts,
+  products: getInitialProducts(),
   isLoading: false,
 
-  fetchProducts: async () => {
-    set({ isLoading: true });
-    try {
-      const res = await fetch(apiUrl('/api/products'));
-      const data = await res.json();
-      if (data.success && Array.isArray(data.products)) {
-        set({ products: data.products, isLoading: false });
-        if (typeof window !== 'undefined') {
-          try {
-            localStorage.setItem('letters_products', JSON.stringify(data.products));
-          } catch (e) { }
-        }
-        return;
-      }
-    } catch (e) {
-      console.warn('API fetch failed, falling back to local products', e);
+  fetchProducts: async (force = false) => {
+    const now = Date.now();
+    // Cache for 15 seconds unless forced
+    if (!force && now - lastProductsFetchedAt < 15000 && get().products.length > 0) {
+      return get().products;
     }
 
-    if (typeof window !== 'undefined') {
+    if (inFlightProductsPromise) {
+      return inFlightProductsPromise;
+    }
+
+    inFlightProductsPromise = (async () => {
       try {
-        const saved = localStorage.getItem('letters_products');
-        if (saved) {
-          set({ products: JSON.parse(saved), isLoading: false });
-          return;
-        }
-      } catch (e) { }
-    }
+        const res = await fetch(apiUrl(`/api/products?t=${Date.now()}`), {
+          headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+          const text = await res.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (pe) {
+            return get().products;
+          }
 
-    set({ products: defaultProducts, isLoading: false });
+          if (data && data.success && Array.isArray(data.products) && data.products.length > 0) {
+            set({ products: data.products, isLoading: false });
+            safeSaveProducts(data.products);
+            lastProductsFetchedAt = Date.now();
+            return data.products;
+          }
+        }
+      } catch (e) {
+        console.warn('API fetch failed, using local products cache', e);
+      } finally {
+        inFlightProductsPromise = null;
+        set({ isLoading: false });
+      }
+      return get().products;
+    })();
+
+    return inFlightProductsPromise;
   },
 
   addProduct: async (productData) => {

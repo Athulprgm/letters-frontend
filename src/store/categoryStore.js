@@ -4,6 +4,19 @@ import { apiUrl } from '@/src/config/api';
 
 export const initialCategories = defaultCategories;
 
+const getInitialCategories = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('letters_categories');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+  }
+  return defaultCategories;
+};
+
 const saveToLocalStorage = (categories) => {
   if (typeof window !== 'undefined') {
     try {
@@ -12,39 +25,54 @@ const saveToLocalStorage = (categories) => {
   }
 };
 
+let inFlightCategoriesPromise = null;
+let lastCategoriesFetchedAt = 0;
+
 export const useCategoryStore = create((set, get) => ({
-  categories: defaultCategories,
+  categories: getInitialCategories(),
   isLoading: false,
 
-  fetchCategories: async () => {
-    set({ isLoading: true });
+  fetchCategories: async (force = false) => {
+    const now = Date.now();
+    if (!force && now - lastCategoriesFetchedAt < 15000 && get().categories.length > 0) {
+      return get().categories;
+    }
 
-    // 1. Try local storage cache first
-    if (typeof window !== 'undefined') {
+    if (inFlightCategoriesPromise) {
+      return inFlightCategoriesPromise;
+    }
+
+    inFlightCategoriesPromise = (async () => {
       try {
-        const saved = localStorage.getItem('letters_categories');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            set({ categories: parsed });
+        const res = await fetch(apiUrl(`/api/categories?t=${Date.now()}`), {
+          headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+          const text = await res.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (pe) {
+            return get().categories;
+          }
+
+          if (data && data.success && Array.isArray(data.categories) && data.categories.length > 0) {
+            set({ categories: data.categories, isLoading: false });
+            saveToLocalStorage(data.categories);
+            lastCategoriesFetchedAt = Date.now();
+            return data.categories;
           }
         }
-      } catch (e) {}
-    }
-
-    // 2. Fetch from backend API
-    try {
-      const res = await fetch(apiUrl(`/api/categories?t=${Date.now()}`));
-      const data = await res.json();
-      if (data.success && Array.isArray(data.categories)) {
-        set({ categories: data.categories, isLoading: false });
-        saveToLocalStorage(data.categories);
-        return;
+      } catch (e) {
+        console.warn('Categories API fetch failed, using local cache', e);
+      } finally {
+        inFlightCategoriesPromise = null;
+        set({ isLoading: false });
       }
-    } catch (e) {
-      console.warn('Categories API fetch failed, using local cache', e);
-    }
-    set({ isLoading: false });
+      return get().categories;
+    })();
+
+    return inFlightCategoriesPromise;
   },
 
   addCategory: async (category) => {
