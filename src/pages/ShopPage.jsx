@@ -18,9 +18,10 @@ import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
+import { ProductGridSkeleton } from '@/src/components/SkeletonLoader';
 
 export default function ShopPage() {
-  const { products } = useProductStore();
+  const { products, isLoading } = useProductStore();
   const { categories } = useCategoryStore();
   const { settings } = useSettingsStore();
 
@@ -409,11 +410,13 @@ export default function ShopPage() {
             </div>
 
             {/* Product Grid */}
-            {filteredProducts.length > 0 ? (
+            {isLoading && products.length === 0 ? (
+              <ProductGridSkeleton count={8} columns={gridCols === 4 ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'} />
+            ) : filteredProducts.length > 0 ? (
               <div
-                className={`grid grid-cols-1 sm:grid-cols-2 ${
+                className={`grid grid-cols-2 sm:grid-cols-2 ${
                   gridCols === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
-                } gap-5 sm:gap-6`}
+                } gap-3 sm:gap-6`}
               >
                 {filteredProducts.map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} />

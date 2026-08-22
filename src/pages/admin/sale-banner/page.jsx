@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useSaleBannerStore } from '@/src/store/saleBannerStore';
 import { useProductStore } from '@/src/store/productStore';
+import { adminLoading } from '@/src/store/adminLoadingStore';
 
 export default function AdminSaleBannerPage() {
   const { saleBanner, fetchSaleBanner, updateSaleBanner } = useSaleBannerStore();
@@ -137,16 +138,16 @@ export default function AdminSaleBannerPage() {
 
   const handleSave = async (e) => {
     if (e) e.preventDefault();
-    setSaving(true);
-    try {
-      await updateSaleBanner(formData);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSaving(false);
-    }
+    await adminLoading.wrap(
+      async () => {
+        await updateSaleBanner(formData);
+      },
+      'Publishing Sale Campaign...',
+      'Updating promotion banners, timers, and deal showcases...',
+      'Sale Campaign published successfully!'
+    );
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   // Calculate remaining time for preview

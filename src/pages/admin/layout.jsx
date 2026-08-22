@@ -25,6 +25,7 @@ import { useSettingsStore } from '@/src/store/settingsStore';
 import { useThemeStore } from '@/src/store/themeStore';
 import { useOrderStore } from '@/src/store/orderStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import AdminLoadingOverlay from '@/src/components/admin/AdminLoadingOverlay';
 
 const navigationGroups = [
   {
@@ -372,6 +373,7 @@ export default function AdminLayout({ children }) {
         </main>
       </div>
 
+      <AdminLoadingOverlay />
     </div>
   );
 }

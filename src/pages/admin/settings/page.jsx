@@ -17,6 +17,7 @@ import {
 import { useAuthStore } from '@/src/store/authStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { useProductStore } from '@/src/store/productStore';
+import { adminLoading } from '@/src/store/adminLoadingStore';
 import { apiUrl } from '@/src/config/api';
 import { faTag, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 
@@ -82,6 +83,7 @@ export default function AdminSettingsPage() {
     }
 
     setEmailLoading(true);
+    adminLoading.start('Updating Admin Email...', 'Synchronizing account authentication credentials...');
     try {
       const res = await fetch(apiUrl('/api/auth/change-credentials'), {
         method: 'POST',
@@ -101,12 +103,15 @@ export default function AdminSettingsPage() {
           currentPassword: '',
         }));
         await initAuth();
+        adminLoading.stop('Admin email updated successfully!', 800);
         setTimeout(() => setEmailSuccess(''), 4000);
       } else {
         setEmailError(data.message || 'Failed to update email.');
+        adminLoading.error(data.message || 'Failed to update email.');
       }
     } catch (err) {
       setEmailError('Server connection error. Please try again.');
+      adminLoading.error('Server connection error. Please try again.');
     } finally {
       setEmailLoading(false);
     }
@@ -134,6 +139,7 @@ export default function AdminSettingsPage() {
     }
 
     setPasswordLoading(true);
+    adminLoading.start('Securing New Password...', 'Encrypting and updating admin portal password...');
     try {
       const res = await fetch(apiUrl('/api/auth/change-credentials'), {
         method: 'POST',
@@ -152,12 +158,15 @@ export default function AdminSettingsPage() {
           newPassword: '',
           confirmPassword: '',
         });
+        adminLoading.stop('Password updated successfully!', 800);
         setTimeout(() => setPasswordSuccess(''), 4500);
       } else {
         setPasswordError(data.message || 'Failed to update password.');
+        adminLoading.error(data.message || 'Failed to update password.');
       }
     } catch (err) {
       setPasswordError('Server connection error. Please try again.');
+      adminLoading.error('Server connection error. Please try again.');
     } finally {
       setPasswordLoading(false);
     }

@@ -20,6 +20,7 @@ import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { adminLoading } from '@/src/store/adminLoadingStore';
 import { compressImage } from '@/src/utils/imageCompressor';
 import { faTag } from '@fortawesome/free-solid-svg-icons';
 
@@ -166,11 +167,18 @@ export default function AdminProductsPage() {
       active: formData.active,
     };
 
-    if (editingProduct) {
-      await updateProduct(editingProduct.id, productPayload);
-    } else {
-      await addProduct(productPayload);
-    }
+    await adminLoading.wrap(
+      async () => {
+        if (editingProduct) {
+          await updateProduct(editingProduct.id, productPayload);
+        } else {
+          await addProduct(productPayload);
+        }
+      },
+      editingProduct ? 'Updating Product...' : 'Adding New Product...',
+      'Optimizing media and updating catalog...',
+      editingProduct ? 'Product updated successfully!' : 'Product added successfully!'
+    );
 
     setIsNewProductModal(false);
     setEditingProduct(null);
@@ -185,7 +193,14 @@ export default function AdminProductsPage() {
       type: 'danger',
     });
     if (isConfirmed) {
-      await deleteProduct(id);
+      await adminLoading.wrap(
+        async () => {
+          await deleteProduct(id);
+        },
+        'Deleting Product...',
+        'Removing item from store records...',
+        'Product removed from catalog'
+      );
     }
   };
 

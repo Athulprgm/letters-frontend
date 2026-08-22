@@ -7,13 +7,14 @@ import { useCategoryStore } from '@/src/store/categoryStore';
 import { useProductStore } from '@/src/store/productStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
+import { ProductGridSkeleton } from '@/src/components/SkeletonLoader';
 
 export default function CategoryPage(props) {
   const routerParams = useParams();
   const slug = props.params?.slug || routerParams?.slug;
 
   const { categories } = useCategoryStore();
-  const { products } = useProductStore();
+  const { products, isLoading } = useProductStore();
   const { settings } = useSettingsStore();
   const showPrices = settings.showPricesGlobally !== false;
 
@@ -143,8 +144,10 @@ export default function CategoryPage(props) {
         </div>
 
         {/* Products Grid */}
-        {matchingProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16">
+        {isLoading && products.length === 0 ? (
+          <ProductGridSkeleton count={4} columns="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" />
+        ) : matchingProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 mb-16">
             {matchingProducts.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}

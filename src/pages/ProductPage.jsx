@@ -27,6 +27,7 @@ import { useProductStore } from '@/src/store/productStore';
 import { useCartStore } from '@/src/store/cartStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
+import { ProductDetailSkeleton } from '@/src/components/SkeletonLoader';
 
 export default function ProductDetailPage(props) {
   const routerParams = useParams();
@@ -34,7 +35,7 @@ export default function ProductDetailPage(props) {
 
 
   const router = useRouter();
-  const { products, getProductBySlug } = useProductStore();
+  const { products, getProductBySlug, isLoading } = useProductStore();
   const addToCart = useCartStore((state) => state.addToCart);
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
@@ -54,6 +55,9 @@ export default function ProductDetailPage(props) {
   const [specialInstructions, setSpecialInstructions] = useState('');
 
   if (!product) {
+    if (isLoading) {
+      return <ProductDetailSkeleton />;
+    }
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-6 text-center bg-[var(--bg)]">
         <FontAwesomeIcon icon={faGift} className="text-[var(--olive)] text-3xl mb-4" />

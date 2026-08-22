@@ -8,15 +8,16 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '../store/productStore';
 import ProductCard from './ProductCard';
 import { DoodleStarburst } from './Doodles';
+import { ProductGridSkeleton } from './SkeletonLoader';
 
 export default function FeaturedProducts() {
-  const { products } = useProductStore();
+  const { products, isLoading } = useProductStore();
   const [activeTab, setActiveTab] = useState('All');
 
   const filterTabs = ['All', 'Signature Hampers', 'Bouquets & Florals', 'Bespoke Keepsakes'];
 
   const activeProducts = products.filter((p) => p.active);
-  if (activeProducts.length === 0) {
+  if (!isLoading && activeProducts.length === 0) {
     return null;
   }
 
@@ -77,11 +78,15 @@ export default function FeaturedProducts() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
-          {filteredProducts.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {isLoading && products.length === 0 ? (
+          <ProductGridSkeleton count={4} columns="grid-cols-2 sm:grid-cols-2 lg:grid-cols-4" />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-14">
+            {filteredProducts.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        )}
 
         {/* CTA */}
         <div className="text-center">

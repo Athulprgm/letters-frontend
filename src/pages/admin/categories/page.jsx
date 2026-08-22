@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { adminLoading } from '@/src/store/adminLoadingStore';
 import { compressImage } from '@/src/utils/imageCompressor';
 
 export default function AdminCategoriesPage() {
@@ -118,11 +119,18 @@ export default function AdminCategoriesPage() {
       enabled: formData.enabled,
     };
 
-    if (editingCategory) {
-      await updateCategory(editingCategory.id, payload);
-    } else {
-      await addCategory(payload);
-    }
+    await adminLoading.wrap(
+      async () => {
+        if (editingCategory) {
+          await updateCategory(editingCategory.id, payload);
+        } else {
+          await addCategory(payload);
+        }
+      },
+      editingCategory ? 'Updating Category...' : 'Adding Category...',
+      'Synchronizing category hierarchy...',
+      editingCategory ? 'Category updated!' : 'Category created successfully!'
+    );
 
     setIsModalOpen(false);
     setEditingCategory(null);
@@ -137,7 +145,14 @@ export default function AdminCategoriesPage() {
       type: 'danger',
     });
     if (isConfirmed) {
-      await deleteCategory(id);
+      await adminLoading.wrap(
+        async () => {
+          await deleteCategory(id);
+        },
+        'Deleting Category...',
+        'Removing category from catalog...',
+        'Category deleted'
+      );
     }
   };
 

@@ -587,3 +587,12 @@ body {
   color: var(--text);
 }
 
+/* ============================
+   SKELETON SHIMMER ANIMATION
+   ============================ */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+

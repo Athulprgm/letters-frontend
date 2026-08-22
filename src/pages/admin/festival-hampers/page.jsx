@@ -20,6 +20,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useFestivalStore, getFestivalStatus } from '@/src/store/festivalStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { adminLoading } from '@/src/store/adminLoadingStore';
 import { compressImage } from '@/src/utils/imageCompressor';
 
 const initialFestivalForm = {
@@ -208,24 +209,20 @@ export default function AdminFestivalHampersPage() {
       alert('Please provide Festival Name, Start Date, and End Date.');
       return;
     }
-    setSaving(true);
-    try {
-      if (editingFestival) {
-        await updateFestival(editingFestival.id, festivalForm);
-        setFeedback(`"${festivalForm.name}" updated successfully.`);
-      } else {
-        const created = await createFestival(festivalForm);
-        if (created) setSelectedFestivalId(created.id);
-        setFeedback(`"${festivalForm.name}" created successfully.`);
-      }
-      setFestivalModalOpen(false);
-      setTimeout(() => setFeedback(''), 3000);
-    } catch (err) {
-      console.error(err);
-      setFeedback('Error saving festival.');
-    } finally {
-      setSaving(false);
-    }
+    await adminLoading.wrap(
+      async () => {
+        if (editingFestival) {
+          await updateFestival(editingFestival.id, festivalForm);
+        } else {
+          const created = await createFestival(festivalForm);
+          if (created) setSelectedFestivalId(created.id);
+        }
+      },
+      editingFestival ? 'Updating Festival Event...' : 'Creating Festival Event...',
+      'Synchronizing festive campaign and dates...',
+      editingFestival ? 'Festival updated successfully!' : 'Festival created successfully!'
+    );
+    setFestivalModalOpen(false);
   };
 
   const handleDeleteFestival = async (id, name) => {
@@ -237,9 +234,14 @@ export default function AdminFestivalHampersPage() {
       type: 'danger',
     });
     if (isConfirmed) {
-      await deleteFestival(id);
-      setFeedback(`Festival "${name}" deleted.`);
-      setTimeout(() => setFeedback(''), 3000);
+      await adminLoading.wrap(
+        async () => {
+          await deleteFestival(id);
+        },
+        'Deleting Festival...',
+        'Removing campaign and all linked hampers...',
+        'Festival removed'
+      );
     }
   };
 
@@ -291,32 +293,29 @@ export default function AdminFestivalHampersPage() {
       alert('Please fill Hamper Title and Price.');
       return;
     }
-    setSaving(true);
-    try {
-      const payload = {
-        ...productForm,
-        price: Number(productForm.price) || 0,
-        originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
-        highlights: typeof productForm.highlights === 'string'
-          ? productForm.highlights.split(',').map((s) => s.trim()).filter(Boolean)
-          : productForm.highlights,
-      };
+    const payload = {
+      ...productForm,
+      price: Number(productForm.price) || 0,
+      originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
+      highlights: typeof productForm.highlights === 'string'
+        ? productForm.highlights.split(',').map((s) => s.trim()).filter(Boolean)
+        : productForm.highlights,
+    };
 
-      if (editingProduct) {
-        await updateFestivalProduct(activeFestivalDetail.id, editingProduct.id, payload);
-        setFeedback('Hamper product updated.');
-      } else {
-        await addProductToFestival(activeFestivalDetail.id, payload);
-        setFeedback('New hamper added to celebration.');
-      }
-      setProductModalOpen(false);
-      setTimeout(() => setFeedback(''), 3000);
-    } catch (err) {
-      console.error(err);
-      setFeedback('Error saving hamper.');
-    } finally {
-      setSaving(false);
-    }
+    await adminLoading.wrap(
+      async () => {
+        if (editingProduct) {
+          await updateFestivalProduct(activeFestivalDetail.id, editingProduct.id, payload);
+        } else {
+          await addProductToFestival(activeFestivalDetail.id, payload);
+        }
+      },
+      editingProduct ? 'Updating Festive Hamper...' : 'Adding Festive Hamper...',
+      'Compressing assets and saving package details...',
+      editingProduct ? 'Hamper updated successfully!' : 'Hamper added to festival celebration!'
+    );
+
+    setProductModalOpen(false);
   };
 
   const handleDeleteProduct = async (productId, name) => {
@@ -329,9 +328,14 @@ export default function AdminFestivalHampersPage() {
       type: 'danger',
     });
     if (isConfirmed) {
-      await deleteFestivalProduct(activeFestivalDetail.id, productId);
-      setFeedback('Hamper removed.');
-      setTimeout(() => setFeedback(''), 3000);
+      await adminLoading.wrap(
+        async () => {
+          await deleteFestivalProduct(activeFestivalDetail.id, productId);
+        },
+        'Deleting Hamper...',
+        'Removing hamper from festival campaign...',
+        'Hamper removed'
+      );
     }
   };
 

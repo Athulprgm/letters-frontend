@@ -5,6 +5,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import ThemeInitializer from './components/ThemeInitializer';
 import Preloader from './components/Preloader';
 import ConfirmModal from './components/ConfirmModal';
+import SEOHead from './components/SEOHead';
 
 // Storefront Shell Components
 import Navbar from './components/Navbar';
@@ -41,6 +42,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
+      <SEOHead />
       <ThemeInitializer />
       <ConfirmModal />
       
