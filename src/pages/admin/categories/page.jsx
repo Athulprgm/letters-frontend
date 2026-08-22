@@ -14,6 +14,7 @@ import {
   faImage,
 } from '@fortawesome/free-solid-svg-icons';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { confirmDialog } from '@/src/store/confirmStore';
 
 export default function AdminCategoriesPage() {
   const { categories, fetchCategories, addCategory, updateCategory, deleteCategory, toggleCategoryStatus, resetCategories } = useCategoryStore();
@@ -122,8 +123,28 @@ export default function AdminCategoriesPage() {
   };
 
   const handleDelete = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete category "${name}"?`)) {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Category',
+      message: `Are you sure you want to delete category "${name}"? Products under this category might lose their grouping.`,
+      confirmText: 'Delete Category',
+      cancelText: 'Cancel',
+      type: 'danger',
+    });
+    if (isConfirmed) {
       await deleteCategory(id);
+    }
+  };
+
+  const handleResetDefaults = async () => {
+    const isConfirmed = await confirmDialog({
+      title: 'Reset Default Categories',
+      message: 'Are you sure you want to restore the 12 default curated gift categories? Any custom categories will be reset.',
+      confirmText: 'Reset Defaults',
+      cancelText: 'Cancel',
+      type: 'warning',
+    });
+    if (isConfirmed) {
+      await resetCategories();
     }
   };
 
@@ -141,7 +162,7 @@ export default function AdminCategoriesPage() {
 
         <div className="flex items-center gap-2.5">
           <button
-            onClick={resetCategories}
+            onClick={handleResetDefaults}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-xs font-semibold text-[var(--text)] shadow-xs transition-colors cursor-pointer"
             title="Reset to 12 Default Categories"
           >

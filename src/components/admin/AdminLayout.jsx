@@ -19,6 +19,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useOrderStore } from '../../store/orderStore';
+import { confirmDialog } from '../../store/confirmStore';
 
 const adminNavLinks = [
   { label: 'Dashboard', href: '/admin', icon: faGauge },
@@ -39,9 +40,18 @@ export default function AdminLayout() {
 
   const pendingOrdersCount = orders.filter((o) => o.status === 'Pending').length;
 
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    const isConfirmed = await confirmDialog({
+      title: 'Sign Out',
+      message: 'Are you sure you want to log out of LETTERS Admin Console?',
+      confirmText: 'Sign Out',
+      cancelText: 'Stay',
+      type: 'warning',
+    });
+    if (isConfirmed) {
+      logout();
+      navigate('/admin/login');
+    }
   };
 
   return (

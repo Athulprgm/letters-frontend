@@ -21,6 +21,7 @@ import {
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCartStore } from '@/src/store/cartStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
+import { confirmDialog } from '@/src/store/confirmStore';
 
 export default function CartPage() {
   const router = useRouter();
@@ -60,6 +61,19 @@ export default function CartPage() {
       setCouponCode('');
     } else {
       setCouponError('Invalid promo code. Try LETTERS10 or FESTIVE15');
+    }
+  };
+
+  const handleRemoveItem = async (cartItemId, name) => {
+    const isConfirmed = await confirmDialog({
+      title: 'Remove Item',
+      message: `Are you sure you want to remove "${name || 'this item'}" from your gifting bag?`,
+      confirmText: 'Remove',
+      cancelText: 'Keep Item',
+      type: 'danger',
+    });
+    if (isConfirmed) {
+      removeFromCart(cartItemId);
     }
   };
 
@@ -248,7 +262,7 @@ Hello LETTERS Concierge, please share custom quote and confirmation for these it
 
                   {/* Delete Item Button */}
                   <button
-                    onClick={() => removeFromCart(item.cartItemId)}
+                    onClick={() => handleRemoveItem(item.cartItemId, item.name)}
                     className="text-[var(--text-muted)] hover:text-rose-600 p-1.5 transition-colors cursor-pointer"
                     title="Remove item"
                   >

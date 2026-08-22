@@ -23,6 +23,7 @@ import {
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
+import { confirmDialog } from '@/src/store/confirmStore';
 
 const statusList = ['All', 'Pending', 'Confirmed', 'Preparing', 'Ready', 'Delivered', 'Cancelled'];
 
@@ -97,8 +98,15 @@ export default function AdminOrdersPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleDeleteOrder = (orderId) => {
-    if (window.confirm(`Are you sure you want to delete order ${orderId}?`)) {
+  const handleDeleteOrder = async (orderId) => {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Order',
+      message: `Are you sure you want to delete order #${orderId}? This record will be permanently removed.`,
+      confirmText: 'Delete Order',
+      cancelText: 'Cancel',
+      type: 'danger',
+    });
+    if (isConfirmed) {
       deleteOrder(orderId);
       if (activeOrderModal?.id === orderId) {
         setActiveOrderModal(null);

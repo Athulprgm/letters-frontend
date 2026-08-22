@@ -19,6 +19,7 @@ import {
 import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
+import { confirmDialog } from '@/src/store/confirmStore';
 import { faTag } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdminProductsPage() {
@@ -170,7 +171,14 @@ export default function AdminProductsPage() {
   };
 
   const handleDelete = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Product',
+      message: `Are you sure you want to delete "${name}"? This product will be permanently removed from the catalog.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger',
+    });
+    if (isConfirmed) {
       await deleteProduct(id);
     }
   };
@@ -289,8 +297,15 @@ export default function AdminProductsPage() {
 
           <button
             type="button"
-            onClick={() => {
-              if (window.confirm('Set ALL individual products in database to "Price on Request"?')) {
+            onClick={async () => {
+              const isConfirmed = await confirmDialog({
+                title: 'Bulk Pricing Update',
+                message: 'Set ALL individual products in database to "Price on Request"? Customers will see "Price on Request" across the catalog.',
+                confirmText: 'Set Price on Request',
+                cancelText: 'Cancel',
+                type: 'warning',
+              });
+              if (isConfirmed) {
                 setAllProductsShowPrice(false);
               }
             }}
@@ -302,8 +317,15 @@ export default function AdminProductsPage() {
 
           <button
             type="button"
-            onClick={() => {
-              if (window.confirm('Set ALL individual products in database to "Price Shown"?')) {
+            onClick={async () => {
+              const isConfirmed = await confirmDialog({
+                title: 'Bulk Pricing Update',
+                message: 'Set ALL individual products in database to "Price Shown"? Standard numeric pricing will be visible to all customers.',
+                confirmText: 'Set Price Shown',
+                cancelText: 'Cancel',
+                type: 'info',
+              });
+              if (isConfirmed) {
                 setAllProductsShowPrice(true);
               }
             }}

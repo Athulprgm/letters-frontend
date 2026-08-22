@@ -19,6 +19,7 @@ import {
   faRotate,
 } from '@fortawesome/free-solid-svg-icons';
 import { useFestivalStore, getFestivalStatus } from '@/src/store/festivalStore';
+import { confirmDialog } from '@/src/store/confirmStore';
 
 const initialFestivalForm = {
   name: '',
@@ -217,7 +218,14 @@ export default function AdminFestivalHampersPage() {
   };
 
   const handleDeleteFestival = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete festival "${name}" and its assigned hampers?`)) {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Festival Campaign',
+      message: `Are you sure you want to delete "${name}" and all of its assigned hamper packages?`,
+      confirmText: 'Delete Festival',
+      cancelText: 'Cancel',
+      type: 'danger',
+    });
+    if (isConfirmed) {
       await deleteFestival(id);
       setFeedback(`Festival "${name}" deleted.`);
       setTimeout(() => setFeedback(''), 3000);
@@ -302,7 +310,14 @@ export default function AdminFestivalHampersPage() {
 
   const handleDeleteProduct = async (productId, name) => {
     if (!activeFestivalDetail) return;
-    if (window.confirm(`Are you sure you want to delete hamper "${name || 'item'}"?`)) {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Hamper Item',
+      message: `Are you sure you want to delete hamper "${name || 'item'}" from this celebration?`,
+      confirmText: 'Delete Hamper',
+      cancelText: 'Cancel',
+      type: 'danger',
+    });
+    if (isConfirmed) {
       await deleteFestivalProduct(activeFestivalDetail.id, productId);
       setFeedback('Hamper removed.');
       setTimeout(() => setFeedback(''), 3000);
