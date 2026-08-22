@@ -18,10 +18,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { useSettingsStore } from '@/src/store/settingsStore';
+import { faTag } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct, toggleProductActive, toggleProductFeatured, toggleProductShowPrice } = useProductStore();
+  const { products, addProduct, updateProduct, deleteProduct, toggleProductActive, toggleProductFeatured, toggleProductShowPrice, setAllProductsShowPrice } = useProductStore();
   const { categories } = useCategoryStore();
+  const { settings, updateSettings } = useSettingsStore();
 
   const fileInputRef = useRef(null);
 
@@ -237,6 +240,78 @@ export default function AdminProductsPage() {
           <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center text-xs">
             <FontAwesomeIcon icon={faStar} />
           </div>
+        </div>
+      </div>
+
+      {/* Storefront Price Visibility Global Banner */}
+      <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs transition-colors ${
+        settings.showPricesGlobally !== false
+          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-950 dark:text-emerald-200'
+          : 'bg-amber-500/10 border-amber-500/20 text-amber-950 dark:text-amber-200'
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0 ${
+            settings.showPricesGlobally !== false ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
+          }`}>
+            <FontAwesomeIcon icon={faTag} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-xs">
+                Public Store Pricing Status: {settings.showPricesGlobally !== false ? 'Prices Visible (Standard Mode)' : 'Prices Hidden ("Price on Request" Catalog Mode)'}
+              </h3>
+              <span className={`text-[9.5px] font-bold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                settings.showPricesGlobally !== false ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
+              }`}>
+                {settings.showPricesGlobally !== false ? 'Active' : 'Inquiry Mode'}
+              </span>
+            </div>
+            <p className="text-[11px] opacity-80 mt-0.5">
+              {settings.showPricesGlobally !== false
+                ? 'Customers can see numeric prices (₹) on product cards, banners, and catalog pages.'
+                : 'All pages show "Price on Request" / inquiry badges. Customers inquire directly on WhatsApp for custom quotes.'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => updateSettings({ showPricesGlobally: settings.showPricesGlobally === false })}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs ${
+              settings.showPricesGlobally !== false
+                ? 'bg-amber-600 text-white hover:bg-amber-700'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
+          >
+            {settings.showPricesGlobally !== false ? 'Switch to "Price on Request" Mode' : 'Switch to Show Prices Mode'}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Set ALL individual products in database to "Price on Request"?')) {
+                setAllProductsShowPrice(false);
+              }
+            }}
+            className="px-2.5 py-1.5 rounded-lg bg-[var(--card)] hover:bg-[var(--bg)] border border-[var(--border)] text-[11px] font-semibold text-[var(--text)] transition-colors cursor-pointer"
+            title="Bulk set all products to Price on Request"
+          >
+            Hide All
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Set ALL individual products in database to "Price Shown"?')) {
+                setAllProductsShowPrice(true);
+              }
+            }}
+            className="px-2.5 py-1.5 rounded-lg bg-[var(--card)] hover:bg-[var(--bg)] border border-[var(--border)] text-[11px] font-semibold text-[var(--text)] transition-colors cursor-pointer"
+            title="Bulk set all products to Price Shown"
+          >
+            Show All
+          </button>
         </div>
       </div>
 

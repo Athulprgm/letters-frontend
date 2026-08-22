@@ -71,7 +71,10 @@ export default function ProductDetailPage(props) {
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80'];
 
-  const discountPercent = product.originalPrice && product.originalPrice > product.price
+  const isPriceShown = settings.showPricesGlobally !== false && product.showPrice !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
+  const discountPercent = isPriceShown && product.originalPrice && product.originalPrice > product.price
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
@@ -147,10 +150,10 @@ export default function ProductDetailPage(props) {
       customDetails += `\n• Add-ons: ${selectedAddons.map((a) => a.name).join(', ')}`;
     }
 
-    const priceDisplay = product.showPrice === false ? 'Price on Request' : `₹${product.price}`;
-    const totalDisplay = product.showPrice === false ? 'On Request / Custom Quote' : `₹${totalWithAddons}`;
+    const priceDisplay = isPriceShown ? `₹${product.price}` : inquiryLabel;
+    const totalDisplay = isPriceShown ? `₹${totalWithAddons}` : 'Quote on Request / Direct Confirmation';
 
-    const message = `*${settings.orderMessagePrefix || 'New Order — LETTERS'}*
+    const message = `*${settings.orderMessagePrefix || 'Order Inquiry — LETTERS'}*
 
 Item: ${product.name}
 Category: ${product.category}
@@ -159,7 +162,7 @@ Price: ${priceDisplay}
 Total: ${totalDisplay}
 Product Link: ${origin}/product/${product.slug}${customDetails}
 
-Hello LETTERS Concierge, please confirm availability and guide me to complete this order.`;
+Hello LETTERS Concierge, please share the quote, personalization details, and delivery timeline for this item.`;
 
     window.open(getWhatsAppUrl(message), '_blank');
   };
@@ -276,7 +279,7 @@ Hello LETTERS Concierge, please confirm availability and guide me to complete th
 
               {/* Pricing */}
               <div className="flex flex-wrap items-baseline gap-3 pb-4 border-b border-[var(--border)]">
-                {product.showPrice !== false ? (
+                {isPriceShown ? (
                   <>
                     <span className="font-heading text-3xl font-bold text-[var(--text)]">
                       ₹{product.price.toLocaleString()}
@@ -298,7 +301,7 @@ Hello LETTERS Concierge, please confirm availability and guide me to complete th
                 ) : (
                   <div className="w-full space-y-1">
                     <span className="text-xl sm:text-2xl font-bold text-[var(--olive)]">
-                      Price on Request
+                      {inquiryLabel}
                     </span>
                     <p className="text-xs text-[var(--text-muted)]">
                       Contact our concierge directly via WhatsApp for bespoke pricing and customization.
@@ -423,7 +426,9 @@ Hello LETTERS Concierge, please confirm availability and guide me to complete th
                         <img src={addon.image} alt={addon.name} className="w-10 h-10 rounded-lg object-cover" />
                         <div>
                           <p className="text-xs font-semibold text-[var(--text)]">{addon.name}</p>
-                          <p className="text-[11px] font-bold text-[var(--olive)]">+₹{addon.price}</p>
+                          <p className="text-[11px] font-bold text-[var(--olive)]">
+                            {isPriceShown ? `+₹${addon.price}` : 'Keepsake Add-on'}
+                          </p>
                         </div>
                       </div>
                       <button
@@ -465,9 +470,13 @@ Hello LETTERS Concierge, please confirm availability and guide me to complete th
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-[var(--text-muted)] block">Subtotal</span>
+                  <span className="text-[10px] text-[var(--text-muted)] block">
+                    {isPriceShown ? 'Subtotal' : 'Pricing Status'}
+                  </span>
                   <span className="font-heading text-lg font-bold text-[var(--text)]">
-                    ₹{(product.price * quantity + selectedAddons.reduce((s, a) => s + a.price, 0)).toLocaleString()}
+                    {isPriceShown
+                      ? `₹${(product.price * quantity + selectedAddons.reduce((s, a) => s + a.price, 0)).toLocaleString()}`
+                      : inquiryLabel}
                   </span>
                 </div>
               </div>

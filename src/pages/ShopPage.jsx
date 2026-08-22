@@ -16,11 +16,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '@/src/store/productStore';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
 
 export default function ShopPage() {
   const { products } = useProductStore();
   const { categories } = useCategoryStore();
+  const { settings } = useSettingsStore();
+
+  const showPrices = settings.showPricesGlobally !== false;
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,7 +58,7 @@ export default function ShopPage() {
       .filter((p) => {
         if (!p.active) return false;
         if (selectedCategory !== 'All' && p.category !== selectedCategory) return false;
-        if (p.price > maxPrice) return false;
+        if (showPrices && p.price > maxPrice) return false;
         if (inStockOnly && (!p.stock || p.stock <= 0)) return false;
         if (customizableOnly && !p.customizable) return false;
         if (selectedOccasion !== 'All') {
@@ -76,18 +80,18 @@ export default function ShopPage() {
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'price-low') return a.price - b.price;
-        if (sortBy === 'price-high') return b.price - a.price;
+        if (showPrices && sortBy === 'price-low') return a.price - b.price;
+        if (showPrices && sortBy === 'price-high') return b.price - a.price;
         if (sortBy === 'name') return a.name.localeCompare(b.name);
         if (sortBy === 'rating') return (b.rating || 5) - (a.rating || 5);
         return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       });
-  }, [products, selectedCategory, searchQuery, sortBy, maxPrice, selectedOccasion, inStockOnly, customizableOnly]);
+  }, [products, selectedCategory, searchQuery, sortBy, maxPrice, selectedOccasion, inStockOnly, customizableOnly, showPrices]);
 
   const hasActiveFilters =
     selectedCategory !== 'All' ||
     searchQuery !== '' ||
-    maxPrice < 5000 ||
+    (showPrices && maxPrice < 5000) ||
     selectedOccasion !== 'All' ||
     inStockOnly ||
     customizableOnly;
@@ -184,43 +188,45 @@ export default function ShopPage() {
               </div>
 
               {/* Price Range */}
-              <div className="mb-6 pt-5 border-t border-[var(--border)]">
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-bold text-[var(--text)] uppercase tracking-wider text-[11px]">Max Budget</span>
-                  <span className="font-bold text-[var(--olive)] bg-[var(--olive)]/10 px-2 py-0.5 rounded">
-                    ₹{maxPrice.toLocaleString()}
-                  </span>
+              {showPrices && (
+                <div className="mb-6 pt-5 border-t border-[var(--border)]">
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-bold text-[var(--text)] uppercase tracking-wider text-[11px]">Max Budget</span>
+                    <span className="font-bold text-[var(--olive)] bg-[var(--olive)]/10 px-2 py-0.5 rounded">
+                      ₹{maxPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="500"
+                    max="5000"
+                    step="100"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Number(e.target.value))}
+                    className="w-full accent-[var(--olive)] cursor-pointer mb-3"
+                  />
+                  {/* Quick Budget Chips */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[
+                      { label: '< ₹1.5k', val: 1500 },
+                      { label: '< ₹3k', val: 3000 },
+                      { label: 'All', val: 5000 },
+                    ].map((chip) => (
+                      <button
+                        key={chip.label}
+                        onClick={() => setMaxPrice(chip.val)}
+                        className={`text-[10px] py-1 px-1 rounded-md border text-center font-medium cursor-pointer transition-colors ${
+                          maxPrice === chip.val
+                            ? 'bg-[var(--text)] text-[var(--bg)] border-[var(--text)]'
+                            : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)]'
+                        }`}
+                      >
+                        {chip.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-[var(--olive)] cursor-pointer mb-3"
-                />
-                {/* Quick Budget Chips */}
-                <div className="grid grid-cols-3 gap-1.5">
-                  {[
-                    { label: '< ₹1.5k', val: 1500 },
-                    { label: '< ₹3k', val: 3000 },
-                    { label: 'All', val: 5000 },
-                  ].map((chip) => (
-                    <button
-                      key={chip.label}
-                      onClick={() => setMaxPrice(chip.val)}
-                      className={`text-[10px] py-1 px-1 rounded-md border text-center font-medium cursor-pointer transition-colors ${
-                        maxPrice === chip.val
-                          ? 'bg-[var(--text)] text-[var(--bg)] border-[var(--text)]'
-                          : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)]'
-                      }`}
-                    >
-                      {chip.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
 
               {/* Occasions */}
               <div className="mb-6 pt-5 border-t border-[var(--border)]">
@@ -311,8 +317,12 @@ export default function ShopPage() {
                   >
                     <option value="featured">Featured Curations</option>
                     <option value="rating">Top Customer Rated</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
+                    {showPrices && (
+                      <>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                      </>
+                    )}
                     <option value="name">Name: A to Z</option>
                   </select>
                 </div>
@@ -369,7 +379,7 @@ export default function ShopPage() {
                   </span>
                 )}
 
-                {maxPrice < 5000 && (
+                {showPrices && maxPrice < 5000 && (
                   <span className="inline-flex items-center gap-1.5 bg-[var(--card)] border border-[var(--border)] text-[var(--text)] text-[10.5px] px-2.5 py-0.5 rounded-full shadow-2xs">
                     Max: ₹{maxPrice}
                     <button onClick={() => setMaxPrice(5000)} className="hover:text-red-500 cursor-pointer">

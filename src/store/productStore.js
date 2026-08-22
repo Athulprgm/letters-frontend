@@ -152,6 +152,24 @@ export const useProductStore = create((set, get) => ({
     });
   },
 
+  setAllProductsShowPrice: (showPrice) => {
+    set((state) => {
+      const updated = state.products.map((p) => {
+        const updatedProd = { ...p, showPrice };
+        fetch(apiUrl(`/api/products/${p.id}`), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ showPrice }),
+        }).catch(console.error);
+        return updatedProd;
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('letters_products', JSON.stringify(updated));
+      }
+      return { products: updated };
+    });
+  },
+
   deleteProduct: async (id) => {
     set((state) => {
       const updated = state.products.filter((p) => p.id !== id && p.slug !== id);

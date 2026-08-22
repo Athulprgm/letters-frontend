@@ -19,15 +19,18 @@ import { useSettingsStore } from '../store/settingsStore';
 
 export default function ProductCard({ product, index = 0 }) {
   const addToCart = useCartStore((state) => state.addToCart);
-  const { getWhatsAppUrl } = useSettingsStore();
+  const { settings, getWhatsAppUrl } = useSettingsStore();
   const [added, setAdded] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+
+  const isPriceShown = settings.showPricesGlobally !== false && product.showPrice !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   // Generate consistent rating and review count based on product ID
   const rating = product.rating || 4.9;
   const reviewCount = product.reviewsCount || (14 + ((product.id?.charCodeAt?.(0) || 5) % 35));
 
-  const discountPercent = product.originalPrice && product.originalPrice > product.price
+  const discountPercent = isPriceShown && product.originalPrice && product.originalPrice > product.price
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
@@ -50,8 +53,8 @@ export default function ProductCard({ product, index = 0 }) {
     e.stopPropagation();
 
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const priceDisplay = product.showPrice === false ? 'Price on Request' : `₹${product.price}`;
-    const message = `*New Order Inquiry — LETTERS*\nItem: ${product.name}\nCategory: ${product.category}\nPrice: ${priceDisplay}\nProduct Link: ${origin}/product/${product.slug}\n\nHello LETTERS team, I would like to inquire and order this item directly via WhatsApp. Please guide me with pricing, customization, and delivery details.`;
+    const priceDisplay = isPriceShown ? `₹${product.price}` : inquiryLabel;
+    const message = `*Inquiry / Order Request — LETTERS*\nItem: ${product.name}\nCategory: ${product.category}\nPricing: ${priceDisplay}\nProduct Link: ${origin}/product/${product.slug}\n\nHello LETTERS team, I would like to inquire about this curated item. Please share customization options, quote, and delivery timeline.`;
 
     window.open(getWhatsAppUrl(message), '_blank');
   };
@@ -75,7 +78,7 @@ export default function ProductCard({ product, index = 0 }) {
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none z-10">
-          {product.showPrice !== false && discountPercent > 0 && (
+          {isPriceShown && discountPercent > 0 && (
             <span className="text-[10px] font-bold bg-[var(--maroon)] text-white px-2.5 py-0.5 rounded-full shadow-xs tracking-wider">
               {discountPercent}% OFF
             </span>
@@ -151,7 +154,7 @@ export default function ProductCard({ product, index = 0 }) {
 
           {/* Price & Stock Badge */}
           <div className="flex items-center justify-between gap-2 pt-1 border-t border-[var(--border)]/60">
-            {product.showPrice !== false ? (
+            {isPriceShown ? (
               <div className="flex items-baseline gap-2">
                 <span className="font-heading text-base sm:text-lg font-bold text-[var(--text)]">
                   ₹{product.price.toLocaleString()}
@@ -165,7 +168,7 @@ export default function ProductCard({ product, index = 0 }) {
             ) : (
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xs sm:text-sm font-bold text-[var(--olive)]">
-                  Price on Request
+                  {inquiryLabel}
                 </span>
               </div>
             )}

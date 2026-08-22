@@ -18,6 +18,8 @@ export const defaultSettings = {
   facebook: 'https://facebook.com/lettersgifting',
   announcementText: '✨ Handcrafted with love • Express delivery available for special occasions • WhatsApp ordering enabled',
   orderMessagePrefix: 'New Order — LETTERS',
+  showPricesGlobally: false,
+  priceInquiryLabel: 'Price on Request',
 };
 
 export const defaultSaleBanner = {

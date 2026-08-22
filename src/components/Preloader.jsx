@@ -81,17 +81,17 @@ export default function Preloader({ onComplete }) {
         <motion.div
           key="letters-lottie-preloader"
           initial={{ opacity: 1 }}
-          exit={{ 
-            opacity: 0, 
-            scale: 1.02, 
+          exit={{
+            opacity: 0,
+            scale: 1.02,
             filter: 'blur(8px)',
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } 
+            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] }
           }}
           className="fixed inset-0 z-[999999] w-screen h-screen flex items-center justify-center bg-white select-none pointer-events-auto overflow-hidden will-change-transform p-4 md:p-8"
         >
           {/* ONLY the Lottie animation - Decreased size */}
-          <div 
-            ref={containerRef} 
+          <div
+            ref={containerRef}
             className="w-full max-w-md md:max-w-xl aspect-video max-h-[45vh] bg-transparent flex items-center justify-center transform-gpu"
           />
         </motion.div>

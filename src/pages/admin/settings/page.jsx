@@ -15,10 +15,18 @@ import {
   faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '@/src/store/authStore';
+import { useSettingsStore } from '@/src/store/settingsStore';
+import { useProductStore } from '@/src/store/productStore';
 import { apiUrl } from '@/src/config/api';
+import { faTag, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdminSettingsPage() {
   const { adminUser, initAuth } = useAuthStore();
+  const { settings, updateSettings } = useSettingsStore();
+  const { setAllProductsShowPrice } = useProductStore();
+
+  const [priceSettingsSaved, setPriceSettingsSaved] = useState(false);
+  const [bulkActionMsg, setBulkActionMsg] = useState('');
 
   // Email form state
   const [emailForm, setEmailForm] = useState({
@@ -190,6 +198,133 @@ export default function AdminSettingsPage() {
         <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] font-medium">
           <FontAwesomeIcon icon={faShieldHalved} className="text-[var(--olive)] text-xs" />
           <span>Protected Session</span>
+        </div>
+      </div>
+
+      {/* Storefront Pricing & Catalog Visibility Control */}
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3.5 flex-wrap gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center text-sm">
+              <FontAwesomeIcon icon={faTag} />
+            </div>
+            <div>
+              <h2 className="font-bold text-sm text-[var(--text)]">Storefront Price Visibility (Public Control)</h2>
+              <p className="text-[11px] text-[var(--text-muted)]">
+                Control whether numerical prices (₹) are displayed publicly across all pages or converted to inquiry mode.
+              </p>
+            </div>
+          </div>
+
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+            settings.showPricesGlobally !== false
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300'
+              : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300'
+          }`}>
+            {settings.showPricesGlobally !== false ? 'Prices Visible on Public' : 'Catalog / Price on Request Mode'}
+          </span>
+        </div>
+
+        {priceSettingsSaved && (
+          <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2 animate-fadeIn">
+            <FontAwesomeIcon icon={faCircleCheck} className="text-sm flex-shrink-0" />
+            <span>Storefront price settings updated successfully! Changes apply immediately across all pages.</span>
+          </div>
+        )}
+
+        {bulkActionMsg && (
+          <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-300 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs flex items-center gap-2 animate-fadeIn">
+            <FontAwesomeIcon icon={faCircleCheck} className="text-sm flex-shrink-0" />
+            <span>{bulkActionMsg}</span>
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {/* Main Global Toggle */}
+          <div className="flex items-center justify-between p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] gap-4">
+            <div>
+              <p className="font-bold text-xs text-[var(--text)]">
+                Master Switch: Display Prices on Public Store
+              </p>
+              <p className="text-[11px] text-[var(--text-muted)] mt-0.5 max-w-xl">
+                When switched <strong>OFF</strong>, all product prices, strikethrough MRPs, and price filters are hidden on all customer pages and replaced with elegant <em>&quot;Price on Request&quot;</em> inquiry badges.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const nextVal = settings.showPricesGlobally === false;
+                await updateSettings({ showPricesGlobally: nextVal });
+                setPriceSettingsSaved(true);
+                setTimeout(() => setPriceSettingsSaved(false), 3500);
+              }}
+              className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                settings.showPricesGlobally !== false ? 'bg-emerald-600' : 'bg-stone-400 dark:bg-stone-600'
+              }`}
+              role="switch"
+              aria-checked={settings.showPricesGlobally !== false}
+            >
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  settings.showPricesGlobally !== false ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Inquiry Label & WhatsApp Customization */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+            <div>
+              <label className="block font-bold text-[var(--text)] uppercase text-[10px] mb-1">
+                Storefront Inquiry Badge Text
+              </label>
+              <input
+                type="text"
+                value={settings.priceInquiryLabel || 'Price on Request'}
+                onChange={(e) => updateSettings({ priceInquiryLabel: e.target.value })}
+                placeholder="e.g. Price on Request / Custom Quote"
+                className="w-full px-3.5 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--olive)]"
+              />
+              <p className="text-[10px] text-[var(--text-muted)] mt-1">
+                Badge text shown when prices are hidden (e.g. &quot;Price on Request&quot;).
+              </p>
+            </div>
+
+            <div>
+              <label className="block font-bold text-[var(--text)] uppercase text-[10px] mb-1">
+                Quick Actions (Product Database)
+              </label>
+              <div className="flex items-center gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAllProductsShowPrice(false);
+                    setBulkActionMsg('All product records updated to "Price on Request".');
+                    setTimeout(() => setBulkActionMsg(''), 4000);
+                  }}
+                  className="px-3 py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300 text-[11px] font-bold transition-colors cursor-pointer"
+                >
+                  Hide All Product Prices
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAllProductsShowPrice(true);
+                    setBulkActionMsg('All product records set to "Price Shown".');
+                    setTimeout(() => setBulkActionMsg(''), 4000);
+                  }}
+                  className="px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 text-[11px] font-bold transition-colors cursor-pointer"
+                >
+                  Show All Product Prices
+                </button>
+              </div>
+              <p className="text-[10px] text-[var(--text-muted)] mt-1">
+                Bulk set all individual product item records in database.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
