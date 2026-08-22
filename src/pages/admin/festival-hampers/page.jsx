@@ -20,6 +20,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useFestivalStore, getFestivalStatus } from '@/src/store/festivalStore';
 import { confirmDialog } from '@/src/store/confirmStore';
+import { compressImage } from '@/src/utils/imageCompressor';
 
 const initialFestivalForm = {
   name: '',
@@ -102,40 +103,50 @@ export default function AdminFestivalHampersPage() {
     return festivals.find((f) => f.id === selectedFestivalId) || festivals[0];
   }, [festivals, selectedFestivalId]);
 
-  const handleBannerUpload = (e) => {
+  const handleBannerUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Banner image must be under 5MB');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Banner image must be under 15MB');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        setFestivalForm((prev) => ({ ...prev, banner: reader.result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, 1400, 800, 0.82);
+      setFestivalForm((prev) => ({ ...prev, banner: compressed }));
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFestivalForm((prev) => ({ ...prev, banner: reader.result }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleProductImageUpload = (e) => {
+  const handleProductImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Product image must be under 5MB');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Product image must be under 15MB');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        setProductForm((prev) => ({ ...prev, image: reader.result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, 1000, 1000, 0.82);
+      setProductForm((prev) => ({ ...prev, image: compressed }));
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setProductForm((prev) => ({ ...prev, image: reader.result }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleStartDateChange = (newStartDate) => {
