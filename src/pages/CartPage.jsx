@@ -148,30 +148,6 @@ Hello LETTERS Concierge, please share custom quote and confirmation for these it
           </button>
         </div>
 
-        {/* Free Shipping Meter Banner */}
-        <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-4 sm:p-5 mb-8 shadow-xs">
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-semibold text-[var(--text)] flex items-center gap-2">
-              <FontAwesomeIcon icon={faTruckFast} className="text-[var(--olive)] text-sm" />
-              {subtotal >= freeShippingThreshold ? (
-                <span className="text-[var(--olive)] font-bold">🎉 Congratulations! You have unlocked FREE Pan-India Shipping!</span>
-              ) : (
-                <span>
-                  Add <strong className="text-[var(--olive)]">₹{amountForFreeShipping.toLocaleString()}</strong> more to enjoy <strong>FREE Express Pan-India Shipping</strong>!
-                </span>
-              )}
-            </span>
-            <span className="text-[11px] font-bold text-[var(--text-muted)]">{progressPercent}%</span>
-          </div>
-
-          <div className="w-full bg-[var(--bg-subtle)] h-2.5 rounded-full overflow-hidden border border-[var(--border)]/50">
-            <div
-              className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-[var(--chandanam)] to-[var(--olive)]"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </div>
-
         {/* Cart Dual Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           

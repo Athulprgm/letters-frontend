@@ -370,8 +370,6 @@ Hello LETTERS Concierge, please share the quote, personalization details, and de
               </div>
             </div>
 
-            </div>
-
             {/* Quantity Selector & CTAs */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
@@ -402,7 +400,7 @@ Hello LETTERS Concierge, please share the quote, personalization details, and de
                   </span>
                   <span className="font-heading text-lg font-bold text-[var(--text)]">
                     {isPriceShown
-                      ? `₹${(product.price * quantity + selectedAddons.reduce((s, a) => s + a.price, 0)).toLocaleString()}`
+                      ? `₹${(product.price * quantity).toLocaleString()}`
                       : inquiryLabel}
                   </span>
                 </div>
