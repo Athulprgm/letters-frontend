@@ -7,8 +7,8 @@ export const defaultSettings = {
   tagline: 'Making your special moments a lot more memorable',
   heroHeading: 'Make Every Moment More Memorable.',
   heroDescription: 'Thoughtfully curated hampers, bouquets and personalized gifts for the moments that matter most.',
-  whatsappNumber: '919497219574',
-  phoneNumber: '+91 94972 19574',
+  whatsappNumber: '917559085513',
+  phoneNumber: '+91 75590 85513',
   email: 'hello@lettersgifting.com',
   address: 'LETTERS Gifting Studio, Kerala, India',
   instagram: 'https://instagram.com/lettersgifting',
@@ -26,6 +26,12 @@ const getInitialSettings = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
+          if (parsed.whatsappNumber === '919497219574') {
+            parsed.whatsappNumber = '917559085513';
+          }
+          if (parsed.phoneNumber === '+91 94972 19574') {
+            parsed.phoneNumber = '+91 75590 85513';
+          }
           return { ...defaultSettings, ...parsed };
         }
       }
@@ -126,7 +132,7 @@ export const useSettingsStore = create((set, get) => ({
   },
 
   getWhatsAppUrl: (message) => {
-    const number = (get().settings.whatsappNumber || '919497219574').replace(/[^\d]/g, '');
+    const number = (get().settings.whatsappNumber || '917559085513').replace(/[^\d]/g, '');
     const encoded = encodeURIComponent(message);
     return `https://wa.me/${number}?text=${encoded}`;
   },
