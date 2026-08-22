@@ -114,9 +114,7 @@ export const useOrderStore = create((set, get) => ({
           ? { ...order, status: newStatus, updatedAt: new Date().toISOString() }
           : order
       );
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_orders', JSON.stringify(updated));
-      }
+      safeSaveOrders(updated);
       return { orders: updated };
     });
 
@@ -134,9 +132,7 @@ export const useOrderStore = create((set, get) => ({
   deleteOrder: async (orderId) => {
     set((state) => {
       const updated = state.orders.filter((order) => order.id !== orderId);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_orders', JSON.stringify(updated));
-      }
+      safeSaveOrders(updated);
       return { orders: updated };
     });
 

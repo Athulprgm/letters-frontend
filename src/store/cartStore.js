@@ -1,4 +1,20 @@
-import { create } from 'zustand';
+const safeSaveCart = (items) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('letters_cart', JSON.stringify(items));
+  } catch (e) {
+    try {
+      // Strip any base64 image strings from cart items
+      const lightweight = items.map((item) => ({
+        ...item,
+        image: typeof item.image === 'string' && item.image.startsWith('data:') ? '' : item.image,
+      }));
+      localStorage.setItem('letters_cart', JSON.stringify(lightweight));
+    } catch (inner) {
+      console.warn('localStorage cart save failed', inner);
+    }
+  }
+};
 
 export const useCartStore = create((set, get) => ({
   items: [],
@@ -48,9 +64,7 @@ export const useCartStore = create((set, get) => ({
         ];
       }
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_cart', JSON.stringify(updated));
-      }
+      safeSaveCart(updated);
       return { items: updated };
     });
   },
@@ -65,9 +79,7 @@ export const useCartStore = create((set, get) => ({
           item.cartItemId === cartItemId ? { ...item, quantity: newQuantity } : item
         );
       }
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_cart', JSON.stringify(updated));
-      }
+      safeSaveCart(updated);
       return { items: updated };
     });
   },
@@ -75,9 +87,7 @@ export const useCartStore = create((set, get) => ({
   removeFromCart: (cartItemId) => {
     set((state) => {
       const updated = state.items.filter((item) => item.cartItemId !== cartItemId);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('letters_cart', JSON.stringify(updated));
-      }
+      safeSaveCart(updated);
       return { items: updated };
     });
   },
