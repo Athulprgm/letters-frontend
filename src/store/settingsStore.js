@@ -11,8 +11,7 @@ export const defaultSettings = {
   phoneNumber: '+91 75590 85513',
   email: 'hello@lettersgifting.com',
   address: 'LETTERS Gifting Studio, Kerala, India',
-  instagram: 'https://instagram.com/lettersgifting',
-  facebook: 'https://facebook.com/lettersgifting',
+  instagram: 'https://www.instagram.com/le_tte_rs_?igsi=MWtkYTVhc204MTUyMw==',
   announcementText: '✨ Handcrafted with love • Express delivery available for special occasions • WhatsApp ordering enabled',
   orderMessagePrefix: 'New Order — LETTERS',
   showPricesGlobally: false,
@@ -31,6 +30,12 @@ const getInitialSettings = () => {
           }
           if (parsed.phoneNumber === '+91 94972 19574') {
             parsed.phoneNumber = '+91 75590 85513';
+          }
+          if (!parsed.instagram || parsed.instagram === 'https://instagram.com/lettersgifting') {
+            parsed.instagram = 'https://www.instagram.com/le_tte_rs_?igsi=MWtkYTVhc204MTUyMw==';
+          }
+          if ('facebook' in parsed) {
+            delete parsed.facebook;
           }
           return { ...defaultSettings, ...parsed };
         }

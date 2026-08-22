@@ -27,7 +27,7 @@ export default function InstagramGallery() {
               className="block mb-1.5 text-[var(--chandanam)]"
               style={{ fontFamily: "'Great Vibes', cursive", fontSize: '22px', letterSpacing: '0.02em' }}
             >
-              @LettersGifting
+              @le_tte_rs_
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-[2.6rem] font-bold text-[var(--text)] leading-tight">
               Moments from Our Atelier
