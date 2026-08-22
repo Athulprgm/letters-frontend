@@ -39,11 +39,12 @@ export default function AdminSaleBannerPage() {
   }, [fetchSaleBanner]);
 
   useEffect(() => {
-    if (saleBanner) {
-      setFormData({
+    if (saleBanner && typeof saleBanner === 'object') {
+      setFormData((prev) => ({
+        ...prev,
         ...saleBanner,
-        selectedProductIds: saleBanner.selectedProductIds || ['prod-1', 'prod-2', 'prod-3', 'prod-5', 'prod-6', 'prod-7'],
-      });
+        selectedProductIds: saleBanner.selectedProductIds || prev?.selectedProductIds || ['prod-1', 'prod-2', 'prod-3', 'prod-5', 'prod-6', 'prod-7'],
+      }));
     }
   }, [saleBanner]);
 
@@ -95,19 +96,41 @@ export default function AdminSaleBannerPage() {
     });
   };
 
-  // Handle local image file upload
+  // Handle local image file upload with client-side compression
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Please upload an image smaller than 5MB.');
-      return;
-    }
-
     const reader = new FileReader();
-    reader.onload = () => {
-      handleChange('image', reader.result);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxWidth = 1600;
+        const maxHeight = 1000;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width / height > maxWidth / maxHeight) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Compress to high-quality JPEG (~100KB-200KB instead of 3MB+)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        handleChange('image', compressedDataUrl);
+      };
+      img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   };

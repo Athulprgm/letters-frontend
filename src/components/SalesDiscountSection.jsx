@@ -25,6 +25,9 @@ export default function SalesDiscountSection() {
   const { settings, getWhatsAppUrl } = useSettingsStore();
   const { saleBanner, isLoaded, fetchSaleBanner } = useSaleBannerStore();
 
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
   const [addedIds, setAddedIds] = useState({});
@@ -62,6 +65,10 @@ export default function SalesDiscountSection() {
     const timer = setInterval(calculate, 1000);
     return () => clearInterval(timer);
   }, [saleBanner?.endDate]);
+
+  if (!isLoaded || !saleBanner?.enabled) {
+    return null;
+  }
 
   // Minimalist Sale Banner Slides
   const saleSlides = useMemo(() => {
@@ -156,10 +163,6 @@ export default function SalesDiscountSection() {
       return true;
     })
     .slice(0, 8);
-
-  const { settings, getWhatsAppUrl } = useSettingsStore();
-  const showPrices = settings.showPricesGlobally !== false;
-  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleAddToCart = (product, e) => {
     e.preventDefault();

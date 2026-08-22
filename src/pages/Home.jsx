@@ -3,6 +3,7 @@ import TopSaleAlertBar from '../components/TopSaleAlertBar';
 import Hero from '../components/Hero';
 import ValuePropsBar from '../components/ValuePropsBar';
 import Marquee from '../components/Marquee';
+import SalesDiscountSection from '../components/SalesDiscountSection';
 import AmazonQuadGrid from '../components/AmazonQuadGrid';
 import FlashDealsRow from '../components/FlashDealsRow';
 import FeaturedCategories from '../components/FeaturedCategories';
@@ -21,6 +22,9 @@ export default function HomePage() {
       <Hero />
       <ValuePropsBar />
       <Marquee />
+
+      {/* 3. Promotional Mega Sale Billboard (shows when enabled by Admin) */}
+      <SalesDiscountSection />
 
       {/* 4. Amazon-Style 4-Tile Spotlight Grid */}
       <AmazonQuadGrid />
