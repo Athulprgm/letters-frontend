@@ -80,7 +80,31 @@ export const useSettingsStore = create((set, get) => ({
           }
 
           if (data && data.success && data.settings) {
-            const merged = { ...defaultSettings, ...data.settings };
+            const raw = { ...data.settings };
+            let needsServerSync = false;
+
+            if (!raw.whatsappNumber || raw.whatsappNumber === '919497219574' || raw.whatsappNumber.includes('9497219574')) {
+              raw.whatsappNumber = '917559085513';
+              needsServerSync = true;
+            }
+            if (!raw.phoneNumber || raw.phoneNumber === '+91 94972 19574' || raw.phoneNumber.includes('94972')) {
+              raw.phoneNumber = '+91 75590 85513';
+              needsServerSync = true;
+            }
+            if (!raw.email || raw.email === 'hello@lettersgifting.com') {
+              raw.email = 'ameenaaami770@gmail.com';
+              needsServerSync = true;
+            }
+            if (!raw.instagram || raw.instagram === 'https://instagram.com/lettersgifting') {
+              raw.instagram = 'https://www.instagram.com/le_tte_rs_?igsi=MWtkYTVhc204MTUyMw==';
+              needsServerSync = true;
+            }
+            if ('facebook' in raw) {
+              delete raw.facebook;
+              needsServerSync = true;
+            }
+
+            const merged = { ...defaultSettings, ...raw };
             set({ settings: merged, isLoaded: true });
             if (typeof window !== 'undefined') {
               try {
@@ -88,6 +112,15 @@ export const useSettingsStore = create((set, get) => ({
               } catch (e) {}
             }
             lastSettingsFetchedAt = Date.now();
+
+            if (needsServerSync) {
+              fetch(apiUrl('/api/settings'), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(merged),
+              }).catch(() => {});
+            }
+
             return merged;
           }
         }
@@ -140,7 +173,10 @@ export const useSettingsStore = create((set, get) => ({
   },
 
   getWhatsAppUrl: (message) => {
-    const number = (get().settings.whatsappNumber || '917559085513').replace(/[^\d]/g, '');
+    let number = (get().settings?.whatsappNumber || '917559085513').replace(/[^\d]/g, '');
+    if (!number || number === '919497219574' || number.includes('9497219574')) {
+      number = '917559085513';
+    }
     const encoded = encodeURIComponent(message);
     return `https://wa.me/${number}?text=${encoded}`;
   },
