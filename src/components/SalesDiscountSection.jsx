@@ -61,74 +61,6 @@ export default function SalesDiscountSection() {
       setTimeLeft({ days, hours, minutes, seconds });
     };
 
-    calculate();
-    const timer = setInterval(calculate, 1000);
-    return () => clearInterval(timer);
-  }, [saleBanner?.endDate]);
-
-  if (!isLoaded || !saleBanner?.enabled) {
-    return null;
-  }
-
-  // Minimalist Sale Banner Slides
-  const saleSlides = useMemo(() => {
-    const adminSlide = {
-      id: 'admin-sale-slide',
-      tag: saleBanner?.tag || 'Seasonal Gifting Offer',
-      badge: saleBanner?.discountOffer || 'Up to 35% Off',
-      calligraphy: saleBanner?.calligraphy || 'Exclusive Flash Drop',
-      title: saleBanner?.title || 'Artisanal Hampers & Keepsakes Sale',
-      description:
-        saleBanner?.description ||
-        'Thoughtfully curated Belgian chocolate hampers, flower arrangements, and custom engraved keepsakes at seasonal offer prices.',
-      priceNote: saleBanner?.priceNote || 'Starting at ₹699 • Handwritten note included',
-      ctaText: saleBanner?.ctaText || 'Explore Deals',
-      ctaLink: saleBanner?.ctaLink || '/deals',
-      image: saleBanner?.image || 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=85',
-      highlights: ['Belgian Chocolates', 'Preserved Florals', 'Custom Keepsakes'],
-    };
-
-    const chocolateSlide = {
-      id: 'chocolate-slide',
-      tag: 'Gourmet Selection',
-      badge: 'Min 20% Off',
-      calligraphy: 'Artisanal Indulgence',
-      title: 'Belgian Truffle & Cocoa Curations',
-      description:
-        'Decadent hazelnut praline truffles paired with gold-dusted chocolate medallions and floral gift wrapping.',
-      priceNote: 'Curations from ₹999 • Luxury temperature packing',
-      ctaText: 'View Chocolates',
-      ctaLink: '/category/chocolate-hamper',
-      image: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=1200&q=85',
-      highlights: ['Belgian Truffles', 'Handmade in Kerala', 'Pan-India Express'],
-    };
-
-    const framesSlide = {
-      id: 'frames-slide',
-      tag: 'Keepsakes & Memories',
-      badge: 'Starts ₹699',
-      calligraphy: 'Timeless Keepsakes',
-      title: 'Floating Glass & Wooden Photo Frames',
-      description:
-        'Solid pinewood and brass-finished floating glass frames with high-definition photo print included and dried botanical pressings.',
-      priceNote: 'High-definition photo print included with every order',
-      ctaText: 'View Frames',
-      ctaLink: '/category/photo-frames',
-      image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1200&q=85',
-      highlights: ['Floating Brass Frames', 'HD Photo Prints', 'Dried Botanical Accents'],
-    };
-
-    return [adminSlide, chocolateSlide, framesSlide];
-  }, [saleBanner]);
-
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % saleSlides.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, saleSlides.length]);
-
   const handleNextSlide = () => {
     setIsAutoPlaying(false);
     setCurrentSlide((prev) => (prev + 1) % saleSlides.length);
@@ -139,8 +71,8 @@ export default function SalesDiscountSection() {
     setCurrentSlide((prev) => (prev - 1 + saleSlides.length) % saleSlides.length);
   };
 
-  // If section is disabled by admin, hide completely
-  if (isLoaded && !saleBanner.enabled) {
+  // If section is not loaded or disabled by admin, hide completely
+  if (!isLoaded || !saleBanner?.enabled) {
     return null;
   }
 
