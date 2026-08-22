@@ -37,13 +37,6 @@ export default function CartPage() {
   const progressPercent = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
   const amountForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
 
-  // Cross sell items
-  const crossSellGifts = [
-    { id: 'cs-1', name: 'Ferrero Rocher Keepsake Pack (4 Pcs)', price: 220, category: 'Chocolates', image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=300&q=80', slug: 'chocolate-bouquet' },
-    { id: 'cs-2', name: 'Artisan Scented Soy Candle Jar', price: 350, category: 'Lifestyle', image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=300&q=80', slug: 'bespoke-hamper' },
-    { id: 'cs-3', name: 'Gold-Embossed Keepsake Greeting Card', price: 99, category: 'Stationery', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=300&q=80', slug: 'keepsake-frame' },
-  ];
-
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     setCouponError('');
@@ -271,45 +264,6 @@ Hello LETTERS Concierge, please share custom quote and confirmation for these it
                 </div>
               </div>
             ))}
-
-            {/* Cross-Sell Gift Addons */}
-            <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-5 mt-6 shadow-xs">
-              <div className="mb-3">
-                <span
-                  className="block text-[var(--chandanam)] text-xs mb-0.5"
-                  style={{ fontFamily: "'Great Vibes', cursive", fontSize: '18px' }}
-                >
-                  Extra Love
-                </span>
-                <h3 className="font-heading text-sm font-bold text-[var(--text)]">
-                  Add Finishing Touches to Your Order
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {crossSellGifts.map((gift) => (
-                  <div
-                    key={gift.id}
-                    className="bg-[var(--bg-subtle)] p-3 rounded-xl border border-[var(--border)] flex items-center justify-between gap-3"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <img src={gift.image} alt={gift.name} className="w-10 h-10 rounded-lg object-cover" />
-                      <div>
-                        <p className="text-[11px] font-bold text-[var(--text)] line-clamp-1">{gift.name}</p>
-                        <p className="text-[10px] font-bold text-[var(--olive)]">₹{gift.price}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => addToCart(gift, 1)}
-                      className="w-7 h-7 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--olive)] hover:bg-[var(--olive)] hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer flex-shrink-0 shadow-2xs"
-                      title="Add to cart"
-                    >
-                      <FontAwesomeIcon icon={faPlus} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             <div className="pt-2">
               <Link

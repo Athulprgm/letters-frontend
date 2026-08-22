@@ -53,9 +53,6 @@ export default function ProductDetailPage(props) {
   const [personalizedMessage, setPersonalizedMessage] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
 
-  // Add-on options
-  const [selectedAddons, setSelectedAddons] = useState([]);
-
   if (!product) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-6 text-center bg-[var(--bg)]">
@@ -81,21 +78,6 @@ export default function ProductDetailPage(props) {
   const rating = product.rating || 4.9;
   const reviewCount = product.reviewsCount || 28;
 
-  // Add-on products list
-  const addonItems = [
-    { id: 'addon-1', name: 'Handcrafted Soy Wax Candle (Vanilla & Rose)', price: 350, image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=200&q=80' },
-    { id: 'addon-2', name: 'Ferrero Rocher Keepsake Pack (4 Pcs)', price: 220, image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80' },
-    { id: 'addon-3', name: 'Minimalist Brass Photo Print Frame', price: 450, image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=200&q=80' },
-  ];
-
-  const toggleAddon = (addon) => {
-    if (selectedAddons.find((a) => a.id === addon.id)) {
-      setSelectedAddons(selectedAddons.filter((a) => a.id !== addon.id));
-    } else {
-      setSelectedAddons([...selectedAddons, addon]);
-    }
-  };
-
   const handlePincodeCheck = (e) => {
     e.preventDefault();
     if (pincode.trim().length >= 6) {
@@ -116,19 +98,6 @@ export default function ProductDetailPage(props) {
       recipientName,
       personalizedMessage,
       specialInstructions,
-      addons: selectedAddons.map((a) => a.name),
-    });
-
-    // Add any selected addons as separate items or bundled
-    selectedAddons.forEach((addon) => {
-      addToCart({
-        id: addon.id,
-        name: addon.name,
-        price: addon.price,
-        image: addon.image,
-        category: 'Gift Add-on',
-        slug: product.slug,
-      }, 1);
     });
 
     setAdded(true);
@@ -146,12 +115,9 @@ export default function ProductDetailPage(props) {
     if (recipientName || personalizedMessage || specialInstructions) {
       customDetails = `\nCustomization for Order:\n• Recipient Name: ${recipientName || 'Not specified'}\n• Message: ${personalizedMessage || 'None'}\n• Instructions: ${specialInstructions || 'None'}`;
     }
-    if (selectedAddons.length > 0) {
-      customDetails += `\n• Add-ons: ${selectedAddons.map((a) => a.name).join(', ')}`;
-    }
 
     const priceDisplay = isPriceShown ? `₹${product.price}` : inquiryLabel;
-    const totalDisplay = isPriceShown ? `₹${totalWithAddons}` : 'Quote on Request / Direct Confirmation';
+    const totalDisplay = isPriceShown ? `₹${Number(product.price) * quantity}` : 'Quote on Request / Direct Confirmation';
 
     const message = `*${settings.orderMessagePrefix || 'Order Inquiry — LETTERS'}*
 
@@ -404,45 +370,6 @@ Hello LETTERS Concierge, please share the quote, personalization details, and de
               </div>
             </div>
 
-            {/* Frequently Gifted Together / Add-ons */}
-            <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-5 shadow-xs">
-              <span className="block text-[11px] font-bold text-[var(--text)] uppercase tracking-wider mb-3">
-                Complete the Gift Set (Add-ons)
-              </span>
-              <div className="space-y-2.5">
-                {addonItems.map((addon) => {
-                  const isSelected = selectedAddons.some((a) => a.id === addon.id);
-                  return (
-                    <div
-                      key={addon.id}
-                      onClick={() => toggleAddon(addon)}
-                      className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
-                        isSelected
-                          ? 'border-[var(--olive)] bg-[var(--olive)]/5 shadow-2xs'
-                          : 'border-[var(--border)] hover:border-[var(--olive)]/40 bg-[var(--bg)]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <img src={addon.image} alt={addon.name} className="w-10 h-10 rounded-lg object-cover" />
-                        <div>
-                          <p className="text-xs font-semibold text-[var(--text)]">{addon.name}</p>
-                          <p className="text-[11px] font-bold text-[var(--olive)]">
-                            {isPriceShown ? `+₹${addon.price}` : 'Keepsake Add-on'}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors ${
-                          isSelected ? 'bg-[var(--olive)] text-white' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--text-muted)]'
-                        }`}
-                      >
-                        <FontAwesomeIcon icon={isSelected ? faCheck : faPlus} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
 
             {/* Quantity Selector & CTAs */}
