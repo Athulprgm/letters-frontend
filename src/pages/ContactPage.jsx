@@ -33,12 +33,6 @@ const faqs = [
   },
 ];
 
-const contactItems = [
-  { icon: faPhone, label: 'Call / WhatsApp', primary: null, secondary: '9:00 AM – 9:00 PM IST', key: 'phoneNumber' },
-  { icon: faEnvelope, label: 'Email Us', secondary: 'Response within 24 hours', key: 'email' },
-  { icon: faLocationDot, label: 'Studio Location', secondary: 'Kerala, India', key: 'address' },
-];
-
 export default function ContactPage() {
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
