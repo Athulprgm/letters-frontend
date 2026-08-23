@@ -18,17 +18,14 @@ import {
   faPlus,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCartStore } from '@/src/store/cartStore';
-import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { confirmDialog } from '@/src/store/confirmStore';
 
 export default function CartPage() {
   const router = useRouter();
   const { items, updateQuantity, removeFromCart, clearCart, getSubtotal, addToCart } = useCartStore();
-  const { createOrder } = useOrderStore();
-  const { settings, getWhatsAppUrl } = useSettingsStore();
+  const { settings } = useSettingsStore();
 
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -75,51 +72,6 @@ export default function CartPage() {
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
   const estimatedShipping = 0;
   const finalTotal = Math.max(0, subtotal - discountAmount + (subtotal > 0 ? estimatedShipping : 0));
-
-  const handleWhatsAppQuickCart = async () => {
-    if (items.length === 0) return;
-
-    let itemsText = '';
-    let customSummary = '';
-    items.forEach((item, index) => {
-      const priceStr = showPrices ? ` — ₹${item.price * item.quantity}` : '';
-      itemsText += `${index + 1}. ${item.name} × ${item.quantity}${priceStr}\n`;
-      if (item.customization?.recipientName || item.customization?.personalizedMessage) {
-        const line = `• ${item.name}: For ${item.customization.recipientName || 'Recipient'}${item.customization.personalizedMessage ? ` (Msg: "${item.customization.personalizedMessage}")` : ''}\n`;
-        itemsText += `   ↳ For: ${item.customization.recipientName || 'N/A'}${item.customization.personalizedMessage ? ` | Msg: "${item.customization.personalizedMessage}"` : ''}\n`;
-        customSummary += line;
-      }
-    });
-
-    const newOrder = await createOrder({
-      customerName: 'WhatsApp Cart Patron',
-      phone: '',
-      whatsappNumber: '',
-      address: 'Express WhatsApp Checkout',
-      pincode: '',
-      deliveryDate: 'Standard Delivery',
-      occasion: 'Special Occasion',
-      items: items,
-      subtotal: subtotal,
-      total: finalTotal,
-      customization: customSummary.trim() || 'Standard Atelier Gift Packaging',
-      specialInstructions: appliedCoupon ? `Applied Coupon: ${appliedCoupon.code} (-₹${discountAmount})` : 'Cart WhatsApp Order',
-    });
-
-    const totalText = showPrices ? `*Subtotal:* ₹${subtotal}\n${appliedCoupon ? `*Discount (${appliedCoupon.code}):* -₹${discountAmount}\n` : ''}*Estimated Total:* ₹${finalTotal}` : `*Pricing:* ${inquiryLabel} / Custom Quote`;
-
-    const message = `*${settings.orderMessagePrefix || 'Bag Inquiry — LETTERS'}*
-Order Reference: #${newOrder.id}
-✦ *SHOPPING CART INQUIRY* ✦
-
-*Cart Items:*
-${itemsText}
-${totalText}
-
-Hello LETTERS Concierge, please share custom quote and confirmation for these items in my gifting bag!`;
-
-    window.open(getWhatsAppUrl(message), '_blank');
-  };
 
   if (items.length === 0) {
     return (
@@ -365,21 +317,13 @@ Hello LETTERS Concierge, please share custom quote and confirmation for these it
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-2.5 pt-2">
+              <div className="pt-2">
                 <button
                   onClick={() => router.push('/checkout')}
-                  className="w-full gold-btn py-3.5 px-6 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                  className="w-full gold-btn py-3.5 px-6 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98 transition-transform"
                 >
                   <span>Proceed to Secure Checkout</span>
                   <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
-                </button>
-
-                <button
-                  onClick={handleWhatsAppQuickCart}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-6 text-xs font-semibold rounded-full bg-[#25D366] text-white hover:bg-[#1EBE5D] transition-colors cursor-pointer shadow-xs"
-                >
-                  <FontAwesomeIcon icon={faWhatsapp} className="text-base" />
-                  Instant WhatsApp Checkout
                 </button>
               </div>
 
