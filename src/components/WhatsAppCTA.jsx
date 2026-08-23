@@ -51,7 +51,7 @@ export default function WhatsAppCTA() {
               </button>
 
               <p className="text-xs text-[var(--text-muted)] font-medium">
-                Usually responds within 15 mins · {settings.phoneNumber}
+                Usually responds within 15 mins · Kerala Atelier Concierge
               </p>
             </div>
 

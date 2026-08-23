@@ -122,8 +122,8 @@ export default function Footer() {
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text)] border-b border-[var(--border)] pb-2">Studio Contact</h3>
           <ul className="space-y-2.5 text-xs text-[var(--text-muted)]">
             <li className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faPhone} className="text-[var(--accent-hover)] text-xs flex-shrink-0" />
-              <span>{settings.phoneNumber}</span>
+              <FontAwesomeIcon icon={faWhatsapp} className="text-[var(--accent-hover)] text-xs flex-shrink-0" />
+              <span>WhatsApp Atelier Concierge</span>
             </li>
             <li className="flex items-center gap-2">
               <FontAwesomeIcon icon={faEnvelope} className="text-[var(--accent-hover)] text-xs flex-shrink-0" />

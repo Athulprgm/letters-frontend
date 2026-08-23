@@ -103,7 +103,7 @@ Message:
               
               <div className="space-y-5">
                 {[
-                  { icon: faPhone, label: 'Call / WhatsApp', value: settings.phoneNumber, note: '9:00 AM – 9:00 PM IST' },
+                  { icon: faPhone, label: 'WhatsApp Concierge', value: 'Instant Concierge Chat Active', note: '9:00 AM – 9:00 PM IST' },
                   { icon: faEnvelope, label: 'Email Us', value: settings.email, note: 'Response within 24 hours' },
                   { icon: faLocationDot, label: 'Studio Location', value: settings.address, note: 'Kerala, India' },
                 ].map((item, i) => (

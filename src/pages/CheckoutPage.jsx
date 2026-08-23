@@ -231,7 +231,7 @@ export default function CheckoutPage() {
               </div>
               <div className="text-right text-[11px] text-[var(--text-muted)]">
                 <span>Atelier Concierge: </span>
-                <strong className="text-[var(--text)]">{settings.phoneNumber || '+91 75590 85513'}</strong>
+                <strong className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded text-[10.5px]">Online & Active</strong>
               </div>
             </div>
 
