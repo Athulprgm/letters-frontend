@@ -1,7 +1,5 @@
 import { apiUrl } from '@/src/config/api';
 
-const DEFAULT_VAPID_PUBLIC_KEY = 'BCBL-EMJVJenDSYVukBAUIcB3XC7ebxPGdfh5F5untU4v1VexvD2BnY5kgnzj9LcbvHjjhz7Fg1ycYa8yMbsyMo';
-
 /**
  * Convert a URL-safe Base64 string to a Uint8Array for PushManager subscription.
  */
@@ -96,8 +94,11 @@ export async function subscribeToPushNotifications({ role = 'user', userId = nul
   // 2. Register Service Worker
   const registration = await registerServiceWorker();
 
-  // 3. Obtain VAPID Public Key
-  const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || DEFAULT_VAPID_PUBLIC_KEY;
+  // 3. Obtain VAPID Public Key from environment
+  const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+  if (!vapidPublicKey) {
+    throw new Error('VAPID public key (VITE_VAPID_PUBLIC_KEY) is missing in frontend .env.');
+  }
   const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
 
   // 4. Subscribe or retrieve existing subscription
