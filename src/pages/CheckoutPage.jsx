@@ -142,90 +142,185 @@ export default function CheckoutPage() {
 
   // Order Confirmation State
   if (createdOrder) {
+    const whatsappMessage = generateWhatsAppMessage(createdOrder);
+    const whatsappUrl = getWhatsAppUrl(whatsappMessage);
+
     return (
-      <div className="min-h-screen pt-12 pb-24 px-4 sm:px-6 lg:px-12 bg-[var(--bg)] transition-colors duration-200">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-8 sm:p-12 text-center shadow-xs">
+      <div className="min-h-screen pt-10 pb-24 px-4 sm:px-6 lg:px-12 bg-[var(--bg)] transition-colors duration-200">
+        <div className="max-w-2xl mx-auto space-y-6">
+          
+          {/* Main Confirmation Card */}
+          <div className="bg-[var(--card)] rounded-3xl border border-[var(--border)] p-6 sm:p-10 text-center shadow-lg relative overflow-hidden">
             
-            {/* Celebration Icon */}
-            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 border border-emerald-200">
-              <FontAwesomeIcon icon={faCircleCheck} className="text-2xl" />
+            {/* Top Celebration Glow */}
+            <div className="w-16 h-16 bg-emerald-500/10 text-[#25D366] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#25D366]/30 shadow-inner animate-pulse">
+              <FontAwesomeIcon icon={faCircleCheck} className="text-3xl" />
             </div>
 
             <span
               className="block mb-1 text-[var(--chandanam)]"
-              style={{ fontFamily: "'Great Vibes', cursive", fontSize: '26px' }}
+              style={{ fontFamily: "'Great Vibes', cursive", fontSize: '28px' }}
             >
-              Order Placed Successfully
+              Order Recorded in Atelier
             </span>
-            <h1 className="font-heading text-2xl sm:text-3xl font-bold text-[var(--text)] mb-3">
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold text-[var(--text)] mb-2">
               Thank You, {createdOrder.customerName}!
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-md mx-auto leading-relaxed mb-8">
-              Your order has been recorded. We have opened WhatsApp so you can finalize and confirm delivery with our studio curators.
+            <p className="text-xs sm:text-[13px] text-[var(--text-muted)] max-w-md mx-auto leading-relaxed mb-6">
+              Your gift order is registered in our database. Complete your order placement by sending the details to our WhatsApp atelier concierge.
             </p>
 
-            {/* Order ID Box */}
-            <div className="bg-[var(--bg)] rounded-xl border border-[var(--border)] p-4 max-w-md mx-auto mb-8 flex items-center justify-between">
+            {/* Prominent High-Priority WhatsApp Dispatch Box */}
+            <div className="bg-gradient-to-br from-[#1E2E1D] via-[#142313] to-[#1E2E1D] text-[#FAF6EE] rounded-2xl p-6 mb-6 border-2 border-[#25D366]/50 shadow-xl text-left relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="text-[11px] font-extrabold uppercase tracking-widest bg-[#25D366] text-black px-3 py-0.5 rounded-full inline-flex items-center gap-1.5 shadow-sm">
+                  <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
+                  <span>Step 2: Send on WhatsApp</span>
+                </span>
+                <span className="text-[11px] text-[#25D366] font-mono font-bold">
+                  Ref: #{createdOrder.id}
+                </span>
+              </div>
+
+              <h3 className="font-heading text-base sm:text-lg font-bold text-[#FFFCF5] mb-1">
+                Send Order to LETTERS WhatsApp Atelier
+              </h3>
+              <p className="text-xs text-[#FAF6EE]/80 mb-5 leading-relaxed">
+                Click below to open WhatsApp with your pre-filled order details to confirm customization, packing, and dispatch schedule.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:flex-1 py-3.5 px-6 rounded-full text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#1EBE5D] text-black transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 text-center cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faWhatsapp} className="text-lg" />
+                  <span>Send Order on WhatsApp Now</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={copyOrderId}
+                  className="w-full sm:w-auto py-3 px-4 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-[#FAF6EE] border border-white/20 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  title="Copy Order ID"
+                >
+                  {copied ? (
+                    <>
+                      <FontAwesomeIcon icon={faCheck} className="text-[#25D366]" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faCopy} />
+                      <span>Copy Ref ID</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Order Reference Box */}
+            <div className="bg-[var(--bg)] rounded-xl border border-[var(--border)] p-4 max-w-xl mx-auto mb-6 flex items-center justify-between">
               <div className="text-left">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                   Order Reference ID
                 </span>
-                <p className="font-mono text-sm font-bold text-[var(--text)]">{createdOrder.id}</p>
+                <p className="font-mono text-sm font-bold text-[var(--text)]">#{createdOrder.id}</p>
               </div>
-              <button
-                onClick={copyOrderId}
-                className="px-3 py-1.5 bg-[var(--card)] rounded-lg border border-[var(--border)] text-xs text-[var(--text)] hover:border-[var(--olive)] flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="Copy Order ID"
-              >
-                {copied ? <FontAwesomeIcon icon={faCheck} className="text-emerald-500 text-xs" /> : <FontAwesomeIcon icon={faCopy} className="text-xs" />}
-                <span className="text-[10px] font-semibold">{copied ? 'Copied' : 'Copy'}</span>
-              </button>
+              <div className="text-right text-[11px] text-[var(--text-muted)]">
+                <span>Atelier Concierge: </span>
+                <strong className="text-[var(--text)]">{settings.phoneNumber || '+91 75590 85513'}</strong>
+              </div>
             </div>
 
             {/* Order Summary Details */}
-            <div className="bg-[var(--bg)] rounded-xl border border-[var(--border)] p-6 text-left max-w-xl mx-auto mb-8 space-y-3 text-xs">
-              <h2 className="font-heading font-bold text-sm text-[var(--text)] border-b border-[var(--border)] pb-2">
-                Order Summary
-              </h2>
+            <div className="bg-[var(--bg)] rounded-2xl border border-[var(--border)] p-6 text-left max-w-xl mx-auto mb-6 space-y-3 text-xs">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
+                <h2 className="font-heading font-bold text-sm text-[var(--text)]">
+                  Order Summary ({createdOrder.items.length} items)
+                </h2>
+                <span className="text-[10.5px] text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded border border-emerald-200">
+                  Ready for Dispatch
+                </span>
+              </div>
               
-              <div className="space-y-1.5">
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {createdOrder.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-[var(--text)] text-xs">
-                    <span>{item.name} × {item.quantity}</span>
-                    {showPrices && <span className="font-bold">₹{item.price * item.quantity}</span>}
+                  <div key={idx} className="flex justify-between items-center text-[var(--text)] text-xs py-1 border-b border-[var(--border)]/40 last:border-0">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold flex items-center justify-center shrink-0">
+                        {idx + 1}
+                      </span>
+                      <span className="font-medium truncate max-w-[240px]">{item.name} × {item.quantity}</span>
+                    </div>
+                    {showPrices ? (
+                      <span className="font-bold">₹{item.price * item.quantity}</span>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-[var(--olive)]">{inquiryLabel}</span>
+                    )}
                   </div>
                 ))}
               </div>
 
               <div className="pt-2 border-t border-[var(--border)] flex justify-between font-bold text-sm text-[var(--text)]">
-                <span>{showPrices ? 'Total:' : 'Pricing:'}</span>
+                <span>{showPrices ? 'Total Payable:' : 'Pricing Status:'}</span>
                 <span className="font-heading text-base text-[var(--olive)]">
                   {showPrices ? `₹${createdOrder.total}` : inquiryLabel}
                 </span>
               </div>
 
               <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1">
-                <p><strong>Address:</strong> {createdOrder.address}, PIN {createdOrder.pincode}</p>
-                <p><strong>Preferred Date:</strong> {createdOrder.deliveryDate}</p>
+                <p><strong>Customer:</strong> {createdOrder.customerName} ({createdOrder.phone})</p>
+                <p><strong>Address:</strong> {createdOrder.address}{createdOrder.pincode ? `, PIN: ${createdOrder.pincode}` : ''}</p>
+                <p><strong>Preferred Delivery:</strong> {createdOrder.deliveryDate}</p>
                 <p><strong>Occasion:</strong> {createdOrder.occasion}</p>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button
-                onClick={() => window.open(getWhatsAppUrl(generateWhatsAppMessage(createdOrder)), '_blank')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 py-3.5 px-7 text-xs font-semibold rounded-full bg-[#25D366] text-white hover:bg-[#1EBE5D] transition-colors cursor-pointer shadow-xs"
+            {/* WhatsApp Message Preview Box */}
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 text-left max-w-xl mx-auto mb-6">
+              <div className="flex items-center justify-between mb-2 pb-2 border-b border-[var(--border)]">
+                <span className="text-[11px] font-bold text-[var(--text)] flex items-center gap-1.5">
+                  <FontAwesomeIcon icon={faWhatsapp} className="text-[#25D366]" />
+                  <span>WhatsApp Message Preview</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(whatsappMessage);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="text-[10.5px] font-semibold text-[var(--olive)] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faCopy} />
+                  <span>{copied ? 'Copied Text' : 'Copy Message'}</span>
+                </button>
+              </div>
+              <pre className="text-[10.5px] text-[var(--text-muted)] whitespace-pre-wrap font-sans bg-[var(--bg)] p-3 rounded-xl border border-[var(--border)] max-h-36 overflow-y-auto leading-relaxed">
+                {whatsappMessage}
+              </pre>
+            </div>
+
+            {/* Actions Bottom Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 py-3.5 px-8 text-xs font-bold rounded-full bg-[#25D366] text-black hover:bg-[#1EBE5D] transition-all cursor-pointer shadow-md active:scale-95"
               >
-                <FontAwesomeIcon icon={faWhatsapp} className="text-base" /> Open WhatsApp Chat Again
-              </button>
+                <FontAwesomeIcon icon={faWhatsapp} className="text-base" />
+                <span>Open WhatsApp Chat Again</span>
+              </a>
 
               <Link
-                href="/"
+                href="/shop"
                 className="w-full sm:w-auto secondary-pill-btn py-3.5 px-7 text-xs font-semibold text-center"
               >
-                Return to Storefront
+                Browse More Curations
               </Link>
             </div>
 
