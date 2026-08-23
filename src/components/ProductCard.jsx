@@ -23,7 +23,7 @@ export default function ProductCard({ product, index = 0 }) {
   const [added, setAdded] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
 
-  const isPriceShown = settings.showPricesGlobally !== false && product.showPrice !== false;
+  const isPriceShown = settings.showPricesGlobally === true && product.showPrice !== false;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   // Generate consistent rating and review count based on product ID

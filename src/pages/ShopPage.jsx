@@ -25,7 +25,7 @@ export default function ShopPage() {
   const { categories } = useCategoryStore();
   const { settings } = useSettingsStore();
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');

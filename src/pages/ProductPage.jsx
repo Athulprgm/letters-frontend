@@ -74,7 +74,7 @@ export default function ProductDetailPage(props) {
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80'];
 
-  const isPriceShown = settings.showPricesGlobally !== false && product.showPrice !== false;
+  const isPriceShown = settings.showPricesGlobally === true && product.showPrice !== false;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const discountPercent = isPriceShown && product.originalPrice && product.originalPrice > product.price

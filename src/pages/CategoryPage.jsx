@@ -16,7 +16,7 @@ export default function CategoryPage(props) {
   const { categories } = useCategoryStore();
   const { products, isLoading } = useProductStore();
   const { settings } = useSettingsStore();
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
 
   const [sortBy, setSortBy] = useState('featured');
 

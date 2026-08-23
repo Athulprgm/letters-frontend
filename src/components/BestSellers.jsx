@@ -39,7 +39,7 @@ export default function BestSellers() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
   const { settings, getWhatsAppUrl } = useSettingsStore();
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleQuickWhatsAppOrder = (product) => {

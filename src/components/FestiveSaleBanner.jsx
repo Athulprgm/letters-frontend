@@ -204,7 +204,7 @@ export default function FestiveSaleBanner() {
   }, [products, activeTab]);
 
   const { settings, getWhatsAppUrl } = useSettingsStore();
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleAddToCart = (product, e) => {
@@ -386,15 +386,23 @@ export default function FestiveSaleBanner() {
 
                 {/* Price & Savings Pill */}
                 <div className="flex flex-wrap items-baseline gap-3 mb-7">
-                  <span className="font-heading text-3xl font-extrabold text-[#E5A04D]">
-                    {current.price}
-                  </span>
-                  <span className="text-sm text-[#FAF6EE]/60 line-through">
-                    {current.originalPrice}
-                  </span>
-                  <span className="text-xs font-bold text-[#FAF6EE] bg-[#721C28] px-2.5 py-0.5 rounded-full border border-white/20">
-                    {current.saveAmount}
-                  </span>
+                  {showPrices ? (
+                    <>
+                      <span className="font-heading text-3xl font-extrabold text-[#E5A04D]">
+                        {current.price}
+                      </span>
+                      <span className="text-sm text-[#FAF6EE]/60 line-through">
+                        {current.originalPrice}
+                      </span>
+                      <span className="text-xs font-bold text-[#FAF6EE] bg-[#721C28] px-2.5 py-0.5 rounded-full border border-white/20">
+                        {current.saveAmount}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-heading text-2xl font-extrabold text-[#E5A04D] bg-black/40 backdrop-blur-md px-4 py-1 rounded-full border border-white/20">
+                      {inquiryLabel}
+                    </span>
+                  )}
                   <span className="text-[11.5px] text-[#F3B868] font-medium hidden sm:inline">
                     • Free Luxury Packaging &amp; Live Photo Preview
                   </span>
@@ -412,7 +420,8 @@ export default function FestiveSaleBanner() {
 
                   <button
                     onClick={() => {
-                      const msg = `Hello LETTERS! I want to claim the ${current.title} festive deal (${current.price}) with live WhatsApp preview.`;
+                      const priceDetail = showPrices ? ` (${current.price})` : '';
+                      const msg = `Hello LETTERS! I want to claim the ${current.title} festive deal${priceDetail} with live WhatsApp preview.`;
                       window.open(getWhatsAppUrl(msg), '_blank');
                     }}
                     className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full text-xs font-semibold bg-white/15 hover:bg-white/25 text-[#FAF6EE] backdrop-blur-md border border-white/30 transition-all active:scale-95 cursor-pointer"

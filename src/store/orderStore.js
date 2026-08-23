@@ -204,7 +204,7 @@ export const useOrderStore = create((set, get) => ({
 
   generateWhatsAppMessage: (order) => {
     const settings = useSettingsStore.getState().settings;
-    const showPrices = settings.showPricesGlobally !== false;
+    const showPrices = settings.showPricesGlobally === true;
     const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
     let itemsText = '';

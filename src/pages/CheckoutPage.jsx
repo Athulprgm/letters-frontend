@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const { createOrder, generateWhatsAppMessage } = useOrderStore();
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const [form, setForm] = useState({

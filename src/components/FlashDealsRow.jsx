@@ -14,7 +14,7 @@ export default function FlashDealsRow() {
   const { settings } = useSettingsStore();
   const [addedIds, setAddedIds] = useState({});
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   // Countdown timer

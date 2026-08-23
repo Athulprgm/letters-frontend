@@ -25,7 +25,7 @@ export default function SalesDiscountSection() {
   const { settings, getWhatsAppUrl } = useSettingsStore();
   const { saleBanner, isLoaded, fetchSaleBanner } = useSaleBannerStore();
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -71,13 +71,15 @@ export default function SalesDiscountSection() {
     const adminSlide = {
       id: 'admin-sale-slide',
       tag: saleBanner?.tag || 'Seasonal Gifting Offer',
-      badge: saleBanner?.discountOffer || 'Up to 35% Off',
+      badge: saleBanner?.discountOffer || 'Artisanal Curations',
       calligraphy: saleBanner?.calligraphy || 'Exclusive Flash Drop',
       title: saleBanner?.title || 'Artisanal Hampers & Keepsakes Sale',
       description:
         saleBanner?.description ||
         'Thoughtfully curated Belgian chocolate hampers, flower arrangements, and custom engraved keepsakes at seasonal offer prices.',
-      priceNote: saleBanner?.priceNote || 'Starting at ₹699 • Handwritten note included',
+      priceNote: showPrices
+        ? (saleBanner?.priceNote || 'Starting at ₹699 • Handwritten note included')
+        : 'Handcrafted luxury presentation • Handwritten keepsake card included',
       ctaText: saleBanner?.ctaText || 'Explore Deals',
       ctaLink: saleBanner?.ctaLink || '/deals',
       image: saleBanner?.image || 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=85',
@@ -87,12 +89,12 @@ export default function SalesDiscountSection() {
     const chocolateSlide = {
       id: 'chocolate-slide',
       tag: 'Gourmet Selection',
-      badge: 'Min 20% Off',
+      badge: showPrices ? 'Min 20% Off' : 'Gourmet Selection',
       calligraphy: 'Artisanal Indulgence',
       title: 'Belgian Truffle & Cocoa Curations',
       description:
         'Decadent hazelnut praline truffles paired with gold-dusted chocolate medallions and floral gift wrapping.',
-      priceNote: 'Curations from ₹999 • Luxury temperature packing',
+      priceNote: showPrices ? 'Curations from ₹999 • Luxury temperature packing' : 'Artisanal Belgian Truffles • Luxury temperature packing',
       ctaText: 'View Chocolates',
       ctaLink: '/category/chocolate-hamper',
       image: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=1200&q=85',
@@ -102,7 +104,7 @@ export default function SalesDiscountSection() {
     const framesSlide = {
       id: 'frames-slide',
       tag: 'Keepsakes & Memories',
-      badge: 'Starts ₹699',
+      badge: showPrices ? 'Starts ₹699' : 'Bespoke Keepsakes',
       calligraphy: 'Timeless Keepsakes',
       title: 'Floating Glass & Wooden Photo Frames',
       description:
@@ -115,7 +117,7 @@ export default function SalesDiscountSection() {
     };
 
     return [adminSlide, chocolateSlide, framesSlide];
-  }, [saleBanner]);
+  }, [saleBanner, showPrices]);
 
   useEffect(() => {
     if (!isAutoPlaying) return;

@@ -12,7 +12,7 @@ export default function AmazonQuadGrid() {
   const { categories } = useCategoryStore();
   const { settings } = useSettingsStore();
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const dealProducts = products.filter((p) => p.active && (p.originalPrice > p.price || p.tag)).slice(0, 4);

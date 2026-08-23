@@ -38,7 +38,7 @@ export default function DealsPage() {
   const { settings, getWhatsAppUrl } = useSettingsStore();
   const addToCart = useCartStore((state) => state.addToCart);
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const [selectedFilter, setSelectedFilter] = useState('all');

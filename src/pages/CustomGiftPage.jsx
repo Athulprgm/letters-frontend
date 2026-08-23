@@ -64,7 +64,7 @@ export default function CustomGiftPage() {
     router.push('/cart');
   };
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleWhatsAppOrder = async () => {

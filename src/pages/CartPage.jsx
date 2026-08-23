@@ -69,7 +69,7 @@ export default function CartPage() {
     }
   };
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;

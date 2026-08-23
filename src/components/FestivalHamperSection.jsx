@@ -93,7 +93,7 @@ export default function FestivalHamperSection() {
     }, 1800);
   };
 
-  const showPrices = settings.showPricesGlobally !== false;
+  const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
 
   const handleWhatsAppOrder = (product, isPreBooking = false, customNoteDetails = null) => {

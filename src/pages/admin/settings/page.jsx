@@ -226,11 +226,11 @@ export default function AdminSettingsPage() {
           </div>
 
           <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
-            settings.showPricesGlobally !== false
+            settings.showPricesGlobally === true
               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300'
               : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300'
           }`}>
-            {settings.showPricesGlobally !== false ? 'Prices Visible on Public' : 'Catalog / Price on Request Mode'}
+            {settings.showPricesGlobally === true ? 'Prices Visible on Public' : 'Catalog / Price on Request Mode'}
           </span>
         </div>
 
@@ -263,21 +263,21 @@ export default function AdminSettingsPage() {
             <button
               type="button"
               onClick={async () => {
-                const nextVal = settings.showPricesGlobally === false;
+                const nextVal = !(settings.showPricesGlobally === true);
                 await updateSettings({ showPricesGlobally: nextVal });
                 setPriceSettingsSaved(true);
                 setTimeout(() => setPriceSettingsSaved(false), 3500);
               }}
               className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                settings.showPricesGlobally !== false ? 'bg-emerald-600' : 'bg-stone-400 dark:bg-stone-600'
+                settings.showPricesGlobally === true ? 'bg-emerald-600' : 'bg-stone-400 dark:bg-stone-600'
               }`}
               role="switch"
-              aria-checked={settings.showPricesGlobally !== false}
+              aria-checked={settings.showPricesGlobally === true}
             >
               <span
                 aria-hidden="true"
                 className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                  settings.showPricesGlobally !== false ? 'translate-x-5' : 'translate-x-0'
+                  settings.showPricesGlobally === true ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
             </button>
