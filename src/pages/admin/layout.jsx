@@ -26,6 +26,7 @@ import { useThemeStore } from '@/src/store/themeStore';
 import { useOrderStore } from '@/src/store/orderStore';
 import { confirmDialog } from '@/src/store/confirmStore';
 import AdminLoadingOverlay from '@/src/components/admin/AdminLoadingOverlay';
+import NotificationToggle from '@/src/components/NotificationToggle';
 
 const navigationGroups = [
   {
@@ -164,6 +165,8 @@ export default function AdminLayout({ children }) {
               </span>
             </Link>
           )}
+
+          <NotificationToggle role="admin" variant="icon-button" />
 
           <button
             onClick={toggleTheme}
@@ -346,6 +349,8 @@ export default function AdminLayout({ children }) {
                 <span>{pendingOrdersCount} Pending {pendingOrdersCount === 1 ? 'Order' : 'Orders'}</span>
               </Link>
             )}
+
+            <NotificationToggle role="admin" />
 
             <Link
               to="/"

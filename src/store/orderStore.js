@@ -138,10 +138,18 @@ export const useOrderStore = create((set, get) => ({
     });
 
     try {
+      let pushEndpoint = orderData.push_endpoint || null;
+      if (!pushEndpoint && typeof window !== 'undefined') {
+        pushEndpoint = localStorage.getItem('letters_push_endpoint') || null;
+      }
+
       const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newOrder),
+        body: JSON.stringify({
+          ...newOrder,
+          push_endpoint: pushEndpoint,
+        }),
       });
       if (res.ok) {
         const data = await res.json();

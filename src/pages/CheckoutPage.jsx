@@ -14,6 +14,7 @@ import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCartStore } from '@/src/store/cartStore';
 import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
+import NotificationToggle from '@/src/components/NotificationToggle';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -233,6 +234,17 @@ export default function CheckoutPage() {
                 <span>Atelier Concierge: </span>
                 <strong className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded text-[10.5px]">Online & Active</strong>
               </div>
+            </div>
+
+            {/* Browser Push Updates Box */}
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 max-w-xl mx-auto mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+              <div>
+                <h4 className="text-xs font-bold text-[var(--text)]">Instant Browser Updates</h4>
+                <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
+                  Receive instant alerts when the atelier confirms and ships your order.
+                </p>
+              </div>
+              <NotificationToggle role="user" userId={createdOrder.phone || createdOrder.id} />
             </div>
 
             {/* Order Summary Details */}

@@ -19,7 +19,8 @@ import { useSettingsStore } from '@/src/store/settingsStore';
 import { useProductStore } from '@/src/store/productStore';
 import { adminLoading } from '@/src/store/adminLoadingStore';
 import { apiUrl } from '@/src/config/api';
-import { faTag, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faToggleOn, faToggleOff, faBell } from '@fortawesome/free-solid-svg-icons';
+import NotificationToggle from '@/src/components/NotificationToggle';
 
 export default function AdminSettingsPage() {
   const { adminUser, initAuth } = useAuthStore();
@@ -544,6 +545,31 @@ export default function AdminSettingsPage() {
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Section 4: Web Push Notification Settings */}
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center">
+              <FontAwesomeIcon icon={faBell} className="text-sm" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-[var(--text)]">Admin Browser Push Notifications</h3>
+              <p className="text-[11px] text-[var(--text-muted)]">
+                Receive instant real-time alerts when customers place new product orders on the store.
+              </p>
+            </div>
+          </div>
+          <NotificationToggle role="admin" />
+        </div>
+
+        <div className="p-3 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1.5">
+          <p className="font-bold text-[var(--text)]">Push Notification Features:</p>
+          <p>• <strong>Instant Order Alerts:</strong> Browser notifications popup immediately upon successful order creation with customer name, order ID, and amount.</p>
+          <p>• <strong>Deep Link Navigation:</strong> Clicking incoming notifications automatically opens and focuses the Admin Orders management screen.</p>
+          <p>• <strong>Standard VAPID Architecture:</strong> Built without external dependencies using native browser Web Push and Service Worker APIs.</p>
+        </div>
       </div>
 
     </div>
