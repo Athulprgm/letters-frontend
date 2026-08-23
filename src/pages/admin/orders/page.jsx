@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSearch,
@@ -19,6 +19,7 @@ import {
   faCheck,
   faCalendarDays,
   faIndianRupeeSign,
+  faRotateRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useOrderStore } from '@/src/store/orderStore';
@@ -28,13 +29,33 @@ import { confirmDialog } from '@/src/store/confirmStore';
 const statusList = ['All', 'Pending', 'Confirmed', 'Preparing', 'Ready', 'Delivered', 'Cancelled'];
 
 export default function AdminOrdersPage() {
-  const { orders, updateOrderStatus, deleteOrder } = useOrderStore();
+  const { orders, fetchOrders, updateOrderStatus, deleteOrder, isLoading } = useOrderStore();
   const { settings } = useSettingsStore();
 
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeOrderModal, setActiveOrderModal] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState('');
+
+  useEffect(() => {
+    fetchOrders();
+    setLastRefreshed(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchOrders();
+    setLastRefreshed(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    setIsRefreshing(false);
+  };
 
   // Status counts
   const statusCounts = useMemo(() => {
@@ -57,8 +78,8 @@ export default function AdminOrdersPage() {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesId = (order.id || '').toLowerCase().includes(q);
-        const matchesName = (order.customerName || '').toLowerCase().includes(q);
-        const matchesPhone = (order.phone || '').toLowerCase().includes(q);
+        const matchesName = (order.customerName || order.customer_name || '').toLowerCase().includes(q);
+        const matchesPhone = (order.phone || order.whatsappNumber || '').toLowerCase().includes(q);
         const matchesAddress = (order.address || '').toLowerCase().includes(q);
         if (!matchesId && !matchesName && !matchesPhone && !matchesAddress) return false;
       }
@@ -87,7 +108,7 @@ export default function AdminOrdersPage() {
 
   const handleContactCustomer = (order) => {
     const rawNumber = (order.whatsappNumber || order.phone || '').replace(/[^\d]/g, '');
-    const message = `Hello ${order.customerName}, this is ${settings.brandName || 'Letters'} regarding your Order #${order.id}. Current Status: ${order.status}.`;
+    const message = `Hello ${order.customerName || 'Customer'}, this is ${settings.brandName || 'Letters'} regarding your Order #${order.id}. Current Status: ${order.status}.`;
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${rawNumber}?text=${encoded}`, '_blank');
   };
@@ -124,6 +145,18 @@ export default function AdminOrdersPage() {
           <p className="text-xs text-[var(--text-muted)] mt-1">
             Review, update statuses, and coordinate WhatsApp fulfillment for incoming customer orders ({orders.length} total).
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleManualRefresh}
+            disabled={isRefreshing || isLoading}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-xs font-semibold text-[var(--text)] transition-colors cursor-pointer disabled:opacity-60"
+            title="Refresh Orders"
+          >
+            <FontAwesomeIcon icon={faRotateRight} className={`text-xs text-[var(--text-muted)] ${isRefreshing || isLoading ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing || isLoading ? 'Refreshing...' : lastRefreshed ? `Sync: ${lastRefreshed}` : 'Refresh'}</span>
+          </button>
         </div>
       </div>
 

@@ -20,12 +20,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCartStore } from '@/src/store/cartStore';
+import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { confirmDialog } from '@/src/store/confirmStore';
 
 export default function CartPage() {
   const router = useRouter();
   const { items, updateQuantity, removeFromCart, clearCart, getSubtotal, addToCart } = useCartStore();
+  const { createOrder } = useOrderStore();
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
   const [couponCode, setCouponCode] = useState('');
@@ -74,21 +76,40 @@ export default function CartPage() {
   const estimatedShipping = 0;
   const finalTotal = Math.max(0, subtotal - discountAmount + (subtotal > 0 ? estimatedShipping : 0));
 
-  const handleWhatsAppQuickCart = () => {
+  const handleWhatsAppQuickCart = async () => {
     if (items.length === 0) return;
 
     let itemsText = '';
+    let customSummary = '';
     items.forEach((item, index) => {
       const priceStr = showPrices ? ` — ₹${item.price * item.quantity}` : '';
       itemsText += `${index + 1}. ${item.name} × ${item.quantity}${priceStr}\n`;
       if (item.customization?.recipientName || item.customization?.personalizedMessage) {
+        const line = `• ${item.name}: For ${item.customization.recipientName || 'Recipient'}${item.customization.personalizedMessage ? ` (Msg: "${item.customization.personalizedMessage}")` : ''}\n`;
         itemsText += `   ↳ For: ${item.customization.recipientName || 'N/A'}${item.customization.personalizedMessage ? ` | Msg: "${item.customization.personalizedMessage}"` : ''}\n`;
+        customSummary += line;
       }
+    });
+
+    const newOrder = await createOrder({
+      customerName: 'WhatsApp Cart Patron',
+      phone: '',
+      whatsappNumber: '',
+      address: 'Express WhatsApp Checkout',
+      pincode: '',
+      deliveryDate: 'Standard Delivery',
+      occasion: 'Special Occasion',
+      items: items,
+      subtotal: subtotal,
+      total: finalTotal,
+      customization: customSummary.trim() || 'Standard Atelier Gift Packaging',
+      specialInstructions: appliedCoupon ? `Applied Coupon: ${appliedCoupon.code} (-₹${discountAmount})` : 'Cart WhatsApp Order',
     });
 
     const totalText = showPrices ? `*Subtotal:* ₹${subtotal}\n${appliedCoupon ? `*Discount (${appliedCoupon.code}):* -₹${discountAmount}\n` : ''}*Estimated Total:* ₹${finalTotal}` : `*Pricing:* ${inquiryLabel} / Custom Quote`;
 
     const message = `*${settings.orderMessagePrefix || 'Bag Inquiry — LETTERS'}*
+Order Reference: #${newOrder.id}
 ✦ *SHOPPING CART INQUIRY* ✦
 
 *Cart Items:*

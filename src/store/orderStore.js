@@ -5,6 +5,40 @@ import { apiUrl } from '@/src/config/api';
 
 export const initialOrders = defaultOrders;
 
+export const normalizeOrderItem = (raw) => {
+  if (!raw) return null;
+  
+  let parsedItems = [];
+  if (Array.isArray(raw.items)) {
+    parsedItems = raw.items;
+  } else if (typeof raw.items === 'string') {
+    try {
+      parsedItems = JSON.parse(raw.items) || [];
+    } catch {
+      parsedItems = [];
+    }
+  }
+
+  return {
+    id: String(raw.id || `LET-${Date.now()}`),
+    customerName: raw.customerName || raw.customer_name || raw.name || 'Valued Patron',
+    phone: String(raw.phone || ''),
+    whatsappNumber: String(raw.whatsappNumber || raw.whatsapp_number || raw.phone || ''),
+    address: String(raw.address || ''),
+    pincode: String(raw.pincode || ''),
+    deliveryDate: String(raw.deliveryDate || raw.delivery_date || 'Standard Delivery'),
+    occasion: String(raw.occasion || 'Celebration'),
+    items: Array.isArray(parsedItems) ? parsedItems : [],
+    subtotal: Number(raw.subtotal) || 0,
+    total: Number(raw.total) || Number(raw.subtotal) || 0,
+    customization: String(raw.customization || ''),
+    specialInstructions: String(raw.specialInstructions || raw.special_instructions || raw.notes || ''),
+    status: String(raw.status || 'Pending'),
+    createdAt: raw.createdAt || raw.created_at || new Date().toISOString(),
+    updatedAt: raw.updatedAt || raw.updated_at || new Date().toISOString(),
+  };
+};
+
 const safeSaveOrders = (orders) => {
   if (typeof window === 'undefined') return;
   try {
@@ -28,44 +62,56 @@ const safeSaveOrders = (orders) => {
   }
 };
 
+const loadLocalOrders = () => {
+  if (typeof window === 'undefined') return defaultOrders;
+  try {
+    const saved = localStorage.getItem('letters_orders');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.map(normalizeOrderItem).filter(Boolean);
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to parse cached orders', e);
+  }
+  return defaultOrders;
+};
+
 export const useOrderStore = create((set, get) => ({
-  orders: defaultOrders,
+  orders: loadLocalOrders(),
   isLoading: false,
 
   fetchOrders: async () => {
     set({ isLoading: true });
     try {
       const res = await fetch(apiUrl('/api/orders'));
-      const data = await res.json();
-      if (data.success && Array.isArray(data.orders)) {
-        set({ orders: data.orders, isLoading: false });
-        safeSaveOrders(data.orders);
-        return;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.orders)) {
+          const normalized = data.orders.map(normalizeOrderItem).filter(Boolean);
+          set({ orders: normalized, isLoading: false });
+          safeSaveOrders(normalized);
+          return normalized;
+        }
       }
     } catch (e) {
       console.warn('API orders fetch failed, falling back to local orders', e);
     }
 
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('letters_orders');
-        if (saved) {
-          set({ orders: JSON.parse(saved), isLoading: false });
-          return;
-        }
-      } catch (e) {}
-    }
-
-    set({ orders: defaultOrders, isLoading: false });
+    const cached = loadLocalOrders();
+    set({ orders: cached, isLoading: false });
+    return cached;
   },
 
   createOrder: async (orderData) => {
     const state = get();
     const count = state.orders.length + 1;
     const year = new Date().getFullYear();
-    const orderId = `LET-${year}-${String(count).padStart(4, '0')}`;
+    const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
+    const orderId = orderData.id || `LET-${year}-${String(count).padStart(3, '0')}${uniqueSuffix}`;
 
-    const newOrder = {
+    const newOrder = normalizeOrderItem({
       id: orderId,
       customerName: orderData.customerName || orderData.name,
       phone: orderData.phone || '',
@@ -79,13 +125,14 @@ export const useOrderStore = create((set, get) => ({
       total: Number(orderData.total) || Number(orderData.subtotal) || 0,
       customization: orderData.customization || '',
       specialInstructions: orderData.specialInstructions || orderData.notes || '',
-      status: 'Pending',
+      status: orderData.status || 'Pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    });
 
+    // Optimistic UI update immediately
     set((s) => {
-      const updated = [newOrder, ...s.orders];
+      const updated = [newOrder, ...s.orders.filter((o) => o.id !== newOrder.id)];
       safeSaveOrders(updated);
       return { orders: updated };
     });
@@ -96,12 +143,20 @@ export const useOrderStore = create((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newOrder),
       });
-      const data = await res.json();
-      if (data.success && data.order) {
-        return data.order;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.order) {
+          const serverOrder = normalizeOrderItem(data.order);
+          set((s) => {
+            const updated = [serverOrder, ...s.orders.filter((o) => o.id !== serverOrder.id && o.id !== newOrder.id)];
+            safeSaveOrders(updated);
+            return { orders: updated };
+          });
+          return serverOrder;
+        }
       }
     } catch (e) {
-      console.error('Failed to sync order with API', e);
+      console.error('Failed to sync order with API, retained in local storage', e);
     }
 
     return newOrder;
@@ -189,3 +244,4 @@ Please confirm details and share dispatch timeline.`;
     return message;
   },
 }));
+

@@ -25,6 +25,7 @@ import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useProductStore } from '@/src/store/productStore';
 import { useCartStore } from '@/src/store/cartStore';
+import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import ProductCard from '@/src/components/ProductCard';
 import { ProductDetailSkeleton } from '@/src/components/SkeletonLoader';
@@ -37,6 +38,7 @@ export default function ProductDetailPage(props) {
   const router = useRouter();
   const { products, getProductBySlug, isLoading } = useProductStore();
   const addToCart = useCartStore((state) => state.addToCart);
+  const { createOrder } = useOrderStore();
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
   const product = getProductBySlug(slug) || products.find((p) => p.slug === slug || p.id === slug);
@@ -113,7 +115,7 @@ export default function ProductDetailPage(props) {
     router.push('/checkout');
   };
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     let customDetails = '';
     if (recipientName || personalizedMessage || specialInstructions) {
@@ -123,7 +125,35 @@ export default function ProductDetailPage(props) {
     const priceDisplay = isPriceShown ? `₹${product.price}` : inquiryLabel;
     const totalDisplay = isPriceShown ? `₹${Number(product.price) * quantity}` : 'Quote on Request / Direct Confirmation';
 
+    const newOrder = await createOrder({
+      customerName: recipientName ? `Order for ${recipientName}` : 'Product Inquiry Patron',
+      phone: '',
+      whatsappNumber: '',
+      address: pincode ? `Delivery to PIN: ${pincode}` : 'Direct Product WhatsApp Order',
+      pincode: pincode || '',
+      deliveryDate: 'Standard Delivery',
+      occasion: 'Special Occasion',
+      items: [{
+        id: product.id,
+        name: product.name,
+        price: Number(product.price) || 0,
+        quantity: quantity,
+        image: images[0] || product.image,
+        category: product.category,
+        customization: {
+          recipientName,
+          personalizedMessage,
+          specialInstructions,
+        },
+      }],
+      subtotal: (Number(product.price) || 0) * quantity,
+      total: (Number(product.price) || 0) * quantity,
+      customization: personalizedMessage ? `Card Message: "${personalizedMessage}"` : (recipientName ? `Recipient: ${recipientName}` : ''),
+      specialInstructions: specialInstructions || 'WhatsApp Product Order',
+    });
+
     const message = `*${settings.orderMessagePrefix || 'Order Inquiry — LETTERS'}*
+Order Reference: #${newOrder.id}
 
 Item: ${product.name}
 Category: ${product.category}

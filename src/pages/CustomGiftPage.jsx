@@ -10,6 +10,7 @@ import {
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/src/store/cartStore';
+import { useOrderStore } from '@/src/store/orderStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 
 const hamperBases = [];
@@ -26,6 +27,7 @@ function StepNumber({ n }) {
 export default function CustomGiftPage() {
   const router = useRouter();
   const addToCart = useCartStore((state) => state.addToCart);
+  const { createOrder } = useOrderStore();
   const { settings, getWhatsAppUrl } = useSettingsStore();
 
   const [selectedBase, setSelectedBase] = useState(null);
@@ -62,20 +64,56 @@ export default function CustomGiftPage() {
     router.push('/cart');
   };
 
-  const handleWhatsAppOrder = () => {
+  const showPrices = settings.showPricesGlobally !== false;
+  const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
+
+  const handleWhatsAppOrder = async () => {
     const itemsList = selectedItems.map((i, idx) => {
       const pText = showPrices ? ` (₹${i.price})` : '';
       return `  ${idx + 1}. ${i.name}${pText}`;
     }).join('\n');
 
-    const basePriceText = showPrices ? ` (₹${selectedBase.price})` : '';
+    const basePriceText = showPrices ? ` (₹${selectedBase?.price || 0})` : '';
     const totalText = showPrices ? `₹${totalAmount}` : 'Quote on Request / Direct Confirmation';
 
+    const newOrder = await createOrder({
+      customerName: recipientName ? `Custom Hamper for ${recipientName}` : 'Custom Gift Patron',
+      phone: '',
+      whatsappNumber: '',
+      address: 'Bespoke Studio Order',
+      pincode: '',
+      deliveryDate: 'Standard Delivery',
+      occasion: occasion,
+      items: [
+        ...(selectedBase ? [{
+          id: selectedBase.id,
+          name: `Base: ${selectedBase.name}`,
+          price: selectedBase.price || 0,
+          quantity: 1,
+          image: selectedBase.image,
+          category: 'Packaging',
+        }] : []),
+        ...selectedItems.map((i) => ({
+          id: i.id,
+          name: i.name,
+          price: i.price || 0,
+          quantity: 1,
+          image: i.image,
+          category: i.category,
+        })),
+      ],
+      subtotal: totalAmount,
+      total: totalAmount,
+      customization: `Base: ${selectedBase?.name || 'Standard'}\nCard: "${messageCard || 'None'}"`,
+      specialInstructions: specialNotes || 'Custom Hamper WhatsApp Order',
+    });
+
     const message = `*${settings.orderMessagePrefix || 'Custom Hamper Inquiry — LETTERS'}*
+Order Reference: #${newOrder.id}
 ✦ *CUSTOM GIFT HAMPER INQUIRY* ✦
 
 *Base Packaging:*
-• ${selectedBase.name}${basePriceText}
+• ${selectedBase?.name || 'Custom'}${basePriceText}
 
 *Selected Items:*
 ${itemsList || '  None'}
