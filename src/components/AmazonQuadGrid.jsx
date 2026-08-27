@@ -48,9 +48,10 @@ export default function AmazonQuadGrid() {
                   return (
                     <Link
                       key={p.id}
-                      href="/deals"
+                      href="/shop"
                       className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
                     >
+
                       <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
                         <img
                           src={p.images?.[0] || p.image}

@@ -33,10 +33,11 @@ export const defaultSaleBanner = {
   priceNote: '',
   image: '',
   endDate: '',
-  ctaText: 'Explore Deals',
-  ctaLink: '/deals',
+  ctaText: 'Shop Collection',
+  ctaLink: '/shop',
   selectedProductIds: [],
 };
+
 
 export const defaultFestivals = [];
 

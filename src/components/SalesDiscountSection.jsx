@@ -80,9 +80,10 @@ export default function SalesDiscountSection() {
       priceNote: showPrices
         ? (saleBanner?.priceNote || 'Starting at ₹699 • Handwritten note included')
         : 'Handcrafted luxury presentation • Handwritten keepsake card included',
-      ctaText: saleBanner?.ctaText || 'Explore Deals',
-      ctaLink: saleBanner?.ctaLink || '/deals',
+      ctaText: saleBanner?.ctaText || 'Shop Collection',
+      ctaLink: (saleBanner?.ctaLink === '/deals' ? '/shop' : saleBanner?.ctaLink) || '/shop',
       image: saleBanner?.image || 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=85',
+
       highlights: ['Belgian Chocolates', 'Preserved Florals', 'Custom Keepsakes'],
     };
 

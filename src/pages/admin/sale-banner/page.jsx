@@ -547,9 +547,9 @@ export default function AdminSaleBannerPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.ctaLink || '/deals'}
+                  value={formData.ctaLink || '/shop'}
                   onChange={(e) => handleChange('ctaLink', e.target.value)}
-                  placeholder="/deals"
+                  placeholder="/shop"
                   className="w-full px-3.5 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--olive)]"
                 />
               </div>
@@ -569,9 +569,10 @@ export default function AdminSaleBannerPage() {
                   <span>Select Products Included in Sale</span>
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                  Only the items checked below will appear in the Mega Sale and Deals page.
+                  Only the items checked below will appear in the Mega Sale storefront section.
                 </p>
               </div>
+
 
               {/* Selection Summary and Shortcuts */}
               <div className="flex items-center gap-2">

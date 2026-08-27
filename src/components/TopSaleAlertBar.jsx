@@ -87,12 +87,13 @@ export default function TopSaleAlertBar() {
           </div>
 
           <Link
-            href={saleBanner.ctaLink || '/deals'}
+            href={(saleBanner.ctaLink === '/deals' ? '/shop' : saleBanner.ctaLink) || '/shop'}
             className="px-4 py-1.5 rounded-full bg-[var(--chandanam)] text-[#1C2519] hover:bg-[#F3B868] text-xs font-bold tracking-tight transition-all duration-200 flex items-center gap-1.5 shadow-xs hover:scale-103 cursor-pointer"
           >
-            <span>{saleBanner.ctaText || 'Explore Deals'}</span>
+            <span>{saleBanner.ctaText || 'Shop Collection'}</span>
             <FontAwesomeIcon icon={faArrowRight} className="text-[9px]" />
           </Link>
+
         </div>
 
       </div>
