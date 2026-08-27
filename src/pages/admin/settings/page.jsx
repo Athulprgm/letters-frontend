@@ -11,18 +11,19 @@ import {
   faCircleExclamation,
   faEye,
   faEyeSlash,
-  faUserShield,
   faCheck,
+  faTag,
+  faToggleOn,
+  faToggleOff,
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '@/src/store/authStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
 import { useProductStore } from '@/src/store/productStore';
 import { adminLoading } from '@/src/store/adminLoadingStore';
 import { apiUrl } from '@/src/config/api';
-import { faTag, faToggleOn, faToggleOff, faBell } from '@fortawesome/free-solid-svg-icons';
-import NotificationToggle from '@/src/components/NotificationToggle';
 
 export default function AdminSettingsPage() {
+
   const { adminUser, initAuth } = useAuthStore();
   const { settings, updateSettings } = useSettingsStore();
   const { setAllProductsShowPrice } = useProductStore();
@@ -186,32 +187,8 @@ export default function AdminSettingsPage() {
         </p>
       </div>
 
-      {/* Current Admin Session Info Pill */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center text-sm flex-shrink-0">
-            <FontAwesomeIcon icon={faUserShield} />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-xs text-[var(--text)]">Admin Portal Account</h2>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.2 rounded-full">
-                Active
-              </span>
-            </div>
-            <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
-              Username: <span className="font-semibold text-[var(--text)]">admin</span> • Email: <span className="font-semibold text-[var(--text)]">{adminUser?.email || emailForm.currentEmail || 'admin@letters.com'}</span>
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] font-medium">
-          <FontAwesomeIcon icon={faShieldHalved} className="text-[var(--olive)] text-xs" />
-          <span>Protected Session</span>
-        </div>
-      </div>
-
       {/* Storefront Pricing & Catalog Visibility Control */}
+
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
         <div className="flex items-center justify-between border-b border-[var(--border)] pb-3.5 flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
@@ -547,86 +524,9 @@ export default function AdminSettingsPage() {
         </form>
       </div>
 
-      {/* Section 4: Web Push Notification Settings */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[var(--olive)]/15 text-[var(--olive)] flex items-center justify-center flex-shrink-0">
-              <FontAwesomeIcon icon={faBell} className="text-base" />
-            </div>
-            <div>
-              <h3 className="font-bold text-sm text-[var(--text)]">Store Order Push & Audio Alerts</h3>
-              <p className="text-[11px] text-[var(--text-muted)]">
-                Receive instant browser notifications and audio chimes whenever customers place new orders.
-              </p>
-            </div>
-          </div>
-          <NotificationToggle role="admin" showTestButton={true} />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-              Push Delivery
-            </span>
-            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Active & Ready</span>
-            </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Standard VAPID Native Web Push</p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-              Audio Chimes
-            </span>
-            <p className="text-xs font-bold text-[var(--text)] flex items-center gap-1.5">
-              <span>🔔 Synthesized Bell Chime</span>
-            </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Plays on live incoming orders</p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-              Target Screen
-            </span>
-            <p className="text-xs font-bold text-[var(--text)] flex items-center gap-1.5">
-              <span>Orders Management</span>
-            </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Clicking alert navigates to /admin/orders</p>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-2">
-          <p className="font-bold text-[var(--text)] flex items-center gap-2">
-            <FontAwesomeIcon icon={faBell} className="text-amber-600" />
-            <span>How to Receive Alerts When Browser / App is Closed (WhatsApp-Style):</span>
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-[11px] text-[var(--text-muted)]">
-            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
-              <p className="font-bold text-[var(--text)]">📱 Android Phone (Chrome/Edge)</p>
-              <p>1. Tap the browser menu (⋮) and tap <strong>&quot;Install App&quot;</strong> or <strong>&quot;Add to Home Screen&quot;</strong>.</p>
-              <p>2. In Phone Settings → Apps → LETTERS → Battery: set to <strong>&quot;Unrestricted&quot;</strong> so alerts ring instantly when screen is locked.</p>
-            </div>
-
-            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
-              <p className="font-bold text-[var(--text)]">🍎 iPhone / iPad (iOS 16.4+)</p>
-              <p>1. Open this website in Safari.</p>
-              <p>2. Tap the <strong>Share button</strong> (square with arrow) → <strong>&quot;Add to Home Screen&quot;</strong>.</p>
-              <p>3. Open the app from your Home Screen and enable push notifications for full lockscreen banner alerts.</p>
-            </div>
-
-            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
-              <p className="font-bold text-[var(--text)]">💻 Windows / Mac Desktop</p>
-              <p>1. Click <strong>&quot;Enable Notifications&quot;</strong> and allow browser prompt.</p>
-              <p>2. Ensure Windows Focus Assist or macOS Do Not Disturb is off for sound chimes and lockscreen banners.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 }
+
 
 
