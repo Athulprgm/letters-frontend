@@ -205,48 +205,51 @@ export default function AdminDashboardPage() {
     <div className="space-y-6 max-w-7xl pb-12 font-sans">
       
       {/* ========================================================================= */}
-      {/* 1. MINIMAL EXECUTIVE HEADER (NO DOTS) */}
+      {/* 1. MINIMAL EXECUTIVE HEADER */}
       {/* ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--border)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text)]">
               Store Executive Dashboard
             </h1>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
               Live Operations
             </span>
           </div>
-          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+          <p className="text-[11px] sm:text-xs text-[var(--text-muted)] mt-0.5">
             Fulfillment velocity, sales revenue metrics, and inventory overview for {settings.brandName || 'Letters'}.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Action Controls in mobile-friendly grid */}
+        <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2">
           {/* Quick Refresh */}
           <button
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-xs font-semibold text-[var(--text)] transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-xs font-semibold text-[var(--text)] transition-colors cursor-pointer"
             title="Refresh Metrics"
           >
-            <FontAwesomeIcon icon={faRotateRight} className="text-[10px] text-[var(--text-muted)]" />
-            <span className="hidden sm:inline">Sync: {lastRefreshed}</span>
+            <FontAwesomeIcon icon={faRotateRight} className="text-xs text-[var(--text-muted)]" />
+            <span className="text-[11px] sm:text-xs">Refresh</span>
           </button>
 
-          {/* Quick Actions */}
+          {/* Quick Add Product */}
           <Link
             to="/admin/products"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--olive)] text-white text-xs font-bold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-lg bg-[var(--olive)] text-white text-xs font-bold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer text-center truncate"
           >
             <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
-            <span>Add Product</span>
+            <span className="text-[11px] sm:text-xs">Add Product</span>
           </Link>
+
+          {/* Orders Link */}
           <Link
             to="/admin/orders"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs font-bold text-[var(--text)] hover:bg-[var(--bg)] shadow-xs transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs font-bold text-[var(--text)] hover:bg-[var(--bg)] shadow-xs transition-colors text-center truncate"
           >
             <FontAwesomeIcon icon={faBagShopping} className="text-[11px] text-[var(--olive)]" />
-            <span>Orders ({metrics.total})</span>
+            <span className="text-[11px] sm:text-xs">Orders ({metrics.total})</span>
           </Link>
         </div>
       </div>
@@ -281,102 +284,102 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. MINIMAL LUXURY KPI STATS GRID */}
+      {/* 3. MINIMAL LUXURY KPI STATS GRID (2x2 on Mobile, 4-col on Desktop) */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         
         {/* Gross Revenue */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
-          <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider">Gross Sales</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center text-xs">
+        <div className="p-3.5 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--text-muted)] mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider truncate">Gross Sales</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center text-xs flex-shrink-0">
               <FontAwesomeIcon icon={faIndianRupeeSign} />
             </div>
           </div>
-          <div className="space-y-1">
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">
+          <div className="space-y-0.5 sm:space-y-1">
+            <h3 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[var(--text)] truncate">
               ₹{metrics.revenue.toLocaleString()}
             </h3>
-            <div className="flex items-center justify-between text-[11px] pt-1">
-              <span className="text-[var(--text-muted)]">Avg. Order Value:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] sm:text-[11px] pt-1 border-t border-[var(--border)]/40 gap-0.5">
+              <span className="text-[var(--text-muted)]">AOV:</span>
               <span className="font-bold text-[var(--text)]">₹{metrics.aov.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         {/* Order Fulfillment Velocity */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
-          <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider">Total Orders</span>
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs">
+        <div className="p-3.5 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--text-muted)] mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider truncate">Total Orders</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs flex-shrink-0">
               <FontAwesomeIcon icon={faBagShopping} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">
+          <div className="space-y-0.5 sm:space-y-1">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[var(--text)]">
                 {metrics.total}
               </h3>
-              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                {metrics.fulfillmentRate}% Fulfilled
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                {metrics.fulfillmentRate}% Done
               </span>
             </div>
-            <div className="flex items-center justify-between text-[11px] pt-1">
-              <span className="text-[var(--text-muted)]">Active in Pipeline:</span>
-              <span className="font-bold text-sky-600 dark:text-sky-400">{metrics.inProgress} orders</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] sm:text-[11px] pt-1 border-t border-[var(--border)]/40 gap-0.5">
+              <span className="text-[var(--text-muted)]">Pipeline:</span>
+              <span className="font-bold text-sky-600 dark:text-sky-400">{metrics.inProgress} active</span>
             </div>
           </div>
         </div>
 
         {/* Pending Action Required */}
-        <div className={`p-4 sm:p-5 rounded-2xl bg-[var(--card)] border shadow-xs relative overflow-hidden transition-colors ${
+        <div className={`p-3.5 sm:p-5 rounded-2xl bg-[var(--card)] border shadow-xs relative overflow-hidden transition-colors flex flex-col justify-between ${
           metrics.pending > 0 ? 'border-amber-400 dark:border-amber-600' : 'border-[var(--border)]'
         }`}>
-          <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider">Requires Action</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+          <div className="flex items-center justify-between text-[var(--text-muted)] mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider truncate">Requires Action</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs flex-shrink-0">
               <FontAwesomeIcon icon={faClock} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-amber-600 dark:text-amber-400">
+          <div className="space-y-0.5 sm:space-y-1">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-amber-600 dark:text-amber-400">
                 {metrics.pending}
               </h3>
-              <span className="text-[11px] font-semibold text-[var(--text-muted)]">
-                Pending Orders
+              <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--text-muted)]">
+                Pending
               </span>
             </div>
-            <div className="flex items-center justify-between text-[11px] pt-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] sm:text-[11px] pt-1 border-t border-[var(--border)]/40 gap-0.5">
               <span className="text-[var(--text-muted)]">Status:</span>
               <span className="font-bold text-amber-600">
-                {metrics.pending > 0 ? 'Needs Confirmation' : 'All Clear'}
+                {metrics.pending > 0 ? 'Needs Action' : 'All Clear'}
               </span>
             </div>
           </div>
         </div>
 
         {/* Catalog & Inventory Balance */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
-          <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider">Catalog Inventory</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+        <div className="p-3.5 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--text-muted)] mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider truncate">Catalog</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs flex-shrink-0">
               <FontAwesomeIcon icon={faBoxesStacked} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">
+          <div className="space-y-0.5 sm:space-y-1">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[var(--text)]">
                 {products.length}
               </h3>
-              <span className="text-[11px] text-[var(--text-muted)]">
-                across {categories.length} Categories
+              <span className="text-[10px] sm:text-[11px] text-[var(--text-muted)]">
+                in {categories.length} Cats
               </span>
             </div>
-            <div className="flex items-center justify-between text-[11px] pt-1">
-              <span className="text-[var(--text-muted)]">Stock Health:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] sm:text-[11px] pt-1 border-t border-[var(--border)]/40 gap-0.5">
+              <span className="text-[var(--text-muted)]">Health:</span>
               <span className={`font-bold ${metrics.lowStock > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>
-                {metrics.stockHealth}% In Stock
+                {metrics.stockHealth}% Stock
               </span>
             </div>
           </div>
