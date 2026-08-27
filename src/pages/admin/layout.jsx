@@ -66,9 +66,9 @@ export default function AdminLayout({ children }) {
   const pathname = location.pathname;
   const { isAuthenticated, isInitialized, logout, adminUser, initAuth } = useAuthStore();
   const { settings, fetchSettings } = useSettingsStore();
-  const { theme, toggleTheme } = useThemeStore();
   const { orders, fetchOrders } = useOrderStore();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
 
   const isLoginPage = pathname === '/admin/login';
 
