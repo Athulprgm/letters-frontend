@@ -157,27 +157,33 @@ export default function AdminLayout({ children }) {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Store Status Online on Tablets */}
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--bg)] border border-[var(--border)] text-[11px] text-[var(--text-muted)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span className="font-semibold text-[var(--text)]">Online</span>
+          </div>
+
           {pendingOrdersCount > 0 && (
             <Link
               to="/admin/orders"
-              className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center relative"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-300 dark:border-amber-800"
               title={`${pendingOrdersCount} Pending Orders`}
             >
               <FontAwesomeIcon icon={faBell} className="text-xs" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
-                {pendingOrdersCount}
-              </span>
+              <span className="hidden sm:inline">{pendingOrdersCount} Pending</span>
+              <span className="sm:hidden font-bold">{pendingOrdersCount}</span>
             </Link>
           )}
 
-          <NotificationToggle role="admin" variant="icon-button" />
+          {/* Main Notification Button on Tablet & Mobile */}
+          <NotificationToggle role="admin" />
 
           <button
             onClick={toggleTheme}
             className="w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] flex items-center justify-center cursor-pointer"
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? <FontAwesomeIcon icon={faSun} className="text-xs" /> : <FontAwesomeIcon icon={faMoon} className="text-xs" />}
+            {theme === 'dark' ? <FontAwesomeIcon icon={faSun} className="text-xs text-amber-400" /> : <FontAwesomeIcon icon={faMoon} className="text-xs" />}
           </button>
           <Link
             to="/"
@@ -186,10 +192,11 @@ export default function AdminLayout({ children }) {
             className="w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] flex items-center justify-center"
             title="View Storefront"
           >
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-xs" />
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-xs text-[var(--olive)]" />
           </Link>
         </div>
       </header>
+
 
       {/* Classic E-Commerce Sidebar */}
       <aside
