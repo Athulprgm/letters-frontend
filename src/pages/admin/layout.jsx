@@ -12,8 +12,6 @@ import {
   faBars,
   faXmark,
   faGift,
-  faSun,
-  faMoon,
   faPercent,
   faCircleCheck,
   faStore,
@@ -22,8 +20,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '@/src/store/authStore';
 import { useSettingsStore } from '@/src/store/settingsStore';
-import { useThemeStore } from '@/src/store/themeStore';
 import { useOrderStore } from '@/src/store/orderStore';
+
 import { confirmDialog } from '@/src/store/confirmStore';
 import AdminLoadingOverlay from '@/src/components/admin/AdminLoadingOverlay';
 import NotificationToggle from '@/src/components/NotificationToggle';
@@ -178,13 +176,6 @@ export default function AdminLayout({ children }) {
           {/* Main Notification Button on Tablet & Mobile */}
           <NotificationToggle role="admin" />
 
-          <button
-            onClick={toggleTheme}
-            className="w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] flex items-center justify-center cursor-pointer"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? <FontAwesomeIcon icon={faSun} className="text-xs text-amber-400" /> : <FontAwesomeIcon icon={faMoon} className="text-xs" />}
-          </button>
           <Link
             to="/"
             target="_blank"
@@ -196,6 +187,7 @@ export default function AdminLayout({ children }) {
           </Link>
         </div>
       </header>
+
 
 
       {/* Classic E-Commerce Sidebar */}
@@ -301,25 +293,17 @@ export default function AdminLayout({ children }) {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-1.5">
+            <div>
               <Link
                 to="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[11px] font-medium text-[var(--text)] hover:bg-[var(--bg)] transition-colors"
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[11px] font-medium text-[var(--text)] hover:bg-[var(--bg)] transition-colors"
                 title="View Online Storefront"
               >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px] text-[var(--text-muted)]" />
-                <span>Storefront</span>
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px] text-[var(--olive)]" />
+                <span>View Online Storefront</span>
               </Link>
-
-              <button
-                onClick={toggleTheme}
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[11px] font-medium text-[var(--text)] hover:bg-[var(--bg)] transition-colors cursor-pointer"
-              >
-                {theme === 'dark' ? <FontAwesomeIcon icon={faSun} className="text-[10px] text-amber-400" /> : <FontAwesomeIcon icon={faMoon} className="text-[10px] text-[var(--text-muted)]" />}
-                <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-              </button>
             </div>
           </div>
 
@@ -374,16 +358,9 @@ export default function AdminLayout({ children }) {
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-xs text-[var(--olive)]" />
               <span>Live Store</span>
             </Link>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] text-xs cursor-pointer transition-colors"
-              title="Toggle Light / Dark Mode"
-            >
-              {theme === 'dark' ? <FontAwesomeIcon icon={faSun} className="text-amber-400" /> : <FontAwesomeIcon icon={faMoon} className="text-[var(--text-muted)]" />}
-            </button>
           </div>
         </header>
+
 
         {/* Page Content View */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
