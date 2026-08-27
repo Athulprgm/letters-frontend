@@ -23,9 +23,8 @@ export default function SEOHead({ title, description, keywords, image, canonical
         pageTitle = 'LETTERS | Luxury Hampers & Bespoke Gifting Studio';
       } else if (path === '/shop') {
         pageTitle = 'Shop All Gifts & Curated Hampers | LETTERS';
-      } else if (path === '/deals') {
-        pageTitle = 'Exclusive Gifting Deals & Limited-Time Offers | LETTERS';
       } else if (path === '/custom-gift') {
+
         pageTitle = 'Create a Custom Gift Hamper | LETTERS Bespoke Studio';
       } else if (path === '/about') {
         pageTitle = 'Our Story & Craftsmanship | LETTERS Gifting Studio';

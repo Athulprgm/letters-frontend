@@ -14,18 +14,19 @@ export default function CategoryCircleBar() {
     <section className="bg-[var(--bg-subtle)] border-b border-[var(--border)] py-3 px-4 sm:px-6 lg:px-12 select-none">
       <div className="max-w-7xl mx-auto flex items-center gap-4 sm:gap-7 overflow-x-auto scrollbar-none pb-1">
         
-        {/* Quick Deal Icon Circle */}
+        {/* Shop All Gifts Circle */}
         <Link
-          href="/deals"
+          href="/shop"
           className="flex flex-col items-center gap-1.5 flex-shrink-0 group cursor-pointer"
         >
           <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-full bg-[var(--maroon)] text-white flex items-center justify-center border-2 border-white shadow-xs group-hover:scale-108 transition-transform">
-            <FontAwesomeIcon icon={faBolt} className="text-lg animate-pulse" />
+            <FontAwesomeIcon icon={faGift} className="text-base" />
           </div>
           <span className="text-[10.5px] sm:text-[11px] font-bold text-[var(--maroon)] tracking-tight group-hover:underline text-center">
-            Mega Deals
+            All Gifts
           </span>
         </Link>
+
 
         {/* Custom Hamper Builder Circle */}
         <Link
