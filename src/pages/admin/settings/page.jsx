@@ -549,29 +549,63 @@ export default function AdminSettingsPage() {
 
       {/* Section 4: Web Push Notification Settings */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center">
-              <FontAwesomeIcon icon={faBell} className="text-sm" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[var(--olive)]/15 text-[var(--olive)] flex items-center justify-center flex-shrink-0">
+              <FontAwesomeIcon icon={faBell} className="text-base" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-[var(--text)]">Admin Browser Push Notifications</h3>
+              <h3 className="font-bold text-sm text-[var(--text)]">Store Order Push & Audio Alerts</h3>
               <p className="text-[11px] text-[var(--text-muted)]">
-                Receive instant real-time alerts when customers place new product orders on the store.
+                Receive instant browser notifications and audio chimes whenever customers place new orders.
               </p>
             </div>
           </div>
-          <NotificationToggle role="admin" />
+          <NotificationToggle role="admin" showTestButton={true} />
         </div>
 
-        <div className="p-3 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1.5">
-          <p className="font-bold text-[var(--text)]">Push Notification Features:</p>
-          <p>• <strong>Instant Order Alerts:</strong> Browser notifications popup immediately upon successful order creation with customer name, order ID, and amount.</p>
-          <p>• <strong>Deep Link Navigation:</strong> Clicking incoming notifications automatically opens and focuses the Admin Orders management screen.</p>
-          <p>• <strong>Standard VAPID Architecture:</strong> Built without external dependencies using native browser Web Push and Service Worker APIs.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+              Push Delivery
+            </span>
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Active & Ready</span>
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)]">Standard VAPID Native Web Push</p>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+              Audio Chimes
+            </span>
+            <p className="text-xs font-bold text-[var(--text)] flex items-center gap-1.5">
+              <span>🔔 Synthesized Bell Chime</span>
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)]">Plays on live incoming orders</p>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+              Target Screen
+            </span>
+            <p className="text-xs font-bold text-[var(--text)] flex items-center gap-1.5">
+              <span>Orders Management</span>
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)]">Clicking alert navigates to /admin/orders</p>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1.5">
+          <p className="font-bold text-[var(--text)]">Push Notification Instructions:</p>
+          <p>• Click <strong>Enable Notifications</strong> and allow the browser prompt when requested.</p>
+          <p>• Click <strong>Test Alert</strong> above to verify your device receives the alert chime and push popup.</p>
+          <p>• Works on mobile and desktop browsers even when LETTERS is in the background.</p>
         </div>
       </div>
 
     </div>
   );
 }
+

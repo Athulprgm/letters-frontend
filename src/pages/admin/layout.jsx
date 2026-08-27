@@ -27,6 +27,8 @@ import { useOrderStore } from '@/src/store/orderStore';
 import { confirmDialog } from '@/src/store/confirmStore';
 import AdminLoadingOverlay from '@/src/components/admin/AdminLoadingOverlay';
 import NotificationToggle from '@/src/components/NotificationToggle';
+import OrderNotificationManager from '@/src/components/admin/OrderNotificationManager';
+
 
 const navigationGroups = [
   {
@@ -378,7 +380,9 @@ export default function AdminLayout({ children }) {
         </main>
       </div>
 
+      <OrderNotificationManager />
       <AdminLoadingOverlay />
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 /**
- * LETTERS Atelier Service Worker - Standard Web Push Notifications
+ * LETTERS Atelier Service Worker - High Reliability Web Push & Real-Time Alerts
  */
 
 self.addEventListener('install', (event) => {
@@ -25,46 +25,81 @@ self.addEventListener('push', (event) => {
   }
 
   const title = data.title || 'LETTERS Notification';
+  const logoUrl = new URL(data.icon || '/logo.png', self.location.origin).href;
+  const badgeUrl = new URL(data.badge || '/logo.png', self.location.origin).href;
+  const targetUrl = (data.data && data.data.url) ? data.data.url : '/';
+
+  const notificationTag = data.tag || (data.data && data.data.orderId
+    ? `order-${data.data.orderId}-${Date.now()}`
+    : `letters-push-${Date.now()}`);
+
   const options = {
     body: data.body || 'You have a new update from LETTERS Atelier.',
-    icon: data.icon || '/logo.png',
-    badge: data.badge || '/logo.png',
-    data: data.data || { url: '/' },
-    vibrate: [100, 50, 100],
-    tag: data.tag || (data.data && data.data.orderId ? `order-${data.data.orderId}` : 'letters-push'),
+    icon: logoUrl,
+    badge: badgeUrl,
+    data: {
+      url: targetUrl,
+      timestamp: Date.now(),
+      orderId: data.data?.orderId,
+      type: data.data?.type || 'general',
+      payload: data,
+    },
+    vibrate: [200, 100, 200, 100, 300],
+    tag: notificationTag,
     renotify: true,
-    requireInteraction: false,
+    requireInteraction: true,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  // Broadcast message to any active browser tabs to play chime & refresh immediately
+  const broadcastPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+    for (const client of clients) {
+      client.postMessage({
+        type: 'PUSH_NOTIFICATION_RECEIVED',
+        title: title,
+        body: options.body,
+        data: options.data,
+      });
+    }
+  });
+
+  // Display system notification
+  const showNotificationPromise = self.registration.showNotification(title, options);
+
+  event.waitUntil(Promise.all([showNotificationPromise, broadcastPromise]));
 });
 
 // 2. Notification Click Handler - Focus or Open URL
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/';
+  const targetPath = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/';
+  const urlToOpen = new URL(targetPath, self.location.origin).href;
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Look for an existing open window/tab from our domain
+      // 1. Try to find a matching open tab
       for (const client of clientList) {
         if ('focus' in client) {
-          // If already on the exact URL or admin, navigate and focus
-          if (client.url.includes(targetUrl) || targetUrl === '/') {
-            return client.focus();
-          }
-          // Navigate existing tab to target URL
-          if ('navigate' in client) {
-            client.navigate(targetUrl);
+          if (client.url === urlToOpen || (targetPath.startsWith('/admin') && client.url.includes('/admin'))) {
+            if ('navigate' in client && client.url !== urlToOpen) {
+              client.navigate(urlToOpen);
+            }
             return client.focus();
           }
         }
       }
-      // If no matching tab is open, open a new window
+
+      // 2. If existing tab is open on our domain, navigate it
+      if (clientList.length > 0 && 'navigate' in clientList[0] && 'focus' in clientList[0]) {
+        clientList[0].navigate(urlToOpen);
+        return clientList[0].focus();
+      }
+
+      // 3. Otherwise, open a new window
       if (self.clients.openWindow) {
-        return self.clients.openWindow(targetUrl);
+        return self.clients.openWindow(urlToOpen);
       }
     })
   );
 });
+
