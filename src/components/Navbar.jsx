@@ -15,6 +15,7 @@ import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCartStore } from '../store/cartStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useCategoryStore } from '../store/categoryStore';
+import { useSaleBannerStore } from '../store/saleBannerStore';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -26,7 +27,9 @@ export default function Navbar() {
 
   const { settings, getWhatsAppUrl } = useSettingsStore();
   const { categories } = useCategoryStore();
+  const { saleBanner } = useSaleBannerStore();
   const itemCount = useCartStore((state) => state.getItemCount());
+
   const pathname = usePathname();
 
   const isAdminRoute = pathname?.startsWith('/admin');
@@ -63,13 +66,17 @@ export default function Navbar() {
     window.open(getWhatsAppUrl(message), '_blank');
   };
 
+  const isSaleActive = Boolean(saleBanner?.enabled);
+
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Shop', href: '/shop' },
+    ...(isSaleActive ? [{ label: 'Deals', href: '/deals', badge: 'Offers' }] : []),
     { label: 'Custom Hamper', href: '/custom-gift', badge: 'Bespoke' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];
+
 
 
   return (
