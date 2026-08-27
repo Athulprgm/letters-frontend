@@ -5,9 +5,7 @@ import {
   faBellSlash,
   faCheck,
   faCircleNotch,
-  faPaperPlane,
   faTriangleExclamation,
-  faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   isPushSupported,
@@ -15,22 +13,18 @@ import {
   getExistingPushSubscription,
   subscribeToPushNotifications,
   unsubscribeFromPushNotifications,
-  sendTestPushNotification,
-  playNotificationSound,
 } from '@/src/utils/pushNotification';
 
 export default function NotificationToggle({
   role = 'admin',
   userId = null,
   variant = 'button',
-  showTestButton = false,
   className = '',
 }) {
   const [supported, setSupported] = useState(true);
   const [permissionState, setPermissionState] = useState('default');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [testLoading, setTestLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
   const checkStatus = useCallback(async () => {
@@ -95,37 +89,6 @@ export default function NotificationToggle({
     }
   };
 
-  const handleTestNotification = async () => {
-    setTestLoading(true);
-    setFeedback(null);
-    try {
-      // If not subscribed, try subscribing first or send direct test
-      if (!isSubscribed && permissionState !== 'denied') {
-        try {
-          await subscribeToPushNotifications({ role, userId });
-          setIsSubscribed(true);
-          setPermissionState('granted');
-        } catch (e) {}
-      }
-
-      await sendTestPushNotification({ role, userId });
-      setFeedback({
-        type: 'success',
-        message: '🔔 Test alert sent with audio chime!',
-      });
-    } catch (err) {
-      console.error('Test notification failed:', err);
-      playNotificationSound();
-      setFeedback({
-        type: 'info',
-        message: 'Played local audio chime (Push delivery: ' + (err.message || 'check network') + ')',
-      });
-    } finally {
-      setTestLoading(false);
-      setTimeout(() => setFeedback(null), 5000);
-    }
-  };
-
   if (!supported) {
     return null;
   }
@@ -180,7 +143,7 @@ export default function NotificationToggle({
     );
   }
 
-  // Full Button with optional Test Trigger
+  // Full Button
   return (
     <div className="relative inline-flex flex-col items-start gap-1.5">
       <div className="flex items-center gap-2">
@@ -211,23 +174,6 @@ export default function NotificationToggle({
               : 'Enable Notifications'}
           </span>
         </button>
-
-        {(showTestButton || isSubscribed) && (
-          <button
-            type="button"
-            onClick={handleTestNotification}
-            disabled={testLoading}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] transition-colors cursor-pointer disabled:opacity-60"
-            title="Test push notification and audio chime"
-          >
-            {testLoading ? (
-              <FontAwesomeIcon icon={faCircleNotch} className="text-[10px] animate-spin text-[var(--olive)]" />
-            ) : (
-              <FontAwesomeIcon icon={faVolumeHigh} className="text-[10px] text-[var(--olive)]" />
-            )}
-            <span>{testLoading ? 'Testing...' : 'Test Alert'}</span>
-          </button>
-        )}
       </div>
 
       {feedback && (
@@ -246,4 +192,5 @@ export default function NotificationToggle({
     </div>
   );
 }
+
 
