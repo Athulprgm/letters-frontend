@@ -10,9 +10,10 @@ import {
   faClock,
   faPercent,
   faBagShopping,
-  faSparkles,
+  faWandMagicSparkles,
   faGift,
   faCircleCheck,
+
   faArrowRight,
   faStar,
   faMagnifyingGlass,
@@ -23,13 +24,13 @@ import { useProductStore } from '../store/productStore';
 import { useCartStore } from '../store/cartStore';
 import { useSaleBannerStore } from '../store/saleBannerStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { getWhatsAppUrl } from '../utils/whatsapp';
 
 export default function DealsPage() {
-  const { products, isLoaded: productsLoaded } = useProductStore();
-  const { saleBanner, isLoaded: saleLoaded } = useSaleBannerStore();
-  const { settings } = useSettingsStore();
-  const { addItem } = useCartStore();
+  const { products } = useProductStore();
+  const { saleBanner } = useSaleBannerStore();
+  const { settings, getWhatsAppUrl } = useSettingsStore();
+  const addItem = useCartStore((state) => state.addItem);
+
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [sortBy, setSortBy] = useState('popular');

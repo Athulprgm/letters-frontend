@@ -3,16 +3,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt, faClock, faArrowRight, faBagShopping, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useProductStore } from '../store/productStore';
 import { useCartStore } from '../store/cartStore';
 import { useSettingsStore } from '../store/settingsStore';
+import { useSaleBannerStore } from '../store/saleBannerStore';
 
 export default function FlashDealsRow() {
   const { products } = useProductStore();
+  const { saleBanner } = useSaleBannerStore();
   const addToCart = useCartStore((state) => state.addToCart);
   const { settings } = useSettingsStore();
   const [addedIds, setAddedIds] = useState({});
+
+  if (!saleBanner?.enabled) {
+    return null;
+  }
+
 
   const showPrices = settings.showPricesGlobally === true;
   const inquiryLabel = settings.priceInquiryLabel || 'Price on Request';
