@@ -314,7 +314,7 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* Main Admin Content Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
         
         {/* Desktop Top Bar */}
         <header className="hidden md:flex items-center justify-between px-6 lg:px-8 py-3 bg-[var(--card)] border-b border-[var(--border)] sticky top-0 z-30 shadow-xs">
@@ -358,13 +358,13 @@ export default function AdminLayout({ children }) {
 
 
         {/* Page Content View */}
-        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-5 lg:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
 
       {/* Mobile Bottom Quick Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] px-2 py-1.5 flex items-center justify-around shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] px-2 py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-lg backdrop-blur-md">
         <Link
           to="/admin"
           className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition-colors ${

@@ -406,11 +406,11 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Metric Mode Switcher */}
-            <div className="flex items-center gap-1 bg-[var(--bg)] p-1 rounded-lg border border-[var(--border)] self-start sm:self-auto">
+            <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center gap-1 bg-[var(--bg)] p-1 rounded-lg border border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setChartViewMode('revenue')}
-                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                className={`py-1.5 px-3 text-center rounded-md text-xs font-semibold transition-all cursor-pointer ${
                   chartViewMode === 'revenue'
                     ? 'bg-[var(--card)] text-[var(--text)] shadow-2xs font-bold'
                     : 'text-[var(--text-muted)] hover:text-[var(--text)]'
@@ -421,7 +421,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setChartViewMode('orders')}
-                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                className={`py-1.5 px-3 text-center rounded-md text-xs font-semibold transition-all cursor-pointer ${
                   chartViewMode === 'orders'
                     ? 'bg-[var(--card)] text-[var(--text)] shadow-2xs font-bold'
                     : 'text-[var(--text-muted)] hover:text-[var(--text)]'
