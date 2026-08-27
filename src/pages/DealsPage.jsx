@@ -81,14 +81,20 @@ export default function DealsPage() {
   }, [saleBanner?.endDate]);
 
   // Aggregate all deals from products + active festival hampers
+  const isSaleActive = Boolean(saleBanner?.enabled);
+
   const allDeals = useMemo(() => {
-    const selectedIds = saleBanner?.selectedProductIds;
+    const selectedIds = isSaleActive ? saleBanner?.selectedProductIds : null;
 
     const prods = products
       .filter((p) => {
         if (!p.active) return false;
         if (selectedIds && selectedIds.length > 0) {
           return selectedIds.includes(p.id);
+        }
+        // If sale is deleted/inactive, show products with genuine discounts or special tags
+        if (!isSaleActive) {
+          return (p.originalPrice && p.originalPrice > p.price) || p.tag;
         }
         return true;
       })
@@ -113,6 +119,26 @@ export default function DealsPage() {
           stockLeft: Math.max(2, 10 - Math.floor(claimedPct / 10)),
         };
       });
+
+    // If no discounted products found when sale is inactive, show top active catalog products as standard deals
+    const fallbackProds = (!isSaleActive && prods.length === 0)
+      ? products.filter((p) => p.active).slice(0, 8).map((p) => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price,
+          originalPrice: p.originalPrice || Math.round(p.price * 1.2),
+          discountPercent: 15,
+          image: p.images?.[0] || p.image,
+          description: p.description,
+          slug: p.slug,
+          isFestival: false,
+          showPrice: p.showPrice !== false,
+          tag: p.tag || 'Special Curation',
+          claimedPercent: 75,
+          stockLeft: 4,
+        }))
+      : [];
 
     // Extract products from all published festivals or showcase festival
     const festivalProductList = [];
@@ -144,8 +170,9 @@ export default function DealsPage() {
       }
     });
 
-    return [...festivalProductList, ...prods];
-  }, [products, festivals, saleBanner]);
+    return [...festivalProductList, ...prods, ...fallbackProds];
+  }, [products, festivals, saleBanner, isSaleActive]);
+
 
   // Filtered & Sorted Deals
   const filteredDeals = useMemo(() => {
@@ -215,105 +242,122 @@ export default function DealsPage() {
     <div className="bg-[var(--bg)] min-h-screen pt-0 pb-24 transition-colors duration-300">
       
       {/* ========================================================================= */}
-      {/* 1. ARTISANAL MINIMAL MEGA SALE BANNER HEADER (TOUCHES NAVBAR) */}
+      {/* 1. ARTISANAL MEGA SALE BANNER OR CLEAN DEALS HEADER */}
       {/* ========================================================================= */}
-      <div className="w-full bg-[#1C2519] text-[#FAF6EE] border-b border-[#C8A97E]/30 py-10 sm:py-14 px-4 sm:px-8 lg:px-16 relative overflow-hidden">
-        
-        {/* Clean Background Image with Gentle Soft Text Legibility Gradient */}
-        {saleBanner?.image ? (
-          <div className="absolute inset-0 pointer-events-none">
-            <img
-              src={saleBanner.image}
-              alt={saleBanner.title || 'Sale Banner'}
-              className="w-full h-full object-cover object-center select-none"
-            />
-            {/* Soft, gentle text-side gradient for clean readability without overpowering the image */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-black/10" />
-          </div>
-        ) : null}
-
-        {/* Delicate Hand-Drawn Botanical Accents */}
-        <div className="absolute -right-6 -bottom-6 text-[#C8A97E]/10 pointer-events-none">
-          <DoodleOliveBranch className="w-56 h-56" />
-        </div>
-        <div className="absolute top-4 left-6 text-[#C8A97E]/15 pointer-events-none">
-          <DoodleSparkle className="w-4 h-4" />
-        </div>
-
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+      {isSaleActive ? (
+        <div className="w-full bg-[#1C2519] text-[#FAF6EE] border-b border-[#C8A97E]/30 py-10 sm:py-14 px-4 sm:px-8 lg:px-16 relative overflow-hidden">
           
-          {/* Left Title, Eyebrow & Description */}
-          <div className="text-center lg:text-left space-y-3.5 max-w-2xl" suppressHydrationWarning>
-            
-            {/* Handcrafted Eyebrow */}
-            <div className="flex items-center justify-center lg:justify-start gap-2">
-              <DoodleSwirl className="w-6 h-3 text-[#C8A97E]" />
-              <span
-                style={{ fontFamily: "'Great Vibes', cursive", fontSize: '24px', color: '#D4B886' }}
-                suppressHydrationWarning
-              >
-                {saleBanner?.calligraphy || 'Seasonal Atelier Curations'}
-              </span>
+          {/* Clean Background Image with Gentle Soft Text Legibility Gradient */}
+          {saleBanner?.image ? (
+            <div className="absolute inset-0 pointer-events-none">
+              <img
+                src={saleBanner.image}
+                alt={saleBanner.title || 'Sale Banner'}
+                className="w-full h-full object-cover object-center select-none"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-black/10" />
             </div>
+          ) : null}
 
-            {/* Event Tag & Offer Badge */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2" suppressHydrationWarning>
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] bg-[#2E3C29] text-[#E8DFC8] border border-[#C8A97E]/30 shadow-xs" suppressHydrationWarning>
-                <FontAwesomeIcon icon={faTag} className="text-[#C8A97E] text-[9px]" />
-                <span suppressHydrationWarning>{saleBanner?.tag || 'LIMITED SEASONAL DROP'}</span>
-              </span>
-              <span className="text-[11px] font-semibold text-[#FBE4B8] bg-[#721C28]/85 px-3 py-0.5 rounded-full border border-white/10 shadow-xs" suppressHydrationWarning>
-                {saleBanner?.discountOffer || 'UP TO 40% OFF'}
-              </span>
-            </div>
-
-            {/* Main Title */}
-            <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-normal text-[#FAF6EE] tracking-tight leading-tight" suppressHydrationWarning>
-              {saleBanner?.title || 'The Celebration Deals Hub'}
-            </h1>
-
-            {/* Description */}
-            <p className="text-xs sm:text-[13.5px] text-[#FAF6EE]/80 leading-relaxed max-w-xl font-light" suppressHydrationWarning>
-              {saleBanner?.description || 'Grab limited-stock atelier curations on Belgian chocolate hampers, preserved florals, handcrafted frames & festive gifts.'}
-            </p>
+          {/* Delicate Hand-Drawn Botanical Accents */}
+          <div className="absolute -right-6 -bottom-6 text-[#C8A97E]/10 pointer-events-none">
+            <DoodleOliveBranch className="w-56 h-56" />
+          </div>
+          <div className="absolute top-4 left-6 text-[#C8A97E]/15 pointer-events-none">
+            <DoodleSparkle className="w-4 h-4" />
           </div>
 
-          {/* Right Side: Minimalist Handcrafted Countdown Card */}
-          <div className="shrink-0 bg-[#FAF6EE]/95 text-[#232D20] p-4 sm:p-5 rounded-2xl border border-[#C8A97E]/40 shadow-xl backdrop-blur-sm space-y-2.5 text-center min-w-[280px]" suppressHydrationWarning>
-            <div className="flex items-center justify-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6E5A44]">
-              <FontAwesomeIcon icon={faClock} className="text-[#721C28] text-xs" />
-              <span>Offer Concludes In</span>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 font-mono" suppressHydrationWarning>
-              <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
-                {String(timeLeft.days).padStart(2, '0')}
-                <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">DAYS</span>
-              </div>
-              <span className="text-[#8A7A66] font-bold text-sm">:</span>
-              <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
-                {String(timeLeft.hours).padStart(2, '0')}
-                <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">HRS</span>
-              </div>
-              <span className="text-[#8A7A66] font-bold text-sm">:</span>
-              <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
-                {String(timeLeft.minutes).padStart(2, '0')}
-                <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">MIN</span>
-              </div>
-              <span className="text-[#8A7A66] font-bold text-sm">:</span>
-              <div className="bg-[#721C28] text-white px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] shadow-xs" suppressHydrationWarning>
-                {String(timeLeft.seconds).padStart(2, '0')}
-                <span className="block text-[8px] font-sans font-semibold text-[#FAF6EE]/80 -mt-0.5 tracking-wider">SEC</span>
-              </div>
-            </div>
+          <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             
-            <p className="text-[10px] text-[#8A7A66] tracking-wide pt-0.5">
-              Handwritten keepsakes included with every order
-            </p>
-          </div>
+            {/* Left Title, Eyebrow & Description */}
+            <div className="text-center lg:text-left space-y-3.5 max-w-2xl" suppressHydrationWarning>
+              
+              {/* Handcrafted Eyebrow */}
+              <div className="flex items-center justify-center lg:justify-start gap-2">
+                <DoodleSwirl className="w-6 h-3 text-[#C8A97E]" />
+                <span
+                  style={{ fontFamily: "'Great Vibes', cursive", fontSize: '24px', color: '#D4B886' }}
+                  suppressHydrationWarning
+                >
+                  {saleBanner?.calligraphy || 'Seasonal Atelier Curations'}
+                </span>
+              </div>
 
+              {/* Event Tag & Offer Badge */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2" suppressHydrationWarning>
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] bg-[#2E3C29] text-[#E8DFC8] border border-[#C8A97E]/30 shadow-xs" suppressHydrationWarning>
+                  <FontAwesomeIcon icon={faTag} className="text-[#C8A97E] text-[9px]" />
+                  <span suppressHydrationWarning>{saleBanner?.tag || 'LIMITED SEASONAL DROP'}</span>
+                </span>
+                <span className="text-[11px] font-semibold text-[#FBE4B8] bg-[#721C28]/85 px-3 py-0.5 rounded-full border border-white/10 shadow-xs" suppressHydrationWarning>
+                  {saleBanner?.discountOffer || 'UP TO 40% OFF'}
+                </span>
+              </div>
+
+              {/* Main Title */}
+              <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-normal text-[#FAF6EE] tracking-tight leading-tight" suppressHydrationWarning>
+                {saleBanner?.title || 'The Celebration Deals Hub'}
+              </h1>
+
+              {/* Description */}
+              <p className="text-xs sm:text-[13.5px] text-[#FAF6EE]/80 leading-relaxed max-w-xl font-light" suppressHydrationWarning>
+                {saleBanner?.description || 'Grab limited-stock atelier curations on Belgian chocolate hampers, preserved florals, handcrafted frames & festive gifts.'}
+              </p>
+            </div>
+
+            {/* Right Side: Minimalist Handcrafted Countdown Card */}
+            <div className="shrink-0 bg-[#FAF6EE]/95 text-[#232D20] p-4 sm:p-5 rounded-2xl border border-[#C8A97E]/40 shadow-xl backdrop-blur-sm space-y-2.5 text-center min-w-[280px]" suppressHydrationWarning>
+              <div className="flex items-center justify-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6E5A44]">
+                <FontAwesomeIcon icon={faClock} className="text-[#721C28] text-xs" />
+                <span>Offer Concludes In</span>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 font-mono" suppressHydrationWarning>
+                <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
+                  {String(timeLeft.days).padStart(2, '0')}
+                  <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">DAYS</span>
+                </div>
+                <span className="text-[#8A7A66] font-bold text-sm">:</span>
+                <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
+                  {String(timeLeft.hours).padStart(2, '0')}
+                  <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">HRS</span>
+                </div>
+                <span className="text-[#8A7A66] font-bold text-sm">:</span>
+                <div className="bg-[#EFE8DA] text-[#232D20] px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] border border-[#C8A97E]/20" suppressHydrationWarning>
+                  {String(timeLeft.minutes).padStart(2, '0')}
+                  <span className="block text-[8px] font-sans font-semibold text-[#8A7A66] -mt-0.5 tracking-wider">MIN</span>
+                </div>
+                <span className="text-[#8A7A66] font-bold text-sm">:</span>
+                <div className="bg-[#721C28] text-white px-2.5 py-1.5 rounded-lg text-sm font-bold min-w-[42px] shadow-xs" suppressHydrationWarning>
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                  <span className="block text-[8px] font-sans font-semibold text-[#FAF6EE]/80 -mt-0.5 tracking-wider">SEC</span>
+                </div>
+              </div>
+              
+              <p className="text-[10px] text-[#8A7A66] tracking-wide pt-0.5">
+                Handwritten keepsakes included with every order
+              </p>
+            </div>
+
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="w-full bg-[var(--card)] border-b border-[var(--border)] py-10 sm:py-12 px-4 sm:px-8 lg:px-16 text-center space-y-3">
+          <span
+            style={{ fontFamily: "'Great Vibes', cursive", fontSize: '28px', color: 'var(--chandanam-dark)' }}
+            className="block"
+          >
+            Handcrafted Value Curations
+          </span>
+          <h1 className="font-heading text-2xl sm:text-4xl font-bold text-[var(--text)] tracking-tight">
+            Curated Deals &amp; Special Offers
+          </h1>
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
+            Discover artisanal gift hampers, chocolate arrangements, and bespoke photo keepsakes crafted with love.
+          </p>
+        </div>
+      )}
+
 
       {/* Main Deals Content Body */}
       <div className="max-w-7xl mx-auto space-y-10 px-4 sm:px-6 lg:px-12 pt-8">

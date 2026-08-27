@@ -19,21 +19,27 @@ import {
   faLayerGroup,
   faFire,
   faImage,
+  faTrashCan,
+  faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { useSaleBannerStore } from '@/src/store/saleBannerStore';
 import { useProductStore } from '@/src/store/productStore';
 import { adminLoading } from '@/src/store/adminLoadingStore';
+import { confirmDialog } from '@/src/store/confirmStore';
+import { defaultSaleBanner } from '@/src/data/initialData';
 
 export default function AdminSaleBannerPage() {
-  const { saleBanner, fetchSaleBanner, updateSaleBanner } = useSaleBannerStore();
+  const { saleBanner, fetchSaleBanner, updateSaleBanner, deleteSaleBanner } = useSaleBannerStore();
   const { products, updateProduct } = useProductStore();
 
   const [formData, setFormData] = useState(saleBanner);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [selectedCategoryTab, setSelectedCategoryTab] = useState('All');
   const fileInputRef = useRef(null);
+
 
   useEffect(() => {
     fetchSaleBanner();
@@ -147,7 +153,34 @@ export default function AdminSaleBannerPage() {
       'Sale Campaign published successfully!'
     );
     setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    setDeleteSuccess(false);
+    setTimeout(() => setSaveSuccess(false), 3500);
+  };
+
+  const handleDeleteSale = async () => {
+    const isConfirmed = await confirmDialog({
+      title: 'Delete Sale Campaign',
+      message:
+        'Are you sure you want to delete this sale campaign? This will immediately remove the promotion banners, countdown timer, and sale showcases from the storefront homepage and deals pages.',
+      confirmText: 'Delete Sale',
+      cancelText: 'Keep Sale',
+      type: 'danger',
+    });
+
+    if (isConfirmed) {
+      await adminLoading.wrap(
+        async () => {
+          await deleteSaleBanner();
+          setFormData({ ...defaultSaleBanner });
+        },
+        'Deleting Sale Campaign...',
+        'Removing promotion banners and resetting sale campaign...',
+        'Sale Campaign deleted successfully.'
+      );
+      setDeleteSuccess(true);
+      setSaveSuccess(false);
+      setTimeout(() => setDeleteSuccess(false), 4000);
+    }
   };
 
   // Calculate remaining time for preview
@@ -207,7 +240,7 @@ export default function AdminSaleBannerPage() {
                   : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
               }`}
             >
-              {formData.enabled ? `${selectedCount} Items in Active Sale` : 'Sale Standby'}
+              {formData.enabled ? `${selectedCount} Items in Active Sale` : 'Sale Deleted / Inactive'}
             </span>
           </div>
           <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -215,8 +248,20 @@ export default function AdminSaleBannerPage() {
           </p>
         </div>
 
-        {/* Action Button */}
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
+          {/* Delete Sale Campaign Button */}
+          <button
+            type="button"
+            onClick={handleDeleteSale}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-bold transition-colors cursor-pointer"
+            title="Delete sale and remove promotion banners from storefront"
+          >
+            <FontAwesomeIcon icon={faTrashCan} className="text-xs text-rose-600" />
+            <span>Delete Sale</span>
+          </button>
+
+          {/* Save & Publish Button */}
           <button
             type="button"
             onClick={handleSave}
@@ -249,6 +294,14 @@ export default function AdminSaleBannerPage() {
           <span>Mega Sale Banner and product selection updated successfully.</span>
         </div>
       )}
+
+      {deleteSuccess && (
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-xl flex items-center gap-2.5 text-xs font-semibold animate-fadeIn">
+          <FontAwesomeIcon icon={faTrashCan} className="text-rose-600" />
+          <span>Sale campaign deleted successfully. Promotional billboard and timers have been removed from the storefront.</span>
+        </div>
+      )}
+
 
       {/* ========================================================================= */}
       {/* 2. FORM & LIVE PREVIEW GRID */}
@@ -757,16 +810,28 @@ export default function AdminSaleBannerPage() {
                 </div>
               </div>
 
-              {/* Quick Save button in preview */}
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full py-2.5 rounded-lg bg-[var(--olive)] text-white text-xs font-bold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                <FontAwesomeIcon icon={faSave} />
-                <span>{saving ? 'Publishing...' : 'Save & Publish Live'}</span>
-              </button>
+              {/* Action Buttons in preview */}
+              <div className="space-y-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="w-full py-2.5 rounded-lg bg-[var(--olive)] text-white text-xs font-bold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faSave} />
+                  <span>{saving ? 'Publishing...' : 'Save & Publish Live'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDeleteSale}
+                  className="w-full py-2 rounded-lg border border-rose-200 dark:border-rose-800/80 bg-rose-50/70 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 hover:bg-rose-100 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faTrashCan} className="text-xs text-rose-600" />
+                  <span>Delete &amp; Remove Sale</span>
+                </button>
+              </div>
+
 
             </div>
 

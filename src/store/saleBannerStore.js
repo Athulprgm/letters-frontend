@@ -126,4 +126,22 @@ export const useSaleBannerStore = create((set, get) => ({
     const current = get().saleBanner.showTopBar;
     return get().updateSaleBanner({ showTopBar: !current });
   },
+
+  deleteSaleBanner: async () => {
+    const reset = { ...defaultSaleBanner };
+    set({ saleBanner: reset, isLoaded: true });
+    safeSaveLocalStorage('letters_sale_banner', reset);
+
+    try {
+      await fetch(apiUrl('/api/sale-banner'), {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' },
+      });
+    } catch (e) {
+      console.error('Failed to delete sale banner from server', e);
+    }
+
+    return reset;
+  },
 }));
+
