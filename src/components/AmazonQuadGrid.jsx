@@ -72,12 +72,13 @@ export default function AmazonQuadGrid() {
             </div>
 
             <Link
-              href="/deals"
+              href="/shop"
               className="text-xs font-bold text-[var(--olive)] hover:underline flex items-center gap-1.5 pt-2 border-t border-[var(--border)]/60"
             >
-              <span>See all deals & offers</span>
+              <span>Explore curated gifts</span>
               <FontAwesomeIcon icon={faArrowRight} className="text-[9px]" />
             </Link>
+
           </div>
 
           {/* Card 2: Shop by Curated Categories */}

@@ -21,8 +21,9 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import CustomGiftPage from './pages/CustomGiftPage';
-import DealsPage from './pages/DealsPage';
 import CategoryPage from './pages/CategoryPage';
+
+
 
 
 // Admin Layout & Pages
@@ -73,10 +74,11 @@ export default function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/custom-gift" element={<CustomGiftPage />} />
-              <Route path="/deals" element={<DealsPage />} />
+              <Route path="/deals" element={<Navigate to="/shop" replace />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/product/:slug" element={<Navigate to="/shop" replace />} />
               <Route path="*" element={<HomePage />} />
+
 
             </Routes>
           </main>
