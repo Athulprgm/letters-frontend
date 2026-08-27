@@ -66,11 +66,11 @@ export default function Navbar() {
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Shop', href: '/shop' },
-    { label: 'Deals', href: '/deals', badge: 'Offers' },
     { label: 'Custom Hamper', href: '/custom-gift', badge: 'Bespoke' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];
+
 
   return (
     <>
@@ -338,7 +338,6 @@ export default function Navbar() {
                   {[
                     { label: 'Home', href: '/' },
                     { label: 'Shop All Gifts', href: '/shop' },
-                    { label: 'Mega Deals', href: '/deals' },
                     { label: 'Our Story & Craft', href: '/about' },
                     { label: 'Contact & Studio', href: '/contact' },
                   ].map((link) => (
@@ -352,6 +351,7 @@ export default function Navbar() {
                       <FontAwesomeIcon icon={faArrowRight} className="text-xs text-[var(--text-muted)]" />
                     </Link>
                   ))}
+
 
                   <Link
                     href="/custom-gift"
