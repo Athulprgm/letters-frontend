@@ -12,7 +12,7 @@ import {
   faGift,
   faCamera,
   faStar,
-  faLocationDot,
+  faCircleInfo,
   faPlus,
   faCheckCircle,
   faShareNodes,
@@ -34,7 +34,6 @@ export default function ProductDetailPage(props) {
   const routerParams = useParams();
   const slug = props.params?.slug || routerParams?.slug;
 
-
   const router = useRouter();
   const { products, getProductBySlug, isLoading } = useProductStore();
   const addToCart = useCartStore((state) => state.addToCart);
@@ -48,13 +47,12 @@ export default function ProductDetailPage(props) {
   const [added, setAdded] = useState(false);
   const [activeTab, setActiveTab] = useState('inclusions');
   const [wishlisted, setWishlisted] = useState(false);
-  const [pincode, setPincode] = useState('');
-  const [pincodeStatus, setPincodeStatus] = useState(null);
 
   // Customization fields
   const [recipientName, setRecipientName] = useState('');
   const [personalizedMessage, setPersonalizedMessage] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
+
 
   if (!product) {
     if (isLoading) {
@@ -83,21 +81,6 @@ export default function ProductDetailPage(props) {
 
   const rating = product.rating || 4.9;
   const reviewCount = product.reviewsCount || 28;
-
-  const handlePincodeCheck = (e) => {
-    e.preventDefault();
-    if (pincode.trim().length >= 6) {
-      setPincodeStatus({
-        valid: true,
-        message: `Express Delivery Available to ${pincode}! Dispatches in 24–48 hours. Live photo preview on WhatsApp before shipping.`,
-      });
-    } else {
-      setPincodeStatus({
-        valid: false,
-        message: 'Please enter a valid 6-digit postal pincode.',
-      });
-    }
-  };
 
   const handleAddToCart = () => {
     addToCart(product, quantity, {
@@ -129,8 +112,8 @@ export default function ProductDetailPage(props) {
       customerName: recipientName ? `Order for ${recipientName}` : 'Product Inquiry Patron',
       phone: '',
       whatsappNumber: '',
-      address: pincode ? `Delivery to PIN: ${pincode}` : 'Direct Product WhatsApp Order',
-      pincode: pincode || '',
+      address: 'Direct Product WhatsApp Order',
+      pincode: '',
       deliveryDate: 'Standard Delivery',
       occasion: 'Special Occasion',
       items: [{
@@ -152,6 +135,7 @@ export default function ProductDetailPage(props) {
       specialInstructions: specialInstructions || 'WhatsApp Product Order',
     });
 
+
     const message = `*${settings.orderMessagePrefix || 'Order Inquiry — LETTERS'}*
 Order Reference: #${newOrder.id}
 
@@ -165,6 +149,32 @@ Product Link: ${origin}/product/${product.slug}${customDetails}
 Hello LETTERS Concierge, please share the quote, personalization details, and delivery timeline for this item.`;
 
     window.open(getWhatsAppUrl(message), '_blank');
+  };
+
+  const getProductNarrative = () => {
+    if (product.description && product.description.trim().length > 20) {
+      return product.description;
+    }
+    const cat = (product.category || '').toLowerCase();
+    if (cat.includes('frame') || cat.includes('photo')) {
+      return `Preserve your most cherished moments in our handcrafted floating photo frame. Built with premium solid wood and crystal-clear floating glass, each frame includes a high-definition photo print with protective lamination for lasting vibrancy. Perfect for tabletops or wall keepsakes.`;
+    }
+    if (cat.includes('chocolate')) {
+      return `Indulge in artisanal luxury with our gourmet Belgian chocolate curations. Handcrafted using premium cocoa and roasted nuts, each truffle offers a decadent melting texture paired with elegant keepsake presentation.`;
+    }
+    if (cat.includes('bouquet') || cat.includes('flower')) {
+      return `Experience the timeless elegance of our preserved everlasting floral arrangements. Carefully handcrafted with naturally dried botanicals and wrapped in eco-friendly textured burlap with satin ribbons. Never wilts, requiring no water.`;
+    }
+    return `The ${product.name} is thoughtfully handcrafted at our Kerala atelier, combining artistic presentation with bespoke customization. Designed to elevate your special gifting moments with unforgettable charm.`;
+  };
+
+  const getProductMaterial = () => {
+    const cat = (product.category || '').toLowerCase();
+    if (cat.includes('frame') || cat.includes('photo')) return 'Solid Wood & Floating Glass (HD Print Included)';
+    if (cat.includes('chocolate')) return 'Artisanal Belgian Cocoa & Roasted Nuts';
+    if (cat.includes('bouquet') || cat.includes('flower')) return 'Preserved Botanicals & Jute Wrapping';
+    if (cat.includes('hamper')) return 'Luxe Keepsake Trunk + Satin Ribbon';
+    return 'Artisanal Handcrafted Materials';
   };
 
   const relatedProducts = products
@@ -311,46 +321,97 @@ Hello LETTERS Concierge, please share the quote, personalization details, and de
               </div>
             </div>
 
-            {/* Short Highlights */}
-            <div className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
-              <p>{product.description}</p>
+            {/* ========================================================================= */}
+            {/* ABOUT THIS PRODUCT & SPECIFICATIONS CARD */}
+            {/* ========================================================================= */}
+            <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-5 space-y-4 shadow-xs">
+              
+              {/* Card Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <FontAwesomeIcon icon={faCircleInfo} className="text-[var(--chandanam)] text-xs" />
+                  <span className="text-xs font-bold text-[var(--text)]">About This Product &amp; Details</span>
+                </div>
+                <span className="text-[10px] text-[var(--olive)] bg-[var(--olive)]/10 px-2.5 py-0.5 rounded-full font-bold border border-[var(--olive)]/20">
+                  {product.tag || 'Atelier Handcrafted'}
+                </span>
+              </div>
+
+              {/* Product Narrative / Description */}
+              <div className="text-xs text-[var(--text-muted)] leading-relaxed space-y-2">
+                <p className="text-[var(--text)] font-medium">
+                  {getProductNarrative()}
+                </p>
+              </div>
+
+              {/* Key Specifications Grid */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <div className="p-3 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border)] space-y-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] block">
+                    Category &amp; Type
+                  </span>
+                  <p className="text-xs font-bold text-[var(--text)] truncate">{product.category || 'Handcrafted Gift'}</p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border)] space-y-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] block">
+                    Customization
+                  </span>
+                  <p className="text-xs font-bold text-[var(--olive)]">
+                    {product.customizable !== false ? 'Personalized Photo / Text' : 'Standard Edition'}
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border)] space-y-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] block">
+                    Material / Craft
+                  </span>
+                  <p className="text-xs font-bold text-[var(--text)] truncate">{getProductMaterial()}</p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border)] space-y-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] block">
+                    Handmade Atelier
+                  </span>
+                  <p className="text-xs font-bold text-[var(--text)]">Crafted in Kerala, India</p>
+                </div>
+              </div>
+
+              {/* Inclusions & Highlights List */}
+              <div className="pt-2 border-t border-[var(--border)] space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text)] block">
+                  What&apos;s Included in this Curation:
+                </span>
+                <ul className="space-y-1.5 text-xs text-[var(--text-muted)]">
+                  <li className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="text-[var(--olive)] text-[10px] flex-shrink-0" />
+                    <span>Complimentary gold-embossed handwritten keepsake note</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="text-[var(--olive)] text-[10px] flex-shrink-0" />
+                    <span>Real-time photo preview sent on WhatsApp before shipping</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="text-[var(--olive)] text-[10px] flex-shrink-0" />
+                    <span>Multi-layer shockproof protective gift packaging</span>
+                  </li>
+                  {Array.isArray(product.features) && product.features.map((feat, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <FontAwesomeIcon icon={faCheck} className="text-[var(--olive)] text-[10px] flex-shrink-0" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Subtle Trust Highlight Banner */}
+              <div className="p-3 rounded-xl bg-[var(--chandanam-soft)]/50 border border-[var(--chandanam)]/25 flex items-center gap-2.5 text-[11px] text-[var(--chandanam-dark)] font-medium">
+                <FontAwesomeIcon icon={faLeaf} className="text-xs text-[var(--chandanam)] shrink-0" />
+                <span>Individually inspected and crafted fresh upon order placement.</span>
+              </div>
+
             </div>
 
-            {/* Delivery Pincode Checker */}
-            <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-4 shadow-xs">
-              <div className="flex items-center gap-2 mb-2">
-                <FontAwesomeIcon icon={faLocationDot} className="text-xs text-[var(--olive)]" />
-                <span className="text-xs font-bold text-[var(--text)]">Check Delivery Date & Speed</span>
-              </div>
-              <form onSubmit={handlePincodeCheck} className="flex gap-2">
-                <input
-                  type="text"
-                  maxLength={6}
-                  placeholder="Enter 6-digit Pincode (e.g. 682001)"
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
-                  className="input-warm text-xs py-2 flex-1"
-                />
-                <button
-                  type="submit"
-                  className="gold-btn px-4 py-2 text-xs font-semibold whitespace-nowrap cursor-pointer"
-                >
-                  Check Speed
-                </button>
-              </form>
-              {pincodeStatus && (
-                <div
-                  className={`mt-2.5 text-[11px] p-2.5 rounded-lg flex items-start gap-2 ${
-                    pincodeStatus.valid
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-xs mt-0.5 flex-shrink-0" />
-                  <span>{pincodeStatus.message}</span>
-                </div>
-              )}
-            </div>
 
             {/* Customization Section */}
             <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] p-5 space-y-4 shadow-xs">
