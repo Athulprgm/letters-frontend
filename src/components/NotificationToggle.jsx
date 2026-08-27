@@ -13,6 +13,8 @@ import {
   getExistingPushSubscription,
   subscribeToPushNotifications,
   unsubscribeFromPushNotifications,
+  isIOSorIPad,
+  isStandalonePWA,
 } from '@/src/utils/pushNotification';
 
 export default function NotificationToggle({
@@ -21,17 +23,12 @@ export default function NotificationToggle({
   variant = 'button',
   className = '',
 }) {
-  const [supported, setSupported] = useState(true);
   const [permissionState, setPermissionState] = useState('default');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
   const checkStatus = useCallback(async () => {
-    const isSupp = isPushSupported();
-    setSupported(isSupp);
-    if (!isSupp) return;
-
     const perm = getNotificationPermissionState();
     setPermissionState(perm);
 
@@ -48,14 +45,19 @@ export default function NotificationToggle({
   }, [checkStatus]);
 
   const handleToggle = async () => {
-    if (!supported) {
-      setFeedback({ type: 'error', message: 'Browser does not support Web Push' });
-      setTimeout(() => setFeedback(null), 4000);
-      return;
-    }
-
     setLoading(true);
     setFeedback(null);
+
+    // iPad / iPhone Safari tab check (needs Add to Home Screen)
+    if (isIOSorIPad() && !isStandalonePWA() && !('Notification' in window)) {
+      setLoading(false);
+      setFeedback({
+        type: 'info',
+        message: '📱 iPad/iPhone: Tap Safari Share (⬆) → "Add to Home Screen" to enable push notifications.',
+      });
+      setTimeout(() => setFeedback(null), 8000);
+      return;
+    }
 
     try {
       if (isSubscribed) {
@@ -89,9 +91,6 @@ export default function NotificationToggle({
     }
   };
 
-  if (!supported) {
-    return null;
-  }
 
   // Icon Button (with responsive label for tablet & mobile bars)
   if (variant === 'icon-button') {

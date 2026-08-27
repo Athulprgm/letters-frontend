@@ -26,8 +26,30 @@ export function urlBase64ToUint8Array(base64String) {
 /**
  * Check if the browser supports Web Push, Notifications, and Service Workers.
  */
+export function isIOSorIPad() {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+}
+
+export function isStandalonePWA() {
+  if (typeof window === 'undefined') return false;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    navigator.standalone === true
+  );
+}
+
 export function isPushSupported() {
   if (typeof window === 'undefined') return false;
+  
+  // If on iOS / iPad
+  if (isIOSorIPad()) {
+    return 'Notification' in window || 'serviceWorker' in navigator;
+  }
+
   return (
     'serviceWorker' in navigator &&
     'PushManager' in window &&
@@ -39,9 +61,16 @@ export function isPushSupported() {
  * Get the current notification permission state ('granted' | 'denied' | 'default' | 'unsupported').
  */
 export function getNotificationPermissionState() {
-  if (!isPushSupported()) return 'unsupported';
-  return Notification.permission;
+  if (typeof window === 'undefined') return 'unsupported';
+  if ('Notification' in window) {
+    return Notification.permission;
+  }
+  if (isIOSorIPad() && !isStandalonePWA()) {
+    return 'needs_pwa_install';
+  }
+  return 'unsupported';
 }
+
 
 /**
  * Register or get the active Service Worker registration.
