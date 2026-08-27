@@ -22,7 +22,16 @@ export default function OrderNotificationManager() {
   const knownOrderIdsRef = useRef(new Set());
   const isInitialLoadRef = useRef(true);
 
-  // 1. Listen for Service Worker Web Push events
+  // 1. Auto-verify push subscription on admin startup if permission is granted
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      import('@/src/utils/pushNotification').then(({ subscribeToPushNotifications }) => {
+        subscribeToPushNotifications({ role: 'admin' }).catch(() => {});
+      });
+    }
+  }, []);
+
+  // 2. Listen for Service Worker Web Push events
   useEffect(() => {
     const cleanup = setupNotificationListeners((pushData) => {
       // Re-fetch latest orders from backend immediately
@@ -42,6 +51,7 @@ export default function OrderNotificationManager() {
       if (typeof cleanup === 'function') cleanup();
     };
   }, [fetchOrders]);
+
 
   // 2. Track newly fetched orders on background poll
   useEffect(() => {
