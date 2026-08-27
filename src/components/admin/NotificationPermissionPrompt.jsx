@@ -13,18 +13,35 @@ import {
   isPushSupported,
   getNotificationPermissionState,
   subscribeToPushNotifications,
+  isIOSorIPad,
+  isStandalonePWA,
 } from '@/src/utils/pushNotification';
 
 export default function NotificationPermissionPrompt() {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isiPadPrompt, setIsiPadPrompt] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Check if push is supported and permission is not yet granted
     const checkState = () => {
+      const isIPadDevice = isIOSorIPad();
+      const isStandalone = isStandalonePWA();
+      const hasNotificationAPI = 'Notification' in window;
+
+      // If on iPad in regular Safari tab (not yet installed to Home Screen)
+      if (isIPadDevice && !isStandalone && !hasNotificationAPI) {
+        const dismissed = sessionStorage.getItem('letters_notif_prompt_dismissed');
+        if (!dismissed) {
+          setIsiPadPrompt(true);
+          const timer = setTimeout(() => setVisible(true), 800);
+          return () => clearTimeout(timer);
+        }
+        return;
+      }
+
       if (!isPushSupported()) return;
 
       const perm = getNotificationPermissionState();
@@ -44,7 +61,7 @@ export default function NotificationPermissionPrompt() {
       // Small delay for smooth entrance after page load
       const timer = setTimeout(() => {
         setVisible(true);
-      }, 1200);
+      }, 800);
 
       return () => clearTimeout(timer);
     };
@@ -53,6 +70,12 @@ export default function NotificationPermissionPrompt() {
   }, []);
 
   const handleEnable = async () => {
+    if (isiPadPrompt) {
+      sessionStorage.setItem('letters_notif_prompt_dismissed', 'true');
+      setVisible(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await subscribeToPushNotifications({ role: 'admin' });
@@ -64,7 +87,6 @@ export default function NotificationPermissionPrompt() {
       }
     } catch (err) {
       console.warn('Permission request result:', err);
-      // If user denied or closed the native prompt, hide modal
       if (getNotificationPermissionState() === 'denied') {
         setVisible(false);
       }
@@ -92,7 +114,7 @@ export default function NotificationPermissionPrompt() {
         <div className="flex-1 min-w-0 pr-6 sm:pr-0">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-extrabold uppercase tracking-wider bg-[var(--olive)]/15 text-[var(--olive)] px-2 py-0.5 rounded-full">
-              Instant Order Alerts
+              {isiPadPrompt ? 'iPad Setup' : 'Instant Order Alerts'}
             </span>
             <span className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
               <FontAwesomeIcon icon={faShieldHalved} className="text-[8px]" />
@@ -101,10 +123,12 @@ export default function NotificationPermissionPrompt() {
           </div>
 
           <h3 className="text-sm font-bold text-[var(--text)] mt-1">
-            Enable Order Notifications
+            {isiPadPrompt ? 'Enable iPad Order Notifications' : 'Enable Order Notifications'}
           </h3>
           <p className="text-[11.5px] text-[var(--text-muted)] mt-0.5 leading-relaxed">
-            Get instant alerts &amp; sound chimes on your phone &amp; laptop whenever a new customer order is placed.
+            {isiPadPrompt
+              ? 'To receive lockscreen order alerts on iPad: Tap the Safari Share button (⬆) at the top and select "Add to Home Screen".'
+              : 'Get instant alerts & sound chimes on your phone & laptop whenever a new customer order is placed.'}
           </p>
 
           {/* Action Buttons */}
@@ -128,6 +152,11 @@ export default function NotificationPermissionPrompt() {
                   <FontAwesomeIcon icon={faCheck} className="text-xs" />
                   <span>Notifications Enabled!</span>
                 </>
+              ) : isiPadPrompt ? (
+                <>
+                  <FontAwesomeIcon icon={faCheck} className="text-xs" />
+                  <span>Got It</span>
+                </>
               ) : (
                 <>
                   <FontAwesomeIcon icon={faBell} className="text-xs" />
@@ -144,6 +173,7 @@ export default function NotificationPermissionPrompt() {
             </button>
           </div>
         </div>
+
 
         {/* Top-Right Dismiss Button */}
         <button
