@@ -597,15 +597,36 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[var(--bg)]/70 border border-[var(--border)] text-[11px] text-[var(--text-muted)] space-y-1.5">
-          <p className="font-bold text-[var(--text)]">Push Notification Instructions:</p>
-          <p>• Click <strong>Enable Notifications</strong> and allow the browser prompt when requested.</p>
-          <p>• Click <strong>Test Alert</strong> above to verify your device receives the alert chime and push popup.</p>
-          <p>• Works on mobile and desktop browsers even when LETTERS is in the background.</p>
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-2">
+          <p className="font-bold text-[var(--text)] flex items-center gap-2">
+            <FontAwesomeIcon icon={faBell} className="text-amber-600" />
+            <span>How to Receive Alerts When Browser / App is Closed (WhatsApp-Style):</span>
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-[11px] text-[var(--text-muted)]">
+            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
+              <p className="font-bold text-[var(--text)]">📱 Android Phone (Chrome/Edge)</p>
+              <p>1. Tap the browser menu (⋮) and tap <strong>&quot;Install App&quot;</strong> or <strong>&quot;Add to Home Screen&quot;</strong>.</p>
+              <p>2. In Phone Settings → Apps → LETTERS → Battery: set to <strong>&quot;Unrestricted&quot;</strong> so alerts ring instantly when screen is locked.</p>
+            </div>
+
+            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
+              <p className="font-bold text-[var(--text)]">🍎 iPhone / iPad (iOS 16.4+)</p>
+              <p>1. Open this website in Safari.</p>
+              <p>2. Tap the <strong>Share button</strong> (square with arrow) → <strong>&quot;Add to Home Screen&quot;</strong>.</p>
+              <p>3. Open the app from your Home Screen and enable push notifications for full lockscreen banner alerts.</p>
+            </div>
+
+            <div className="bg-[var(--card)] p-3 rounded-lg border border-[var(--border)] space-y-1">
+              <p className="font-bold text-[var(--text)]">💻 Windows / Mac Desktop</p>
+              <p>1. Click <strong>&quot;Enable Notifications&quot;</strong> and allow browser prompt.</p>
+              <p>2. Ensure Windows Focus Assist or macOS Do Not Disturb is off for sound chimes and lockscreen banners.</p>
+            </div>
+          </div>
         </div>
       </div>
 
     </div>
   );
 }
+
 
