@@ -97,7 +97,13 @@ export default function FlashDealsRow() {
                 className="group flex flex-col justify-between bg-[var(--bg-subtle)]/70 p-3 rounded-xl border border-[var(--border)] hover:border-[var(--olive)]/50 transition-all shadow-2xs"
               >
                 <div>
-                  <Link href={`/product/${item.slug}`} className="block relative aspect-square rounded-lg overflow-hidden bg-white mb-2">
+                  <div
+                    className="block relative aspect-square rounded-lg overflow-hidden bg-white mb-2 cursor-pointer"
+                    onClick={() => {
+                      const msg = `*Flash Deal Inquiry — LETTERS*\nItem: ${item.name}\nCategory: ${item.category}\n\nHello LETTERS team! I would like to inquire about this Flash Deal.`;
+                      window.open(getWhatsAppUrl(msg), '_blank');
+                    }}
+                  >
                     <img
                       src={item.images?.[0] || item.image}
                       alt={item.name}
@@ -108,13 +114,18 @@ export default function FlashDealsRow() {
                         {item.discount}% OFF
                       </span>
                     )}
-                  </Link>
+                  </div>
 
-                  <Link href={`/product/${item.slug}`} className="block">
-                    <h4 className="text-xs font-bold text-[var(--text)] line-clamp-1 group-hover:text-[var(--olive)] mb-1">
-                      {item.name}
-                    </h4>
-                  </Link>
+                  <h4
+                    onClick={() => {
+                      const msg = `*Flash Deal Inquiry — LETTERS*\nItem: ${item.name}\nCategory: ${item.category}\n\nHello LETTERS team! I would like to inquire about this Flash Deal.`;
+                      window.open(getWhatsAppUrl(msg), '_blank');
+                    }}
+                    className="text-xs font-bold text-[var(--text)] line-clamp-1 group-hover:text-[var(--olive)] mb-1 cursor-pointer transition-colors"
+                  >
+                    {item.name}
+                  </h4>
+
 
                   <div className="flex items-baseline gap-1.5 mb-3">
                     {showPrices && item.showPrice !== false ? (

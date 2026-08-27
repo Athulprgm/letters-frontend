@@ -230,13 +230,13 @@ export default function DealsPage() {
   const handleWhatsAppDeal = (item, e) => {
     e.preventDefault();
     e.stopPropagation();
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const priceText = showPrices && item.showPrice !== false
       ? `\nOffer Price: ₹${item.price} (Original MRP: ₹${item.originalPrice})\nDiscount: ${item.discountPercent}% OFF`
       : `\nPricing: ${inquiryLabel}`;
-    const msg = `*Deal Inquiry — LETTERS*\nItem: ${item.name}${priceText}\nLink: ${origin}/product/${item.slug}\n\nHello LETTERS team! I would like to inquire about this curated deal. Please confirm customization and live photo preview.`;
+    const msg = `*Deal Inquiry — LETTERS*\nItem: ${item.name}${priceText}\nCategory: ${item.category}\n\nHello LETTERS team! I would like to inquire about this curated deal. Please confirm customization and live photo preview.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
+
 
   return (
     <div className="bg-[var(--bg)] min-h-screen pt-0 pb-24 transition-colors duration-300">
@@ -473,15 +473,15 @@ export default function DealsPage() {
                 className="card-minimal flex flex-col justify-between h-full group bg-[var(--card)] overflow-hidden border hover:border-[var(--chandanam)]/70 hover:shadow-xl transition-all duration-300"
               >
                 {/* Product Image & Badges */}
-                <div className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)]">
-                  <Link href={`/product/${item.slug}`} className="block w-full h-full">
+                <div className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)] cursor-pointer" onClick={(e) => handleWhatsAppDeal(item, e)}>
+                  <div className="block w-full h-full">
                     <img
                       src={item.image}
                       alt={item.name}
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                     />
-                  </Link>
+                  </div>
 
                   {/* Amazon/Flipkart Discount Badge */}
                   <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
@@ -523,15 +523,17 @@ export default function DealsPage() {
                       </span>
                     </div>
 
-                    <Link href={`/product/${item.slug}`} className="block group-hover:text-[var(--maroon)] transition-colors">
-                      <h2 className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1">
-                        {item.name}
-                      </h2>
-                    </Link>
+                    <h2
+                      onClick={(e) => handleWhatsAppDeal(item, e)}
+                      className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1 hover:text-[var(--maroon)] cursor-pointer transition-colors"
+                    >
+                      {item.name}
+                    </h2>
 
                     <p className="text-[var(--text-muted)] text-[11.5px] leading-relaxed line-clamp-2 mb-3">
                       {item.description}
                     </p>
+
 
                     {/* Price & Savings Display */}
                     <div className="space-y-1 mb-3">

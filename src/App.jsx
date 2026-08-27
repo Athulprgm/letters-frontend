@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // Global Initializers
 import ThemeInitializer from './components/ThemeInitializer';
@@ -23,7 +23,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import CustomGiftPage from './pages/CustomGiftPage';
 import DealsPage from './pages/DealsPage';
 import CategoryPage from './pages/CategoryPage';
-import ProductPage from './pages/ProductPage';
+
 
 // Admin Layout & Pages
 import AdminLayout from './pages/admin/layout';
@@ -75,8 +75,9 @@ export default function App() {
               <Route path="/custom-gift" element={<CustomGiftPage />} />
               <Route path="/deals" element={<DealsPage />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
-              <Route path="/product/:slug" element={<ProductPage />} />
+              <Route path="/product/:slug" element={<Navigate to="/shop" replace />} />
               <Route path="*" element={<HomePage />} />
+
             </Routes>
           </main>
           <Footer />

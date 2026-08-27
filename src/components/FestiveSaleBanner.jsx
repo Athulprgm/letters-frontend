@@ -220,11 +220,11 @@ export default function FestiveSaleBanner() {
   const handleWhatsAppOrder = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const priceText = showPrices && product.showPrice !== false ? `\nOffer Price: ₹${product.price}` : `\nPricing: ${inquiryLabel}`;
-    const msg = `*Festive Deal Inquiry — LETTERS*\nItem: ${product.name}${priceText}\nLink: ${origin}/product/${product.slug}\n\nHello LETTERS team! I would like to inquire about this Festive Deal. Please share customization options, quote, dispatch time, and live photo preview.`;
+    const msg = `*Festive Deal Inquiry — LETTERS*\nItem: ${product.name}${priceText}\nCategory: ${product.category}\n\nHello LETTERS team! I would like to inquire about this Festive Deal. Please share customization options, quote, dispatch time, and live photo preview.`;
     window.open(getWhatsAppUrl(msg), '_blank');
   };
+
 
   const current = slides[currentSlide];
 
@@ -656,15 +656,18 @@ export default function FestiveSaleBanner() {
                   className="card-minimal flex flex-col justify-between h-full group bg-[var(--card)] overflow-hidden border hover:border-[var(--chandanam)]/70 hover:shadow-xl transition-all duration-300"
                 >
                   {/* Image */}
-                  <div className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)]">
-                    <Link href={`/product/${product.slug}`} className="block w-full h-full">
+                  <div
+                    className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)] cursor-pointer"
+                    onClick={(e) => handleWhatsAppOrder(product, e)}
+                  >
+                    <div className="block w-full h-full">
                       <img
                         src={product.images?.[0] || product.image}
                         alt={product.name}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                       />
-                    </Link>
+                    </div>
 
                     {/* Discount Badge */}
                     <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
@@ -709,11 +712,13 @@ export default function FestiveSaleBanner() {
                         </span>
                       </div>
 
-                      <Link href={`/product/${product.slug}`} className="block group-hover:text-[var(--maroon)] transition-colors">
-                        <h4 className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1">
-                          {product.name}
-                        </h4>
-                      </Link>
+                      <h4
+                        onClick={(e) => handleWhatsAppOrder(product, e)}
+                        className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1 hover:text-[var(--maroon)] cursor-pointer transition-colors"
+                      >
+                        {product.name}
+                      </h4>
+
 
                       <p className="text-[var(--text-muted)] text-[11.5px] leading-relaxed line-clamp-2 mb-3">
                         {product.description}

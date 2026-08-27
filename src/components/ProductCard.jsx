@@ -54,7 +54,7 @@ export default function ProductCard({ product, index = 0 }) {
 
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const priceDisplay = isPriceShown ? `₹${product.price}` : inquiryLabel;
-    const message = `*Inquiry / Order Request — LETTERS*\nItem: ${product.name}\nCategory: ${product.category}\nPricing: ${priceDisplay}\nProduct Link: ${origin}/product/${product.slug}\n\nHello LETTERS team, I would like to inquire about this curated item. Please share customization options, quote, and delivery timeline.`;
+    const message = `*Inquiry / Order Request — LETTERS*\nItem: ${product.name}\nCategory: ${product.category}\nPricing: ${priceDisplay}\n\nHello LETTERS team, I would like to inquire about this curated item. Please share customization options, quote, and delivery timeline.`;
 
     window.open(getWhatsAppUrl(message), '_blank');
   };
@@ -62,8 +62,8 @@ export default function ProductCard({ product, index = 0 }) {
   return (
     <article className="card-minimal flex flex-col justify-between h-full group bg-[var(--card)] rounded-2xl border border-[var(--border)] overflow-hidden transition-all duration-300 hover:shadow-md hover:border-[var(--olive)]/30">
       {/* Product Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)]">
-        <Link href={`/product/${product.slug}`} className="block w-full h-full relative">
+      <div className="relative aspect-square overflow-hidden bg-[var(--bg-subtle)] cursor-pointer" onClick={handleWhatsAppOrder}>
+        <div className="block w-full h-full relative">
           <Image
             src={product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80'}
             alt={product.name}
@@ -71,7 +71,7 @@ export default function ProductCard({ product, index = 0 }) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
-        </Link>
+        </div>
 
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -111,15 +111,12 @@ export default function ProductCard({ product, index = 0 }) {
           </span>
         )}
 
-        {/* Quick View Button */}
-        <Link
-          href={`/product/${product.slug}`}
-          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20 backdrop-blur-[2px]"
-        >
+        {/* Quick Order Overlay on Hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20 backdrop-blur-[2px]">
           <span className="bg-white/95 backdrop-blur-md text-[var(--text)] px-4 py-2 rounded-full text-[11px] font-semibold tracking-wide shadow-md flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-            <FontAwesomeIcon icon={faEye} className="text-[10px] text-[var(--olive)]" /> View Details
+            <FontAwesomeIcon icon={faWhatsapp} className="text-sm text-[#25D366]" /> Order on WhatsApp
           </span>
-        </Link>
+        </div>
       </div>
 
       {/* Product Details */}
@@ -141,16 +138,18 @@ export default function ProductCard({ product, index = 0 }) {
           </div>
 
           {/* Title */}
-          <Link href={`/product/${product.slug}`} className="block group-hover:text-[var(--accent)] transition-colors duration-200">
-            <h3 className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1">
-              {product.name}
-            </h3>
-          </Link>
+          <h3
+            onClick={handleWhatsAppOrder}
+            className="font-heading text-[0.95rem] font-bold text-[var(--text)] leading-snug line-clamp-1 mb-1 hover:text-[var(--olive)] cursor-pointer transition-colors duration-200"
+          >
+            {product.name}
+          </h3>
 
           {/* Short Description */}
           <p className="text-[11.5px] text-[var(--text-muted)] line-clamp-2 leading-relaxed font-normal mb-2">
             {product.description}
           </p>
+
 
           {/* Price & Stock Badge */}
           <div className="flex items-center justify-between gap-2 pt-1 border-t border-[var(--border)]/60">

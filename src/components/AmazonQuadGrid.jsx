@@ -48,7 +48,7 @@ export default function AmazonQuadGrid() {
                   return (
                     <Link
                       key={p.id}
-                      href={`/product/${p.slug}`}
+                      href="/deals"
                       className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
                     >
                       <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
@@ -65,6 +65,7 @@ export default function AmazonQuadGrid() {
                         {isItemPriceShown ? `₹${p.price.toLocaleString()}` : inquiryLabel}
                       </p>
                     </Link>
+
                   );
                 })}
               </div>
@@ -137,7 +138,7 @@ export default function AmazonQuadGrid() {
                   return (
                     <Link
                       key={p.id}
-                      href={`/product/${p.slug}`}
+                      href="/shop"
                       className="group/item bg-[var(--bg-subtle)] rounded-xl p-2 border border-[var(--border)]/70 hover:border-[var(--olive)] transition-all"
                     >
                       <div className="aspect-square rounded-lg overflow-hidden mb-1.5 bg-white">
@@ -154,6 +155,7 @@ export default function AmazonQuadGrid() {
                         {isItemPriceShown ? `₹${p.price.toLocaleString()}` : inquiryLabel}
                       </p>
                     </Link>
+
                   );
                 })}
               </div>
