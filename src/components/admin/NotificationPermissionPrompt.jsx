@@ -103,40 +103,29 @@ export default function NotificationPermissionPrompt() {
   if (!visible) return null;
 
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 max-w-lg w-[92%] sm:w-full px-2 animate-in fade-in slide-in-from-top-4 duration-300">
-      <div className="bg-[var(--card)] border-2 border-[var(--olive)] rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Glowing Bell Icon */}
-        <div className="w-12 h-12 rounded-2xl bg-[var(--olive)] text-white flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
-          <FontAwesomeIcon icon={faBell} className="text-xl text-amber-300" />
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 max-w-md w-[92%] sm:w-full px-2 animate-in fade-in slide-in-from-top-4 duration-300">
+      <div className="bg-[var(--card)] border border-[var(--olive)] rounded-2xl p-4 shadow-2xl backdrop-blur-md relative overflow-hidden flex items-center gap-3.5">
+        {/* Bell Icon */}
+        <div className="w-10 h-10 rounded-xl bg-[var(--olive)] text-white flex items-center justify-center flex-shrink-0 shadow-md">
+          <FontAwesomeIcon icon={faBell} className="text-base text-amber-300" />
         </div>
 
-        {/* Text Details */}
-        <div className="flex-1 min-w-0 pr-6 sm:pr-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider bg-[var(--olive)]/15 text-[var(--olive)] px-2 py-0.5 rounded-full">
-              {isiPadPrompt ? 'iPad Setup' : 'Instant Order Alerts'}
-            </span>
-            <span className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
-              <FontAwesomeIcon icon={faShieldHalved} className="text-[8px]" />
-              Official Store Push
-            </span>
-          </div>
-
-          <h3 className="text-sm font-bold text-[var(--text)] mt-1">
-            {isiPadPrompt ? 'Enable iPad Order Notifications' : 'Enable Order Notifications'}
+        {/* Content */}
+        <div className="flex-1 min-w-0 pr-6">
+          <h3 className="text-xs font-bold text-[var(--text)]">
+            {isiPadPrompt ? 'Add to Home Screen for Alerts' : 'Enable Order Notifications'}
           </h3>
-          <p className="text-[11.5px] text-[var(--text-muted)] mt-0.5 leading-relaxed">
+          <p className="text-[11px] text-[var(--text-muted)] mt-0.5 leading-snug">
             {isiPadPrompt
-              ? 'To receive lockscreen order alerts on iPad: Tap the Safari Share button (⬆) at the top and select "Add to Home Screen".'
-              : 'Get instant alerts & sound chimes on your phone & laptop whenever a new customer order is placed.'}
+              ? 'Tap Share (⬆) → "Add to Home Screen" to receive order alerts on iPad.'
+              : 'Get instant sound and lockscreen alerts for new orders.'}
           </p>
 
-          {/* Action Buttons */}
-          <div className="mt-3.5 flex items-center gap-2.5">
+          <div className="mt-2.5 flex items-center gap-2">
             <button
               onClick={handleEnable}
               disabled={loading || success}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all shadow-md cursor-pointer active:scale-95 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-xs cursor-pointer active:scale-95 ${
                 success
                   ? 'bg-emerald-600'
                   : 'bg-[var(--olive)] hover:bg-[var(--olive-hover)]'
@@ -144,42 +133,41 @@ export default function NotificationPermissionPrompt() {
             >
               {loading ? (
                 <>
-                  <FontAwesomeIcon icon={faCircleNotch} className="text-xs animate-spin" />
-                  <span>Requesting Permission...</span>
+                  <FontAwesomeIcon icon={faCircleNotch} className="text-[10px] animate-spin" />
+                  <span>Enabling...</span>
                 </>
               ) : success ? (
                 <>
-                  <FontAwesomeIcon icon={faCheck} className="text-xs" />
-                  <span>Notifications Enabled!</span>
+                  <FontAwesomeIcon icon={faCheck} className="text-[10px]" />
+                  <span>Enabled</span>
                 </>
               ) : isiPadPrompt ? (
                 <>
-                  <FontAwesomeIcon icon={faCheck} className="text-xs" />
+                  <FontAwesomeIcon icon={faCheck} className="text-[10px]" />
                   <span>Got It</span>
                 </>
               ) : (
                 <>
-                  <FontAwesomeIcon icon={faBell} className="text-xs" />
-                  <span>Turn On Notifications</span>
+                  <FontAwesomeIcon icon={faBell} className="text-[10px]" />
+                  <span>Turn On</span>
                 </>
               )}
             </button>
 
             <button
               onClick={handleDismiss}
-              className="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs text-[var(--text-muted)] hover:text-[var(--text)] font-semibold transition-colors cursor-pointer"
+              className="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs text-[var(--text-muted)] hover:text-[var(--text)] font-medium transition-colors cursor-pointer"
             >
               Later
             </button>
           </div>
         </div>
 
-
-        {/* Top-Right Dismiss Button */}
+        {/* Close Button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 text-[var(--text-muted)] hover:text-[var(--text)] w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
-          title="Dismiss"
+          className="absolute top-2.5 right-2.5 text-[var(--text-muted)] hover:text-[var(--text)] w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-colors"
+          title="Close"
         >
           <FontAwesomeIcon icon={faXmark} className="text-xs" />
         </button>
@@ -187,3 +175,4 @@ export default function NotificationPermissionPrompt() {
     </div>
   );
 }
+

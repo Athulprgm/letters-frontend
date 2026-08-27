@@ -169,13 +169,14 @@ export default function NotificationToggle({
           ) : (
             <FontAwesomeIcon icon={faBell} className="text-xs text-[var(--olive)]" />
           )}
-          <span>
+          <span className="text-xs font-semibold">
             {isSubscribed
-              ? 'Notifications Active'
+              ? 'Alerts Active'
               : permissionState === 'denied'
-              ? 'Notifications Blocked'
-              : 'Enable Notifications'}
+              ? 'Alerts Blocked'
+              : 'Enable Alerts'}
           </span>
+
         </button>
       </div>
 
