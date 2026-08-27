@@ -345,6 +345,7 @@ export default function Navbar() {
                   {[
                     { label: 'Home', href: '/' },
                     { label: 'Shop All Gifts', href: '/shop' },
+                    ...(isSaleActive ? [{ label: 'Mega Deals & Offers', href: '/deals' }] : []),
                     { label: 'Our Story & Craft', href: '/about' },
                     { label: 'Contact & Studio', href: '/contact' },
                   ].map((link) => (
@@ -358,6 +359,7 @@ export default function Navbar() {
                       <FontAwesomeIcon icon={faArrowRight} className="text-xs text-[var(--text-muted)]" />
                     </Link>
                   ))}
+
 
 
                   <Link
