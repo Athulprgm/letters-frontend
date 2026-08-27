@@ -132,44 +132,39 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col md:flex-row antialiased">
       
       {/* Mobile Top Header */}
-      <header className="md:hidden bg-[var(--card)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-xs">
-        <div className="flex items-center gap-2.5">
+      <header className="md:hidden bg-[var(--card)] border-b border-[var(--border)] px-3 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-xs">
+        <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            className="w-9 h-9 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] flex items-center justify-center cursor-pointer hover:bg-[var(--card)] transition-colors"
+            className="w-9 h-9 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text)] flex items-center justify-center cursor-pointer hover:bg-[var(--card)] transition-colors flex-shrink-0"
             aria-label="Toggle admin sidebar"
           >
             {mobileSidebarOpen ? <FontAwesomeIcon icon={faXmark} className="text-sm" /> : <FontAwesomeIcon icon={faBars} className="text-sm" />}
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 flex items-center justify-center flex-shrink-0 -ml-1">
-              <img src="/logo.png" alt="Letters" className="w-full h-full object-contain scale-110 drop-shadow-sm" />
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+              <img src="/logo.png" alt="Letters" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
-            <span className="font-bold text-sm text-[var(--text)] tracking-tight">
-              {settings.brandName || 'Letters'}
-            </span>
-            <span className="text-[10px] uppercase font-bold bg-[var(--olive)]/10 text-[var(--olive)] px-1.5 py-0.5 rounded">
-              Admin
-            </span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-xs sm:text-sm text-[var(--text)] tracking-tight truncate">
+                {settings.brandName || 'Letters'}
+              </span>
+              <span className="text-[9px] uppercase font-bold text-[var(--olive)] leading-none">
+                Admin Console
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Store Status Online on Tablets */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--bg)] border border-[var(--border)] text-[11px] text-[var(--text-muted)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span className="font-semibold text-[var(--text)]">Online</span>
-          </div>
-
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           {pendingOrdersCount > 0 && (
             <Link
               to="/admin/orders"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-300 dark:border-amber-800"
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[11px] font-bold border border-amber-300 dark:border-amber-800"
               title={`${pendingOrdersCount} Pending Orders`}
             >
-              <FontAwesomeIcon icon={faBell} className="text-xs" />
-              <span className="hidden sm:inline">{pendingOrdersCount} Pending</span>
-              <span className="sm:hidden font-bold">{pendingOrdersCount}</span>
+              <FontAwesomeIcon icon={faBell} className="text-[10px]" />
+              <span>{pendingOrdersCount}</span>
             </Link>
           )}
 
@@ -192,20 +187,20 @@ export default function AdminLayout({ children }) {
 
       {/* Classic E-Commerce Sidebar */}
       <aside
-        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 w-64 bg-[var(--card)] border-r border-[var(--border)] flex flex-col justify-between transition-transform duration-300 md:translate-x-0 h-screen ${
-          mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 w-64 bg-[var(--card)] border-r border-[var(--border)] flex flex-col justify-between transition-transform duration-300 md:translate-x-0 h-screen max-h-screen ${
+          mobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full overflow-hidden">
           
           {/* Brand Header */}
           <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 flex items-center justify-center flex-shrink-0">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
                 <img src="/logo.png" alt="Letters" className="w-full h-full object-contain" />
               </div>
-              <div>
-                <h2 className="font-bold text-sm text-[var(--text)] tracking-tight leading-none">
+              <div className="min-w-0">
+                <h2 className="font-bold text-sm text-[var(--text)] tracking-tight leading-none truncate">
                   {settings.brandName || 'Letters'}
                 </h2>
                 <div className="flex items-center gap-1.5 mt-1.5">
@@ -217,14 +212,15 @@ export default function AdminLayout({ children }) {
 
             <button
               onClick={() => setMobileSidebarOpen(false)}
-              className="md:hidden text-[var(--text-muted)] hover:text-[var(--text)] p-1 cursor-pointer"
+              className="md:hidden text-[var(--text-muted)] hover:text-[var(--text)] p-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--bg)] cursor-pointer"
+              aria-label="Close sidebar"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-base" />
+              <FontAwesomeIcon icon={faXmark} className="text-sm" />
             </button>
           </div>
 
           {/* Navigation Items (Grouped Classic Admin) */}
-          <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
+          <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-5">
             {navigationGroups.map((group) => (
               <div key={group.title} className="space-y-1">
                 <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] opacity-70">
@@ -239,7 +235,7 @@ export default function AdminLayout({ children }) {
                         key={link.href}
                         to={link.href}
                         onClick={() => setMobileSidebarOpen(false)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold tracking-normal transition-colors duration-150 ${
+                        className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold tracking-normal transition-colors duration-150 ${
                           isActive
                             ? 'bg-[var(--olive)] text-white font-bold shadow-xs'
                             : 'text-[var(--text)]/80 hover:bg-[var(--bg)] hover:text-[var(--text)]'
@@ -273,20 +269,19 @@ export default function AdminLayout({ children }) {
           {/* Footer Admin Card & Actions */}
           <div className="p-3.5 border-t border-[var(--border)] bg-[var(--bg)]/40 space-y-2.5">
             <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
-
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[var(--olive)]/15 text-[var(--olive)] flex items-center justify-center font-bold text-[10px]">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-6 h-6 rounded-full bg-[var(--olive)]/15 text-[var(--olive)] flex items-center justify-center font-bold text-[10px] flex-shrink-0">
                   {(adminUser?.username || 'A')[0].toUpperCase()}
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold leading-none text-[var(--text)]">{adminUser?.username || 'Administrator'}</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-bold leading-none text-[var(--text)] truncate">{adminUser?.username || 'Administrator'}</span>
                   <span className="text-[9px] text-[var(--text-muted)] mt-0.5">Letters Store</span>
                 </div>
               </div>
 
               <button
                 onClick={handleLogout}
-                className="text-rose-600 hover:text-rose-700 dark:text-rose-400 p-1 text-xs cursor-pointer"
+                className="text-rose-600 hover:text-rose-700 dark:text-rose-400 p-1.5 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs cursor-pointer flex-shrink-0"
                 title="Logout"
               >
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
@@ -314,15 +309,15 @@ export default function AdminLayout({ children }) {
       {mobileSidebarOpen && (
         <div
           onClick={() => setMobileSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-xs"
+          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-xs transition-opacity"
         />
       )}
 
       {/* Main Admin Content Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
         
         {/* Desktop Top Bar */}
-        <header className="hidden md:flex items-center justify-between px-8 py-3 bg-[var(--card)] border-b border-[var(--border)] sticky top-0 z-30 shadow-xs">
+        <header className="hidden md:flex items-center justify-between px-6 lg:px-8 py-3 bg-[var(--card)] border-b border-[var(--border)] sticky top-0 z-30 shadow-xs">
           <div className="flex items-center gap-2 text-xs">
             <Link to="/admin" className="font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
               Admin
@@ -363,10 +358,80 @@ export default function AdminLayout({ children }) {
 
 
         {/* Page Content View */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
+
+      {/* Mobile Bottom Quick Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] px-2 py-1.5 flex items-center justify-around shadow-lg">
+        <Link
+          to="/admin"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition-colors ${
+            pathname === '/admin'
+              ? 'text-[var(--olive)] font-bold'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          <FontAwesomeIcon icon={faGauge} className="text-sm mb-0.5" />
+          <span>Dashboard</span>
+        </Link>
+
+        <Link
+          to="/admin/orders"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold relative transition-colors ${
+            pathname.startsWith('/admin/orders')
+              ? 'text-[var(--olive)] font-bold'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          <div className="relative">
+            <FontAwesomeIcon icon={faBagShopping} className="text-sm mb-0.5" />
+            {pendingOrdersCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-amber-500 text-white text-[8px] font-extrabold px-1 rounded-full">
+                {pendingOrdersCount}
+              </span>
+            )}
+          </div>
+          <span>Orders</span>
+        </Link>
+
+        <Link
+          to="/admin/products"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition-colors ${
+            pathname.startsWith('/admin/products')
+              ? 'text-[var(--olive)] font-bold'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          <FontAwesomeIcon icon={faBox} className="text-sm mb-0.5" />
+          <span>Products</span>
+        </Link>
+
+        <Link
+          to="/admin/categories"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition-colors ${
+            pathname.startsWith('/admin/categories')
+              ? 'text-[var(--olive)] font-bold'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          <FontAwesomeIcon icon={faLayerGroup} className="text-sm mb-0.5" />
+          <span>Categories</span>
+        </Link>
+
+        <Link
+          to="/admin/settings"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-semibold transition-colors ${
+            pathname.startsWith('/admin/settings')
+              ? 'text-[var(--olive)] font-bold'
+              : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          <FontAwesomeIcon icon={faGear} className="text-sm mb-0.5" />
+          <span>Settings</span>
+        </Link>
+      </nav>
 
       <OrderNotificationManager />
       <NotificationPermissionPrompt />

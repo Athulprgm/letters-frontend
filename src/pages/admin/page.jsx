@@ -252,29 +252,29 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. ADVANCE LEVEL STATUS RIBBON (CLEAN MINIMAL, NO DOTS) */}
+      {/* 2. ADVANCE LEVEL STATUS RIBBON */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs">
-        <div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs">
           <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Storefront</span>
-          <span className="font-bold text-[var(--text)]">Online &amp; Active</span>
+          <span className="font-bold text-[var(--text)] text-xs sm:text-sm">Online &amp; Active</span>
         </div>
 
-        <div className="border-l border-[var(--border)] pl-3">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs">
           <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] block">WhatsApp Gateway</span>
-          <span className="font-bold text-[var(--text)]">Connected</span>
+          <span className="font-bold text-[var(--text)] text-xs sm:text-sm">Connected</span>
         </div>
 
-        <div className="border-l border-[var(--border)] pl-3">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs">
           <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Promo Campaign</span>
-          <span className="font-bold text-[var(--text)] truncate max-w-[140px] block">
+          <span className="font-bold text-[var(--text)] text-xs sm:text-sm truncate block">
             {saleBanner?.enabled ? `${saleBanner.tag || 'Mega Sale Live'}` : 'Standby'}
           </span>
         </div>
 
-        <div className="border-l border-[var(--border)] pl-3">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs">
           <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Active Festival</span>
-          <span className="font-bold text-[var(--text)] truncate max-w-[140px] block">
+          <span className="font-bold text-[var(--text)] text-xs sm:text-sm truncate block">
             {showcaseFestival ? showcaseFestival.name : 'Standard Catalog'}
           </span>
         </div>
@@ -283,10 +283,10 @@ export default function AdminDashboardPage() {
       {/* ========================================================================= */}
       {/* 3. MINIMAL LUXURY KPI STATS GRID */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Gross Revenue */}
-        <div className="p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
           <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
             <span className="text-[10.5px] font-bold uppercase tracking-wider">Gross Sales</span>
             <div className="w-8 h-8 rounded-lg bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center text-xs">
@@ -305,7 +305,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Order Fulfillment Velocity */}
-        <div className="p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
           <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
             <span className="text-[10.5px] font-bold uppercase tracking-wider">Total Orders</span>
             <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs">
@@ -329,7 +329,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Pending Action Required */}
-        <div className={`p-5 rounded-2xl bg-[var(--card)] border shadow-xs relative overflow-hidden transition-colors ${
+        <div className={`p-4 sm:p-5 rounded-2xl bg-[var(--card)] border shadow-xs relative overflow-hidden transition-colors ${
           metrics.pending > 0 ? 'border-amber-400 dark:border-amber-600' : 'border-[var(--border)]'
         }`}>
           <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
@@ -357,7 +357,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Catalog & Inventory Balance */}
-        <div className="p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs relative overflow-hidden group hover:border-[var(--olive)]/50 transition-colors">
           <div className="flex items-center justify-between text-[var(--text-muted)] mb-3">
             <span className="text-[10.5px] font-bold uppercase tracking-wider">Catalog Inventory</span>
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
@@ -390,7 +390,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Graph 1: Weekly Revenue & Orders Velocity Chart (2 cols) */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
             <div>
               <h2 className="font-bold text-sm text-[var(--text)] flex items-center gap-2">
@@ -403,7 +403,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Metric Mode Switcher */}
-            <div className="flex items-center gap-1 bg-[var(--bg)] p-1 rounded-lg border border-[var(--border)]">
+            <div className="flex items-center gap-1 bg-[var(--bg)] p-1 rounded-lg border border-[var(--border)] self-start sm:self-auto">
               <button
                 type="button"
                 onClick={() => setChartViewMode('revenue')}
@@ -431,7 +431,7 @@ export default function AdminDashboardPage() {
 
           {/* Interactive Bar & Curve Chart Canvas */}
           <div className="pt-2">
-            <div className="h-52 w-full flex items-end justify-between gap-2 sm:gap-4 px-2">
+            <div className="h-48 sm:h-52 w-full flex items-end justify-between gap-1.5 sm:gap-4 px-1 sm:px-2">
               {weeklySalesData.list.map((item, idx) => {
                 const isZero = chartViewMode === 'revenue' ? item.revenue === 0 : item.orders === 0;
                 const heightPct = isZero
@@ -447,17 +447,18 @@ export default function AdminDashboardPage() {
                     key={item.day + idx}
                     onMouseEnter={() => setActiveHoverBar(idx)}
                     onMouseLeave={() => setActiveHoverBar(null)}
+                    onClick={() => setActiveHoverBar(activeHoverBar === idx ? null : idx)}
                     className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer relative"
                   >
                     {/* Hover Value Popover */}
                     {isHovered && (
-                      <div className="absolute -top-10 z-20 bg-[var(--text)] text-[var(--bg)] text-[10.5px] font-bold py-1 px-2.5 rounded-lg shadow-lg whitespace-nowrap animate-fadeIn pointer-events-none">
+                      <div className="absolute -top-10 z-20 bg-[var(--text)] text-[var(--bg)] text-[10px] sm:text-[10.5px] font-bold py-1 px-2 rounded-lg shadow-lg whitespace-nowrap animate-fadeIn pointer-events-none">
                         {chartViewMode === 'revenue' ? `₹${item.revenue.toLocaleString()}` : `${item.orders} Orders`}
                       </div>
                     )}
 
                     {/* Chart Bar */}
-                    <div className="w-full max-w-[48px] bg-[var(--bg)] rounded-t-lg overflow-hidden flex items-end h-[160px]">
+                    <div className="w-full max-w-[48px] bg-[var(--bg)] rounded-t-lg overflow-hidden flex items-end h-[140px] sm:h-[160px]">
                       <div
                         style={{ height: `${heightPct}%` }}
                         className={`w-full rounded-t-lg transition-all duration-300 ${
@@ -474,7 +475,7 @@ export default function AdminDashboardPage() {
 
                     {/* Day Label */}
                     <div className="mt-2 text-center">
-                      <span className={`text-[11px] font-semibold block ${item.isToday ? 'font-bold text-[var(--olive)]' : 'text-[var(--text-muted)]'}`}>
+                      <span className={`text-[10px] sm:text-[11px] font-semibold block ${item.isToday ? 'font-bold text-[var(--olive)]' : 'text-[var(--text-muted)]'}`}>
                         {item.day}
                       </span>
                     </div>
@@ -484,7 +485,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Chart Footer Real Highlights */}
-            <div className="flex items-center justify-between text-[11px] pt-3 border-t border-[var(--border)]/60 text-[var(--text-muted)]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] pt-3 border-t border-[var(--border)]/60 text-[var(--text-muted)]">
               <span>Peak Day: <strong className="text-[var(--text)] font-bold">{weeklySalesData.peakDay}</strong></span>
               <span>7-Day Sales: <strong className="text-[var(--text)] font-bold">{weeklySalesData.totalPeriodOrders} Orders (₹{weeklySalesData.totalPeriodRev.toLocaleString()})</strong></span>
             </div>
@@ -492,7 +493,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Graph 2: Fulfillment Status Distribution Arc / Matrix (1 col) */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
           <div className="border-b border-[var(--border)] pb-3">
             <h2 className="font-bold text-sm text-[var(--text)] flex items-center gap-2">
               <FontAwesomeIcon icon={faChartPie} className="text-xs text-[var(--olive)]" />
@@ -564,9 +565,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 5. ADVANCED ORDER FULFILLMENT PIPELINE MATRIX (NO DOTS) */}
+      {/* 5. ADVANCED ORDER FULFILLMENT PIPELINE MATRIX */}
       {/* ========================================================================= */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--border)] pb-3">
           <div>
             <h2 className="font-bold text-sm text-[var(--text)] flex items-center gap-2">
@@ -578,7 +579,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 self-start sm:self-auto">
             <button
               onClick={() => setSelectedStatusFilter('ALL')}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
@@ -592,8 +593,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* 5-Stage Interactive Fulfillment Matrix (Clean typography, NO dots) */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+        {/* 5-Stage Interactive Fulfillment Matrix */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5">
           
           {/* Pending */}
           <button
@@ -608,7 +609,7 @@ export default function AdminDashboardPage() {
               <span>Pending</span>
               <span className="text-[10px] font-bold uppercase tracking-wider">Queue</span>
             </div>
-            <p className="text-xl font-extrabold text-[var(--text)]">{metrics.pending}</p>
+            <p className="text-lg sm:text-xl font-extrabold text-[var(--text)]">{metrics.pending}</p>
             <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Needs Approval</span>
           </button>
 
@@ -625,7 +626,7 @@ export default function AdminDashboardPage() {
               <span>Confirmed</span>
               <span className="text-[10px] font-bold uppercase tracking-wider">Accepted</span>
             </div>
-            <p className="text-xl font-extrabold text-[var(--text)]">{metrics.confirmed}</p>
+            <p className="text-lg sm:text-xl font-extrabold text-[var(--text)]">{metrics.confirmed}</p>
             <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Payment Verified</span>
           </button>
 
@@ -642,7 +643,7 @@ export default function AdminDashboardPage() {
               <span>Preparing</span>
               <span className="text-[10px] font-bold uppercase tracking-wider">Atelier</span>
             </div>
-            <p className="text-xl font-extrabold text-[var(--text)]">{metrics.preparing}</p>
+            <p className="text-lg sm:text-xl font-extrabold text-[var(--text)]">{metrics.preparing}</p>
             <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Crafting Keepsake</span>
           </button>
 
@@ -659,14 +660,14 @@ export default function AdminDashboardPage() {
               <span>Ready</span>
               <span className="text-[10px] font-bold uppercase tracking-wider">Dispatch</span>
             </div>
-            <p className="text-xl font-extrabold text-[var(--text)]">{metrics.ready}</p>
+            <p className="text-lg sm:text-xl font-extrabold text-[var(--text)]">{metrics.ready}</p>
             <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Packed &amp; Ready</span>
           </button>
 
           {/* Delivered */}
           <button
             onClick={() => setSelectedStatusFilter(selectedStatusFilter === 'Delivered' ? 'ALL' : 'Delivered')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer col-span-2 sm:col-span-1 ${
               selectedStatusFilter === 'Delivered'
                 ? 'bg-emerald-500/15 border-emerald-500 shadow-xs'
                 : 'bg-[var(--bg)]/70 border-[var(--border)] hover:border-emerald-400/50'
@@ -676,7 +677,7 @@ export default function AdminDashboardPage() {
               <span>Delivered</span>
               <FontAwesomeIcon icon={faCheck} className="text-xs" />
             </div>
-            <p className="text-xl font-extrabold text-[var(--text)]">{metrics.delivered}</p>
+            <p className="text-lg sm:text-xl font-extrabold text-[var(--text)]">{metrics.delivered}</p>
             <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Fulfilled Orders</span>
           </button>
 
@@ -688,7 +689,7 @@ export default function AdminDashboardPage() {
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Recent Orders List Table (2 cols on desktop) */}
+        {/* Recent Orders (2 cols on desktop) */}
         <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between">
           <div>
             <div className="p-4 sm:p-5 border-b border-[var(--border)] flex items-center justify-between">
@@ -705,7 +706,7 @@ export default function AdminDashboardPage() {
                 to="/admin/orders"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--olive)] hover:underline"
               >
-                <span>Full Orders ({orders.length})</span>
+                <span>All Orders ({orders.length})</span>
                 <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
               </Link>
             </div>
@@ -716,78 +717,137 @@ export default function AdminDashboardPage() {
                 <p>No orders found matching this filter.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="bg-[var(--bg)]/60 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
-                      <th className="py-3 px-4 font-bold">Order</th>
-                      <th className="py-3 px-4 font-bold">Customer</th>
-                      <th className="py-3 px-4 font-bold hidden sm:table-cell">Items</th>
-                      <th className="py-3 px-4 font-bold">Amount</th>
-                      <th className="py-3 px-4 font-bold">Status</th>
-                      <th className="py-3 px-4 font-bold text-right">Concierge</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border)]/70">
-                    {filteredOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-[var(--bg)]/40 transition-colors">
-                        
-                        {/* Order ID */}
-                        <td className="py-3 px-4 font-mono font-bold text-[var(--text)] text-[11px]">
-                          #{order.id.slice(-6)}
-                        </td>
-
-                        {/* Customer */}
-                        <td className="py-3 px-4">
-                          <p className="font-bold text-[var(--text)] text-xs">{order.customerName}</p>
-                          <p className="text-[10.5px] text-[var(--text-muted)] font-mono">{order.phone || order.whatsappNumber}</p>
-                        </td>
-
-                        {/* Items */}
-                        <td className="py-3 px-4 max-w-[150px] truncate text-[11px] text-[var(--text)] hidden sm:table-cell">
-                          {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Gift'}
-                        </td>
-
-                        {/* Total */}
-                        <td className="py-3 px-4 font-bold text-[var(--text)]">
+              <>
+                {/* Mobile Orders Cards View (< md) */}
+                <div className="md:hidden divide-y divide-[var(--border)]/70">
+                  {filteredOrders.map((order) => (
+                    <div key={order.id} className="p-3.5 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono font-bold text-xs text-[var(--text)]">#{order.id.slice(-6)}</span>
+                          <span className="text-[10px] text-[var(--text-muted)]">
+                            {new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                          </span>
+                        </div>
+                        <span className="font-extrabold text-sm text-[var(--text)]">
                           ₹{Number(order.total || 0).toLocaleString()}
-                        </td>
+                        </span>
+                      </div>
 
-                        {/* Status Switcher */}
-                        <td className="py-3 px-4">
-                          <select
-                            value={order.status}
-                            onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full cursor-pointer focus:outline-none ${getStatusBadge(
-                              order.status
-                            )}`}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Preparing">Preparing</option>
-                            <option value="Ready">Ready</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </select>
-                        </td>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-xs text-[var(--text)]">{order.customerName}</p>
+                          <p className="text-[11px] text-[var(--text-muted)] font-mono">{order.phone || order.whatsappNumber}</p>
+                        </div>
 
-                        {/* Action */}
-                        <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => handleContactCustomer(order)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-semibold transition-colors cursor-pointer"
-                            title="Chat on WhatsApp"
-                          >
-                            <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
-                            <span className="hidden sm:inline">WhatsApp</span>
-                          </button>
-                        </td>
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className={`text-[10px] font-bold px-2 py-1 rounded-full cursor-pointer focus:outline-none ${getStatusBadge(
+                            order.status
+                          )}`}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Confirmed">Confirmed</option>
+                          <option value="Preparing">Preparing</option>
+                          <option value="Ready">Ready</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      </div>
 
+                      <div className="flex items-center justify-between pt-1 text-xs">
+                        <span className="text-[11px] text-[var(--text-muted)] truncate max-w-[180px]">
+                          {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Gift'}
+                        </span>
+
+                        <button
+                          onClick={() => handleContactCustomer(order)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                          title="Chat on WhatsApp"
+                        >
+                          <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
+                          <span>WhatsApp</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Data Table (>= md) */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="bg-[var(--bg)]/60 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
+                        <th className="py-3 px-4 font-bold">Order</th>
+                        <th className="py-3 px-4 font-bold">Customer</th>
+                        <th className="py-3 px-4 font-bold">Items</th>
+                        <th className="py-3 px-4 font-bold">Amount</th>
+                        <th className="py-3 px-4 font-bold">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Concierge</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)]/70">
+                      {filteredOrders.map((order) => (
+                        <tr key={order.id} className="hover:bg-[var(--bg)]/40 transition-colors">
+                          
+                          {/* Order ID */}
+                          <td className="py-3 px-4 font-mono font-bold text-[var(--text)] text-[11px]">
+                            #{order.id.slice(-6)}
+                          </td>
+
+                          {/* Customer */}
+                          <td className="py-3 px-4">
+                            <p className="font-bold text-[var(--text)] text-xs">{order.customerName}</p>
+                            <p className="text-[10.5px] text-[var(--text-muted)] font-mono">{order.phone || order.whatsappNumber}</p>
+                          </td>
+
+                          {/* Items */}
+                          <td className="py-3 px-4 max-w-[150px] truncate text-[11px] text-[var(--text)]">
+                            {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Gift'}
+                          </td>
+
+                          {/* Total */}
+                          <td className="py-3 px-4 font-bold text-[var(--text)]">
+                            ₹{Number(order.total || 0).toLocaleString()}
+                          </td>
+
+                          {/* Status Switcher */}
+                          <td className="py-3 px-4">
+                            <select
+                              value={order.status}
+                              onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full cursor-pointer focus:outline-none ${getStatusBadge(
+                                order.status
+                              )}`}
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Confirmed">Confirmed</option>
+                              <option value="Preparing">Preparing</option>
+                              <option value="Ready">Ready</option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                          </td>
+
+                          {/* Action */}
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => handleContactCustomer(order)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                              title="Chat on WhatsApp"
+                            >
+                              <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
+                              <span>WhatsApp</span>
+                            </button>
+                          </td>
+
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
 
