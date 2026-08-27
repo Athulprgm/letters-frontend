@@ -1,14 +1,23 @@
-/**
- * LETTERS Atelier Service Worker - High Reliability Web Push & Real-Time Alerts
- */
+const CACHE_VERSION = 'letters-cache-v3.2';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_VERSION) {
+            return caches.delete(key);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
+
 
 // 1. Receive Push Messages from Web Push Server (Wakes device even when browser is closed)
 self.addEventListener('push', (event) => {
