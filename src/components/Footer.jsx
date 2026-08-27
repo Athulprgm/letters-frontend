@@ -113,7 +113,6 @@ export default function Footer() {
             <li><Link href="/custom-gift" className="hover:text-[var(--accent-hover)] transition-colors">Custom Gift Builder</Link></li>
             <li><Link href="/about" className="hover:text-[var(--accent-hover)] transition-colors">About LETTERS</Link></li>
             <li><Link href="/contact" className="hover:text-[var(--accent-hover)] transition-colors">Contact & Studio</Link></li>
-            <li><Link href="/admin" className="hover:text-[var(--accent-hover)] transition-colors flex items-center gap-1.5"><FontAwesomeIcon icon={faShieldHalved} className="text-[10px]" /> Admin Portal</Link></li>
           </ul>
         </div>
 
@@ -136,10 +135,12 @@ export default function Footer() {
           </ul>
 
           <button
+            type="button"
             onClick={handleWhatsAppClick}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full bg-[#C9A46C] text-[#1C1C1A] hover:bg-[#A9824D] hover:text-[#FFFDF9] transition-colors mt-4 cursor-pointer shadow-sm"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-bold uppercase tracking-wider rounded-xl bg-[var(--olive)] text-white hover:bg-[var(--olive-hover)] transition-all mt-4 cursor-pointer shadow-md active:scale-95"
           >
-            <FontAwesomeIcon icon={faWhatsapp} className="text-sm" /> Order on WhatsApp
+            <FontAwesomeIcon icon={faWhatsapp} className="text-base text-emerald-300" />
+            <span>Order on WhatsApp</span>
           </button>
         </div>
 
@@ -147,13 +148,14 @@ export default function Footer() {
 
       {/* Footer Bottom Strip */}
       <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10.5px] text-[var(--text-muted)] font-medium">
-        <p>© {new Date().getFullYear()} {settings.brandName} Gifting (EST. {settings.establishedYear}). All rights reserved.</p>
+        <p>© {new Date().getFullYear()} {settings.brandName || 'LETTERS'} Gifting (EST. {settings.establishedYear || '2020'}). All rights reserved.</p>
         <div className="flex items-center gap-6">
           <Link href="/about" className="hover:text-[var(--text)]">About Us</Link>
           <Link href="/contact" className="hover:text-[var(--text)]">Customer Care</Link>
-          <Link href="/admin" className="hover:text-[var(--text)] flex items-center gap-1.5"><FontAwesomeIcon icon={faShieldHalved} className="text-[10px]" /> Admin</Link>
+          <Link href="/custom-gift" className="hover:text-[var(--text)]">Bespoke Studio</Link>
         </div>
       </div>
     </footer>
   );
 }
+
