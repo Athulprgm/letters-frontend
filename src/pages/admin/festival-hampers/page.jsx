@@ -462,124 +462,227 @@ export default function AdminFestivalHampersPage() {
 
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden">
           {festivals.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
-                    <th className="py-3 px-4 font-bold">Celebration / Festival</th>
-                    <th className="py-3 px-4 font-bold">Event Dates</th>
-                    <th className="py-3 px-4 font-bold">Pre-Booking</th>
-                    <th className="py-3 px-4 font-bold">Status</th>
-                    <th className="py-3 px-4 font-bold">Hampers</th>
-                    <th className="py-3 px-4 font-bold text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]/70">
-                  {festivals.map((fest) => {
-                    const isSelected = selectedFestivalId === fest.id;
-                    const isShowcase = showcaseFestival?.id === fest.id;
-                    const productCount = (fest.products || []).length;
-                    const activeProductCount = (fest.products || []).filter((p) => p.active !== false).length;
+            <>
+              {/* Mobile Festivals Cards View (< md) */}
+              <div className="md:hidden divide-y divide-[var(--border)]/70">
+                {festivals.map((fest) => {
+                  const isSelected = selectedFestivalId === fest.id;
+                  const isShowcase = showcaseFestival?.id === fest.id;
+                  const productCount = (fest.products || []).length;
+                  const activeProductCount = (fest.products || []).filter((p) => p.active !== false).length;
 
-                    return (
-                      <tr
-                        key={fest.id}
-                        onClick={() => setSelectedFestivalId(fest.id)}
-                        className={`hover:bg-[var(--bg)]/40 transition-colors cursor-pointer ${
-                          isSelected ? 'bg-[var(--olive)]/5' : ''
-                        }`}
-                      >
-                        {/* Name & Banner */}
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={fest.banner || '/logo.png'}
-                              alt={fest.name}
-                              className="w-12 h-8 rounded-md object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
-                              onError={(e) => { e.target.src = '/logo.png'; }}
-                            />
-                            <div>
-                              <div className="flex items-center gap-1.5">
-                                <p className="font-bold text-[var(--text)] text-xs">{fest.name}</p>
-                                {isShowcase && (
-                                  <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-500/20">
-                                    ★ Live
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-[10px] text-[var(--text-muted)] truncate max-w-xs">{fest.title || fest.tagline}</p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Event Dates */}
-                        <td className="py-3 px-4 whitespace-nowrap text-[11px] font-medium text-[var(--text)]">
-                          {fest.startDate} &rarr; {fest.endDate}
-                        </td>
-
-                        {/* Pre-Booking */}
-                        <td className="py-3 px-4 whitespace-nowrap text-[11px]">
-                          {fest.preBookingEnabled ? (
-                            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                              From {fest.preBookingStartDate || '1 mo prior'}
+                  return (
+                    <div
+                      key={fest.id}
+                      onClick={() => setSelectedFestivalId(fest.id)}
+                      className={`p-4 space-y-3 cursor-pointer transition-colors ${
+                        isSelected ? 'bg-[var(--olive)]/5' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={fest.banner || '/logo.png'}
+                          alt={fest.name}
+                          className="w-16 h-12 rounded-lg object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                          onError={(e) => { e.target.src = '/logo.png'; }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-bold text-xs sm:text-sm text-[var(--text)] truncate">
+                              {fest.name}
                             </span>
-                          ) : (
-                            <span className="text-[var(--text-muted)]">Off</span>
-                          )}
-                        </td>
-
-                        {/* Status */}
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          {renderStatusBadge(fest)}
-                        </td>
-
-                        {/* Hampers count */}
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          <span className="text-[11px] font-bold text-[var(--olive)]">
-                            {activeProductCount} active / {productCount} total
-                          </span>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3 px-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEditFestival(fest)}
-                              className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
-                              title="Edit Festival Details"
-                            >
-                              <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleToggleFestivalStatus(fest)}
-                              className={`px-2 py-1 rounded-md text-[10px] font-bold transition-colors cursor-pointer border ${
-                                fest.status === 'published'
-                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                                  : 'bg-stone-500/10 text-stone-600 border-stone-500/20'
-                              }`}
-                              title="Toggle Published / Draft"
-                            >
-                              {fest.status === 'published' ? 'Live' : 'Draft'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteFestival(fest.id, fest.name)}
-                              className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
-                              title="Delete Festival"
-                            >
-                              <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
-                            </button>
+                            {isShowcase && (
+                              <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                                ★ Live
+                              </span>
+                            )}
                           </div>
-                        </td>
+                          <p className="text-[10.5px] text-[var(--text-muted)] line-clamp-1 mt-0.5">
+                            {fest.title || fest.tagline}
+                          </p>
+                          <p className="text-[11px] text-[var(--text)] font-semibold mt-1">
+                            {fest.startDate} &rarr; {fest.endDate}
+                          </p>
+                        </div>
+                      </div>
 
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)] text-xs">
+                        <div>
+                          <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold block">Pre-Booking</span>
+                          <span className="text-[11px] font-semibold text-[var(--text)]">
+                            {fest.preBookingEnabled ? `From ${fest.preBookingStartDate || '1 mo prior'}` : 'Off'}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold block">Hampers</span>
+                          <span className="text-[11px] font-bold text-[var(--olive)]">
+                            {activeProductCount} active / {productCount}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1 border-t border-[var(--border)]/50" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2">
+                          {renderStatusBadge(fest)}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleFestivalStatus(fest)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors cursor-pointer border ${
+                              fest.status === 'published'
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                : 'bg-stone-500/10 text-stone-600 border-stone-500/20'
+                            }`}
+                          >
+                            {fest.status === 'published' ? 'Live' : 'Draft'}
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditFestival(fest)}
+                            className="px-3 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs font-semibold text-[var(--text)] flex items-center gap-1 cursor-pointer"
+                            title="Edit Festival Details"
+                          >
+                            <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteFestival(fest.id, fest.name)}
+                            className="p-1.5 w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center cursor-pointer"
+                            title="Delete Festival"
+                          >
+                            <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop Festivals Table (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
+                      <th className="py-3 px-4 font-bold">Celebration / Festival</th>
+                      <th className="py-3 px-4 font-bold">Event Dates</th>
+                      <th className="py-3 px-4 font-bold">Pre-Booking</th>
+                      <th className="py-3 px-4 font-bold">Status</th>
+                      <th className="py-3 px-4 font-bold">Hampers</th>
+                      <th className="py-3 px-4 font-bold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)]/70">
+                    {festivals.map((fest) => {
+                      const isSelected = selectedFestivalId === fest.id;
+                      const isShowcase = showcaseFestival?.id === fest.id;
+                      const productCount = (fest.products || []).length;
+                      const activeProductCount = (fest.products || []).filter((p) => p.active !== false).length;
+
+                      return (
+                        <tr
+                          key={fest.id}
+                          onClick={() => setSelectedFestivalId(fest.id)}
+                          className={`hover:bg-[var(--bg)]/40 transition-colors cursor-pointer ${
+                            isSelected ? 'bg-[var(--olive)]/5' : ''
+                          }`}
+                        >
+                          {/* Name & Banner */}
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={fest.banner || '/logo.png'}
+                                alt={fest.name}
+                                className="w-12 h-8 rounded-md object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                                onError={(e) => { e.target.src = '/logo.png'; }}
+                              />
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <p className="font-bold text-[var(--text)] text-xs">{fest.name}</p>
+                                  {isShowcase && (
+                                    <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                                      ★ Live
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[10px] text-[var(--text-muted)] truncate max-w-xs">{fest.title || fest.tagline}</p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Event Dates */}
+                          <td className="py-3 px-4 whitespace-nowrap text-[11px] font-medium text-[var(--text)]">
+                            {fest.startDate} &rarr; {fest.endDate}
+                          </td>
+
+                          {/* Pre-Booking */}
+                          <td className="py-3 px-4 whitespace-nowrap text-[11px]">
+                            {fest.preBookingEnabled ? (
+                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                From {fest.preBookingStartDate || '1 mo prior'}
+                              </span>
+                            ) : (
+                              <span className="text-[var(--text-muted)]">Off</span>
+                            )}
+                          </td>
+
+                          {/* Status */}
+                          <td className="py-3 px-4 whitespace-nowrap">
+                            {renderStatusBadge(fest)}
+                          </td>
+
+                          {/* Hampers count */}
+                          <td className="py-3 px-4 whitespace-nowrap">
+                            <span className="text-[11px] font-bold text-[var(--olive)]">
+                              {activeProductCount} active / {productCount} total
+                            </span>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="py-3 px-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditFestival(fest)}
+                                className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
+                                title="Edit Festival Details"
+                              >
+                                <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleFestivalStatus(fest)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-bold transition-colors cursor-pointer border ${
+                                  fest.status === 'published'
+                                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                    : 'bg-stone-500/10 text-stone-600 border-stone-500/20'
+                                }`}
+                                title="Toggle Published / Draft"
+                              >
+                                {fest.status === 'published' ? 'Live' : 'Draft'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteFestival(fest.id, fest.name)}
+                                className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                                title="Delete Festival"
+                              >
+                                <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                              </button>
+                            </div>
+                          </td>
+
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           ) : (
             <div className="text-center py-10 text-xs text-[var(--text-muted)]">
               <FontAwesomeIcon icon={faGift} className="text-2xl text-[var(--text-muted)]/30 mb-2 block mx-auto" />
@@ -592,7 +695,7 @@ export default function AdminFestivalHampersPage() {
 
       {/* 4. Products / Hampers of Selected Festival */}
       {activeFestivalDetail && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-xs space-y-4">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
             <div>
               <span className="text-[10px] uppercase font-bold text-[var(--olive)] bg-[var(--olive)]/10 px-2 py-0.5 rounded">
@@ -605,7 +708,7 @@ export default function AdminFestivalHampersPage() {
 
             <button
               onClick={handleOpenAddProduct}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--olive)] text-white text-xs font-semibold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--olive)] text-white text-xs font-semibold hover:bg-[var(--olive-hover)] shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
             >
               <FontAwesomeIcon icon={faPlus} className="text-xs" />
               <span>Add Hamper</span>
@@ -629,7 +732,84 @@ export default function AdminFestivalHampersPage() {
             </div>
           ) : (
             <div className="border border-[var(--border)] rounded-xl overflow-hidden">
-              <div className="overflow-x-auto">
+              {/* Mobile Hampers Cards View (< md) */}
+              <div className="md:hidden divide-y divide-[var(--border)]/70">
+                {activeFestivalDetail.products.map((prod) => {
+                  const isActive = prod.active !== false;
+
+                  return (
+                    <div key={prod.id} className="p-4 space-y-3">
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={prod.image || (prod.images && prod.images[0]) || '/logo.png'}
+                          alt={prod.title || prod.name}
+                          className="w-14 h-14 rounded-xl object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                          onError={(e) => { e.target.src = '/logo.png'; }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          {prod.badge && (
+                            <span className="text-[9.5px] font-bold bg-[var(--olive)]/10 text-[var(--olive)] px-2 py-0.5 rounded">
+                              {prod.badge}
+                            </span>
+                          )}
+                          <h4 className="font-bold text-xs sm:text-sm text-[var(--text)] mt-1 truncate">
+                            {prod.title || prod.name}
+                          </h4>
+                          <p className="text-[10.5px] text-[var(--text-muted)] line-clamp-1 mt-0.5">
+                            {prod.description}
+                          </p>
+                          <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
+                            Origin: <strong className="text-[var(--text)]">{prod.origin || 'Kerala Atelier'}</strong>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)]">
+                        <div>
+                          <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold block">Price</span>
+                          <span className="font-extrabold text-xs sm:text-sm text-[var(--text)]">
+                            {prod.showPrice !== false ? `₹${prod.price?.toLocaleString()}` : 'Price on Request'}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => handleToggleProduct(prod.id)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
+                            isActive
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                              : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
+                          }`}
+                        >
+                          <FontAwesomeIcon icon={isActive ? faEye : faEyeSlash} className="text-[10px]" />
+                          <span>{isActive ? 'Active' : 'Hidden'}</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-1.5 pt-1 border-t border-[var(--border)]/50">
+                        <button
+                          onClick={() => handleOpenEditProduct(prod)}
+                          className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs font-semibold text-[var(--text)] flex items-center gap-1.5 transition-colors cursor-pointer"
+                          title="Edit Hamper"
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(prod.id, prod.title || prod.name)}
+                          className="p-1.5 w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                          title="Delete Hamper"
+                        >
+                          <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                        </button>
+                      </div>
+
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop Hampers Table (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">

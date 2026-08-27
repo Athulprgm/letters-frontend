@@ -413,116 +413,103 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      {/* Products Data Table */}
+      {/* Products Data Display (Mobile Cards + Desktop Table) */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden">
         {filteredProducts.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
-                  <th className="py-3 px-4 font-bold">Product</th>
-                  <th className="py-3 px-4 font-bold">Category</th>
-                  <th className="py-3 px-4 font-bold">Price (₹)</th>
-                  <th className="py-3 px-4 font-bold">Price on Storefront</th>
-                  <th className="py-3 px-4 font-bold">Featured</th>
-                  <th className="py-3 px-4 font-bold">Status</th>
-                  <th className="py-3 px-4 font-bold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]/70">
-                {filteredProducts.map((p) => {
-                  const discountPct = p.originalPrice && Number(p.originalPrice) > Number(p.price)
-                    ? Math.round(((Number(p.originalPrice) - Number(p.price)) / Number(p.originalPrice)) * 100)
-                    : 0;
+          <>
+            {/* Mobile Cards View (< md) */}
+            <div className="md:hidden divide-y divide-[var(--border)]/70">
+              {filteredProducts.map((p) => {
+                const discountPct = p.originalPrice && Number(p.originalPrice) > Number(p.price)
+                  ? Math.round(((Number(p.originalPrice) - Number(p.price)) / Number(p.originalPrice)) * 100)
+                  : 0;
 
-                  const isPriceShown = p.showPrice !== false;
+                const isPriceShown = p.showPrice !== false;
 
-                  return (
-                    <tr key={p.id} className="hover:bg-[var(--bg)]/40 transition-colors">
-
-                      {/* Thumbnail & Title */}
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={p.images?.[0] || p.image || '/logo.png'}
-                            alt={p.name}
-                            className="w-11 h-11 rounded-lg object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
-                            onError={(e) => { e.target.src = '/logo.png'; }}
-                          />
-                          <div className="overflow-hidden">
-                            <div className="flex items-center gap-2">
-                              <p className="font-bold text-[var(--text)] text-xs truncate max-w-[200px]">{p.name}</p>
-                              {p.tag && (
-                                <span className="text-[9px] font-bold bg-[var(--olive)]/10 text-[var(--olive)] px-1.5 py-0.2 rounded flex-shrink-0">
-                                  {p.tag}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 max-w-xs">{p.description}</p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Category */}
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <span className="text-[11px] font-semibold text-[var(--text)]">
-                          {p.category}
-                        </span>
-                      </td>
-
-                      {/* Price */}
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-xs text-[var(--text)]">
-                            ₹{Number(p.price || 0).toLocaleString()}
+                return (
+                  <div key={p.id} className="p-4 space-y-3">
+                    
+                    {/* Top Row: Image & Title & Category */}
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={p.images?.[0] || p.image || '/logo.png'}
+                        alt={p.name}
+                        className="w-16 h-16 rounded-xl object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                        onError={(e) => { e.target.src = '/logo.png'; }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--olive)]/10 text-[var(--olive)] px-2 py-0.5 rounded">
+                            {p.category}
                           </span>
-                          {p.originalPrice && Number(p.originalPrice) > Number(p.price) && (
-                            <span className="text-[10px] text-[var(--text-muted)] line-through">
-                              ₹{Number(p.originalPrice).toLocaleString()}
+                          {p.tag && (
+                            <span className="text-[9px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-1.5 py-0.2 rounded">
+                              {p.tag}
                             </span>
                           )}
                         </div>
-                        {discountPct > 0 && (
-                          <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
-                            {discountPct}% OFF
+                        <h3 className="font-bold text-xs sm:text-sm text-[var(--text)] mt-1 truncate">
+                          {p.name}
+                        </h3>
+                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 mt-0.5">
+                          {p.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Middle Row: Price and Storefront Price Switch */}
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)]">
+                      <div>
+                        <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold block">Selling Price</span>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="font-extrabold text-sm text-[var(--text)]">
+                            ₹{Number(p.price || 0).toLocaleString()}
                           </span>
-                        )}
-                      </td>
+                          {p.originalPrice && Number(p.originalPrice) > Number(p.price) && (
+                            <span className="text-[11px] text-[var(--text-muted)] line-through">
+                              ₹{Number(p.originalPrice).toLocaleString()}
+                            </span>
+                          )}
+                          {discountPct > 0 && (
+                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                              ({discountPct}% OFF)
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-                      {/* Price Display on Storefront */}
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <button
-                          onClick={() => toggleProductShowPrice(p.id)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
-                            isPriceShown
-                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                          }`}
-                          title="Click to toggle price display on storefront"
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${isPriceShown ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                          <span>{isPriceShown ? 'Price Shown' : 'On Request'}</span>
-                        </button>
-                      </td>
+                      {/* Storefront Price Mode Switch */}
+                      <button
+                        onClick={() => toggleProductShowPrice(p.id)}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-bold transition-colors cursor-pointer border ${
+                          isPriceShown
+                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                            : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                        }`}
+                        title="Click to toggle price display on storefront"
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${isPriceShown ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                        <span>{isPriceShown ? 'Price Shown' : 'On Request'}</span>
+                      </button>
+                    </div>
 
-                      {/* Featured Star Toggle */}
-                      <td className="py-3 px-4 whitespace-nowrap">
+                    {/* Bottom Row: Status Toggles & Actions */}
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center gap-1.5">
+                        {/* Featured */}
                         <button
                           onClick={() => toggleProductFeatured(p.id)}
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-colors cursor-pointer border ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors cursor-pointer border ${
                             p.featured
                               ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                              : 'text-[var(--text-muted)] border-[var(--border)] hover:bg-[var(--bg)]'
+                              : 'text-[var(--text-muted)] border-[var(--border)] bg-[var(--bg)]'
                           }`}
-                          title="Toggle Featured on homepage"
                         >
                           <FontAwesomeIcon icon={faStar} className={`text-[10px] ${p.featured ? 'text-amber-500' : ''}`} />
                           <span>{p.featured ? 'Featured' : 'Standard'}</span>
                         </button>
-                      </td>
 
-                      {/* Active Status Switch */}
-                      <td className="py-3 px-4 whitespace-nowrap">
+                        {/* Active / Draft */}
                         <button
                           onClick={() => toggleProductActive(p.id)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
@@ -534,34 +521,182 @@ export default function AdminProductsPage() {
                           <FontAwesomeIcon icon={p.active !== false ? faEye : faEyeSlash} className="text-[10px]" />
                           <span>{p.active !== false ? 'Active' : 'Draft'}</span>
                         </button>
-                      </td>
+                      </div>
 
-                      {/* Actions */}
-                      <td className="py-3 px-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => openEditModal(p)}
-                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
-                            title="Edit Product"
-                          >
-                            <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(p.id, p.name)}
-                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
-                            title="Delete Product"
-                          >
-                            <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
-                          </button>
-                        </div>
-                      </td>
+                      {/* Edit / Delete */}
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => openEditModal(p)}
+                          className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs font-semibold text-[var(--text)] flex items-center gap-1.5 transition-colors cursor-pointer"
+                          title="Edit Product"
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                          <span>Edit</span>
+                        </button>
 
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        <button
+                          onClick={() => handleDelete(p.id, p.name)}
+                          className="p-1.5 w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                          title="Delete Product"
+                        >
+                          <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Data Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
+                    <th className="py-3 px-4 font-bold">Product</th>
+                    <th className="py-3 px-4 font-bold">Category</th>
+                    <th className="py-3 px-4 font-bold">Price (₹)</th>
+                    <th className="py-3 px-4 font-bold">Price on Storefront</th>
+                    <th className="py-3 px-4 font-bold">Featured</th>
+                    <th className="py-3 px-4 font-bold">Status</th>
+                    <th className="py-3 px-4 font-bold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]/70">
+                  {filteredProducts.map((p) => {
+                    const discountPct = p.originalPrice && Number(p.originalPrice) > Number(p.price)
+                      ? Math.round(((Number(p.originalPrice) - Number(p.price)) / Number(p.originalPrice)) * 100)
+                      : 0;
+
+                    const isPriceShown = p.showPrice !== false;
+
+                    return (
+                      <tr key={p.id} className="hover:bg-[var(--bg)]/40 transition-colors">
+
+                        {/* Thumbnail & Title */}
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={p.images?.[0] || p.image || '/logo.png'}
+                              alt={p.name}
+                              className="w-11 h-11 rounded-lg object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                              onError={(e) => { e.target.src = '/logo.png'; }}
+                            />
+                            <div className="overflow-hidden">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-[var(--text)] text-xs truncate max-w-[200px]">{p.name}</p>
+                                {p.tag && (
+                                  <span className="text-[9px] font-bold bg-[var(--olive)]/10 text-[var(--olive)] px-1.5 py-0.2 rounded flex-shrink-0">
+                                    {p.tag}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 max-w-xs">{p.description}</p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Category */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="text-[11px] font-semibold text-[var(--text)]">
+                            {p.category}
+                          </span>
+                        </td>
+
+                        {/* Price */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-xs text-[var(--text)]">
+                              ₹{Number(p.price || 0).toLocaleString()}
+                            </span>
+                            {p.originalPrice && Number(p.originalPrice) > Number(p.price) && (
+                              <span className="text-[10px] text-[var(--text-muted)] line-through">
+                                ₹{Number(p.originalPrice).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          {discountPct > 0 && (
+                            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                              {discountPct}% OFF
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Price Display on Storefront */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <button
+                            onClick={() => toggleProductShowPrice(p.id)}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
+                              isPriceShown
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                            }`}
+                            title="Click to toggle price display on storefront"
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${isPriceShown ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                            <span>{isPriceShown ? 'Price Shown' : 'On Request'}</span>
+                          </button>
+                        </td>
+
+                        {/* Featured Star Toggle */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <button
+                            onClick={() => toggleProductFeatured(p.id)}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-colors cursor-pointer border ${
+                              p.featured
+                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                                : 'text-[var(--text-muted)] border-[var(--border)] hover:bg-[var(--bg)]'
+                            }`}
+                            title="Toggle Featured on homepage"
+                          >
+                            <FontAwesomeIcon icon={faStar} className={`text-[10px] ${p.featured ? 'text-amber-500' : ''}`} />
+                            <span>{p.featured ? 'Featured' : 'Standard'}</span>
+                          </button>
+                        </td>
+
+                        {/* Active Status Switch */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <button
+                            onClick={() => toggleProductActive(p.id)}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
+                              p.active !== false
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
+                            }`}
+                          >
+                            <FontAwesomeIcon icon={p.active !== false ? faEye : faEyeSlash} className="text-[10px]" />
+                            <span>{p.active !== false ? 'Active' : 'Draft'}</span>
+                          </button>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3 px-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => openEditModal(p)}
+                              className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
+                              title="Edit Product"
+                            >
+                              <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(p.id, p.name)}
+                              className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                              title="Delete Product"
+                            >
+                              <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                            </button>
+                          </div>
+                        </td>
+
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         ) : (
           <div className="text-center py-12 px-4">
             <FontAwesomeIcon icon={faBox} className="mx-auto text-[var(--text-muted)] mb-3 text-3xl opacity-30 block" />

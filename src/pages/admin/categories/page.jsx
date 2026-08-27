@@ -225,94 +225,161 @@ export default function AdminCategoriesPage() {
         })}
       </div>
 
-      {/* Categories Data Table */}
+      {/* Categories Data Display (Mobile Cards + Desktop Table) */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden">
         {filteredCategories.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
-                  <th className="py-3 px-4 font-bold">Category</th>
-                  <th className="py-3 px-4 font-bold">Group</th>
-                  <th className="py-3 px-4 font-bold">Description</th>
-                  <th className="py-3 px-4 font-bold">Status</th>
-                  <th className="py-3 px-4 font-bold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]/70">
-                {filteredCategories.map((cat) => (
-                  <tr key={cat.id} className="hover:bg-[var(--bg)]/40 transition-colors">
-                    
-                    {/* Category Thumbnail & Title */}
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={cat.image || '/logo.png'}
-                          alt={cat.name}
-                          className="w-10 h-10 rounded-lg object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
-                          onError={(e) => { e.target.src = '/logo.png'; }}
-                        />
-                        <div>
-                          <p className="font-bold text-[var(--text)] text-xs">{cat.name}</p>
-                          <span className="text-[10px] text-[var(--text-muted)] sm:hidden">{cat.group}</span>
-                        </div>
+          <>
+            {/* Mobile Cards View (< md) */}
+            <div className="md:hidden divide-y divide-[var(--border)]/70">
+              {filteredCategories.map((cat) => (
+                <div key={cat.id} className="p-4 space-y-3">
+                  
+                  <div className="flex items-start gap-3">
+                    <img
+                      src={cat.image || '/logo.png'}
+                      alt={cat.name}
+                      className="w-14 h-14 rounded-xl object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                      onError={(e) => { e.target.src = '/logo.png'; }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--olive)]/10 text-[var(--olive)] px-2 py-0.5 rounded">
+                          {cat.group}
+                        </span>
                       </div>
-                    </td>
-
-                    {/* Group */}
-                    <td className="py-3 px-4 whitespace-nowrap">
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--olive)]/10 text-[var(--olive)] px-2 py-0.5 rounded">
-                        {cat.group}
-                      </span>
-                    </td>
-
-                    {/* Description */}
-                    <td className="py-3 px-4 max-w-sm">
-                      <p className="text-[11px] text-[var(--text-muted)] line-clamp-2">
+                      <h3 className="font-bold text-xs sm:text-sm text-[var(--text)] mt-1 truncate">
+                        {cat.name}
+                      </h3>
+                      <p className="text-[11px] text-[var(--text-muted)] line-clamp-2 mt-0.5">
                         {cat.description}
                       </p>
-                    </td>
+                    </div>
+                  </div>
 
-                    {/* Status Toggle */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                  <div className="flex items-center justify-between pt-1 border-t border-[var(--border)]/50">
+                    <button
+                      onClick={() => toggleCategoryStatus(cat.id)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
+                        cat.enabled
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                          : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
+                      }`}
+                    >
+                      <FontAwesomeIcon icon={cat.enabled ? faEye : faEyeSlash} className="text-[10px]" />
+                      <span>{cat.enabled ? 'Active on Store' : 'Hidden'}</span>
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
                       <button
-                        onClick={() => toggleCategoryStatus(cat.id)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
-                          cat.enabled
-                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                            : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
-                        }`}
+                        onClick={() => openEditModal(cat)}
+                        className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs font-semibold text-[var(--text)] flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="Edit Category"
                       >
-                        <FontAwesomeIcon icon={cat.enabled ? faEye : faEyeSlash} className="text-[10px]" />
-                        <span>{cat.enabled ? 'Active' : 'Hidden'}</span>
+                        <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                        <span>Edit</span>
                       </button>
-                    </td>
 
-                    {/* Actions */}
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => openEditModal(cat)}
-                          className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
-                          title="Edit Category"
-                        >
-                          <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(cat.id, cat.name)}
-                          className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
-                          title="Delete Category"
-                        >
-                          <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
-                        </button>
-                      </div>
-                    </td>
+                      <button
+                        onClick={() => handleDelete(cat.id, cat.name)}
+                        className="p-1.5 w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Delete Category"
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                      </button>
+                    </div>
+                  </div>
 
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Data Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
+                    <th className="py-3 px-4 font-bold">Category</th>
+                    <th className="py-3 px-4 font-bold">Group</th>
+                    <th className="py-3 px-4 font-bold">Description</th>
+                    <th className="py-3 px-4 font-bold">Status</th>
+                    <th className="py-3 px-4 font-bold text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]/70">
+                  {filteredCategories.map((cat) => (
+                    <tr key={cat.id} className="hover:bg-[var(--bg)]/40 transition-colors">
+                      
+                      {/* Category Thumbnail & Title */}
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={cat.image || '/logo.png'}
+                            alt={cat.name}
+                            className="w-10 h-10 rounded-lg object-cover border border-[var(--border)] flex-shrink-0 bg-[var(--bg)]"
+                            onError={(e) => { e.target.src = '/logo.png'; }}
+                          />
+                          <div>
+                            <p className="font-bold text-[var(--text)] text-xs">{cat.name}</p>
+                            <span className="text-[10px] text-[var(--text-muted)] sm:hidden">{cat.group}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Group */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--olive)]/10 text-[var(--olive)] px-2 py-0.5 rounded">
+                          {cat.group}
+                        </span>
+                      </td>
+
+                      {/* Description */}
+                      <td className="py-3 px-4 max-w-sm">
+                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-2">
+                          {cat.description}
+                        </p>
+                      </td>
+
+                      {/* Status Toggle */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <button
+                          onClick={() => toggleCategoryStatus(cat.id)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors cursor-pointer border ${
+                            cat.enabled
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                              : 'bg-stone-500/10 text-stone-600 dark:text-stone-400 border-stone-500/20'
+                          }`}
+                        >
+                          <FontAwesomeIcon icon={cat.enabled ? faEye : faEyeSlash} className="text-[10px]" />
+                          <span>{cat.enabled ? 'Active' : 'Hidden'}</span>
+                        </button>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3 px-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => openEditModal(cat)}
+                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
+                            title="Edit Category"
+                          >
+                            <FontAwesomeIcon icon={faPenToSquare} className="text-xs" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(cat.id, cat.name)}
+                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                            title="Delete Category"
+                          >
+                            <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                          </button>
+                        </div>
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         ) : (
           <div className="text-center py-12 px-4">
             <FontAwesomeIcon icon={faLayerGroup} className="mx-auto text-[var(--text-muted)] mb-3 text-3xl opacity-30 block" />

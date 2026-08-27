@@ -217,83 +217,81 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Orders Data Table */}
+      {/* Orders Data Display (Mobile Cards + Desktop Table) */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden">
         {filteredOrders.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
-                  <th className="py-3 px-4 font-bold">Order ID</th>
-                  <th className="py-3 px-4 font-bold">Customer Details</th>
-                  <th className="py-3 px-4 font-bold">Items</th>
-                  <th className="py-3 px-4 font-bold">Total</th>
-                  <th className="py-3 px-4 font-bold">Delivery Date</th>
-                  <th className="py-3 px-4 font-bold">Status</th>
-                  <th className="py-3 px-4 font-bold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]/70">
-                {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[var(--bg)]/40 transition-colors">
-                    
-                    {/* Order ID */}
-                    <td className="py-3.5 px-4 font-mono font-bold text-[var(--text)] whitespace-nowrap">
-                      <div className="flex items-center gap-1.5">
-                        <span>#{order.id}</span>
-                        <button
-                          onClick={() => handleCopyOrderId(order.id)}
-                          className="text-[var(--text-muted)] hover:text-[var(--text)] p-0.5 cursor-pointer"
-                          title="Copy Order ID"
-                        >
-                          <FontAwesomeIcon icon={copiedId === order.id ? faCheck : faCopy} className="text-[10px]" />
-                        </button>
-                      </div>
-                      <span className="text-[10px] text-[var(--text-muted)] block font-sans">
-                        {new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
-                    </td>
+          <>
+            {/* Mobile Cards View (< md) */}
+            <div className="md:hidden divide-y divide-[var(--border)]/70">
+              {filteredOrders.map((order) => (
+                <div key={order.id} className="p-4 space-y-3">
+                  
+                  {/* Top Bar: Order ID, Date & Total */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono font-bold text-xs text-[var(--text)]">#{order.id}</span>
+                      <button
+                        onClick={() => handleCopyOrderId(order.id)}
+                        className="text-[var(--text-muted)] hover:text-[var(--text)] p-1 cursor-pointer"
+                        title="Copy Order ID"
+                      >
+                        <FontAwesomeIcon icon={copiedId === order.id ? faCheck : faCopy} className="text-xs" />
+                      </button>
+                    </div>
 
-                    {/* Customer */}
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                          {(order.customerName || 'C')[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-bold text-[var(--text)]">{order.customerName}</p>
-                          <p className="text-[11px] text-[var(--text-muted)] font-mono">{order.phone}</p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Items */}
-                    <td className="py-3.5 px-4 max-w-[200px]">
-                      <p className="font-medium text-[var(--text)] truncate text-[11px]">
-                        {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Hamper'}
-                      </p>
-                      <p className="text-[10px] text-[var(--text-muted)]">{order.items?.length || 1} distinct item(s)</p>
-                    </td>
-
-                    {/* Total */}
-                    <td className="py-3.5 px-4 font-bold text-sm text-[var(--text)] whitespace-nowrap">
+                    <span className="text-base font-extrabold text-[var(--text)]">
                       ₹{Number(order.total || 0).toLocaleString()}
-                    </td>
+                    </span>
+                  </div>
 
-                    {/* Delivery Date */}
-                    <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-[var(--text-muted)]">
-                      {order.deliveryDate || 'Standard Delivery'}
-                    </td>
+                  {/* Customer Info & Quick WhatsApp */}
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)]/70 border border-[var(--border)]">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center font-bold text-xs flex-shrink-0">
+                        {(order.customerName || 'C')[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-xs text-[var(--text)] truncate">{order.customerName}</p>
+                        <p className="text-[11px] text-[var(--text-muted)] font-mono">{order.phone}</p>
+                      </div>
+                    </div>
 
-                    {/* Status Dropdown */}
-                    <td className="py-3.5 px-4">
+                    <button
+                      onClick={() => handleContactCustomer(order)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-semibold transition-colors cursor-pointer flex-shrink-0"
+                      title="Open WhatsApp Chat"
+                    >
+                      <FontAwesomeIcon icon={faWhatsapp} className="text-sm" />
+                      <span>WhatsApp</span>
+                    </button>
+                  </div>
+
+                  {/* Items summary */}
+                  <div className="text-xs text-[var(--text)] space-y-0.5">
+                    <p className="text-[10.5px] uppercase font-bold text-[var(--text-muted)] tracking-wider">
+                      Items ({order.items?.length || 1})
+                    </p>
+                    <p className="font-medium text-[11.5px] line-clamp-2 text-[var(--text)]">
+                      {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Hamper'}
+                    </p>
+                  </div>
+
+                  {/* Delivery Info */}
+                  <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)] pt-1 border-t border-[var(--border)]/50">
+                    <div className="flex items-center gap-1">
+                      <FontAwesomeIcon icon={faCalendarDays} className="text-[10px]" />
+                      <span>{order.deliveryDate || 'Standard Delivery'}</span>
+                    </div>
+                    <span>Placed: {new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
+                  </div>
+
+                  {/* Status Dropdown & Action Controls */}
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-[var(--border)]/70">
+                    <div className="flex-1">
                       <select
                         value={order.status}
                         onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-md cursor-pointer focus:outline-none ${getStatusBadgeClass(
+                        className={`w-full text-xs font-bold px-3 py-1.5 rounded-lg cursor-pointer focus:outline-none border ${getStatusBadgeClass(
                           order.status
                         )}`}
                       >
@@ -304,42 +302,154 @@ export default function AdminOrdersPage() {
                         <option value="Delivered">Delivered</option>
                         <option value="Cancelled">Cancelled</option>
                       </select>
-                    </td>
+                    </div>
 
-                    {/* Actions */}
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => setActiveOrderModal(order)}
-                          className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
-                          title="View Complete Order"
-                        >
-                          <FontAwesomeIcon icon={faEye} className="text-xs" />
-                        </button>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <button
+                        onClick={() => setActiveOrderModal(order)}
+                        className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--card)] text-xs font-semibold text-[var(--text)] flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="View Complete Invoice"
+                      >
+                        <FontAwesomeIcon icon={faEye} className="text-xs" />
+                        <span>Invoice</span>
+                      </button>
 
-                        <button
-                          onClick={() => handleContactCustomer(order)}
-                          className="w-7 h-7 rounded-md bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                          title="Open WhatsApp Chat"
-                        >
-                          <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
-                        </button>
+                      <button
+                        onClick={() => handleDeleteOrder(order.id)}
+                        className="p-1.5 w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Delete Order"
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                      </button>
+                    </div>
+                  </div>
 
-                        <button
-                          onClick={() => handleDeleteOrder(order.id)}
-                          className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
-                          title="Delete Order"
-                        >
-                          <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
-                        </button>
-                      </div>
-                    </td>
+                </div>
+              ))}
+            </div>
 
+            {/* Desktop Data Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="bg-[var(--bg)]/50 border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider text-[10px]">
+                    <th className="py-3 px-4 font-bold">Order ID</th>
+                    <th className="py-3 px-4 font-bold">Customer Details</th>
+                    <th className="py-3 px-4 font-bold">Items</th>
+                    <th className="py-3 px-4 font-bold">Total</th>
+                    <th className="py-3 px-4 font-bold">Delivery Date</th>
+                    <th className="py-3 px-4 font-bold">Status</th>
+                    <th className="py-3 px-4 font-bold text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]/70">
+                  {filteredOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-[var(--bg)]/40 transition-colors">
+                      
+                      {/* Order ID */}
+                      <td className="py-3.5 px-4 font-mono font-bold text-[var(--text)] whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          <span>#{order.id}</span>
+                          <button
+                            onClick={() => handleCopyOrderId(order.id)}
+                            className="text-[var(--text-muted)] hover:text-[var(--text)] p-0.5 cursor-pointer"
+                            title="Copy Order ID"
+                          >
+                            <FontAwesomeIcon icon={copiedId === order.id ? faCheck : faCopy} className="text-[10px]" />
+                          </button>
+                        </div>
+                        <span className="text-[10px] text-[var(--text-muted)] block font-sans">
+                          {new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                      </td>
+
+                      {/* Customer */}
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[var(--olive)]/10 text-[var(--olive)] flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            {(order.customerName || 'C')[0].toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-bold text-[var(--text)]">{order.customerName}</p>
+                            <p className="text-[11px] text-[var(--text-muted)] font-mono">{order.phone}</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Items */}
+                      <td className="py-3.5 px-4 max-w-[200px]">
+                        <p className="font-medium text-[var(--text)] truncate text-[11px]">
+                          {order.items?.map((i) => `${i.name} (×${i.quantity})`).join(', ') || 'Custom Hamper'}
+                        </p>
+                        <p className="text-[10px] text-[var(--text-muted)]">{order.items?.length || 1} distinct item(s)</p>
+                      </td>
+
+                      {/* Total */}
+                      <td className="py-3.5 px-4 font-bold text-sm text-[var(--text)] whitespace-nowrap">
+                        ₹{Number(order.total || 0).toLocaleString()}
+                      </td>
+
+                      {/* Delivery Date */}
+                      <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-[var(--text-muted)]">
+                        {order.deliveryDate || 'Standard Delivery'}
+                      </td>
+
+                      {/* Status Dropdown */}
+                      <td className="py-3.5 px-4">
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-md cursor-pointer focus:outline-none ${getStatusBadgeClass(
+                            order.status
+                          )}`}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Confirmed">Confirmed</option>
+                          <option value="Preparing">Preparing</option>
+                          <option value="Ready">Ready</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setActiveOrderModal(order)}
+                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] flex items-center justify-center transition-colors cursor-pointer"
+                            title="View Complete Order"
+                          >
+                            <FontAwesomeIcon icon={faEye} className="text-xs" />
+                          </button>
+
+                          <button
+                            onClick={() => handleContactCustomer(order)}
+                            className="w-7 h-7 rounded-md bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                            title="Open WhatsApp Chat"
+                          >
+                            <FontAwesomeIcon icon={faWhatsapp} className="text-xs" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--card)] hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors cursor-pointer"
+                            title="Delete Order"
+                          >
+                            <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                          </button>
+                        </div>
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         ) : (
           <div className="text-center py-12 px-4">
             <FontAwesomeIcon icon={faBagShopping} className="mx-auto text-[var(--text-muted)] mb-3 text-3xl opacity-30 block" />
