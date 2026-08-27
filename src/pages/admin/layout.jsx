@@ -28,6 +28,8 @@ import { confirmDialog } from '@/src/store/confirmStore';
 import AdminLoadingOverlay from '@/src/components/admin/AdminLoadingOverlay';
 import NotificationToggle from '@/src/components/NotificationToggle';
 import OrderNotificationManager from '@/src/components/admin/OrderNotificationManager';
+import NotificationPermissionPrompt from '@/src/components/admin/NotificationPermissionPrompt';
+
 
 
 const navigationGroups = [
@@ -386,8 +388,10 @@ export default function AdminLayout({ children }) {
       </div>
 
       <OrderNotificationManager />
+      <NotificationPermissionPrompt />
       <AdminLoadingOverlay />
     </div>
   );
 }
+
 
