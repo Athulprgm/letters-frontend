@@ -93,7 +93,7 @@ export default function NotificationToggle({
     return null;
   }
 
-  // Icon Button (for headers and compact bars)
+  // Icon Button (with responsive label for tablet & mobile bars)
   if (variant === 'icon-button') {
     return (
       <div className="relative inline-flex items-center gap-1">
@@ -101,12 +101,12 @@ export default function NotificationToggle({
           type="button"
           onClick={handleToggle}
           disabled={loading}
-          className={`w-8 h-8 rounded-lg border transition-all cursor-pointer flex items-center justify-center ${
+          className={`h-8 px-2.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
             isSubscribed
               ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 shadow-xs'
               : permissionState === 'denied'
               ? 'bg-rose-500/10 text-rose-600 border-rose-500/30'
-              : 'bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text-muted)] hover:text-[var(--text)] border-[var(--border)]'
+              : 'bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--text)] border-[var(--border)]'
           } ${className}`}
           title={
             isSubscribed
@@ -124,6 +124,9 @@ export default function NotificationToggle({
           ) : (
             <FontAwesomeIcon icon={isSubscribed ? faBell : faBellSlash} className="text-xs" />
           )}
+          <span className="text-[11px] font-semibold hidden sm:inline">
+            {isSubscribed ? 'Alerts ON' : 'Enable Alerts'}
+          </span>
         </button>
 
         {feedback && (
@@ -142,6 +145,7 @@ export default function NotificationToggle({
       </div>
     );
   }
+
 
   // Full Button
   return (
