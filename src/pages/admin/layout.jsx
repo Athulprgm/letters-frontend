@@ -271,6 +271,10 @@ export default function AdminLayout({ children }) {
 
           {/* Footer Admin Card & Actions */}
           <div className="p-3.5 border-t border-[var(--border)] bg-[var(--bg)]/40 space-y-2.5">
+            <div>
+              <NotificationToggle role="admin" className="w-full justify-center" />
+            </div>
+
             <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-[var(--olive)]/15 text-[var(--olive)] flex items-center justify-center font-bold text-[10px]">
@@ -281,6 +285,7 @@ export default function AdminLayout({ children }) {
                   <span className="text-[9px] text-[var(--text-muted)] mt-0.5">Letters Store</span>
                 </div>
               </div>
+
               <button
                 onClick={handleLogout}
                 className="text-rose-600 hover:text-rose-700 dark:text-rose-400 p-1 text-xs cursor-pointer"
