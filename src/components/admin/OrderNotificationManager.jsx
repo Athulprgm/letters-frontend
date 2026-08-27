@@ -13,6 +13,7 @@ import {
   playNotificationSound,
   setupNotificationListeners,
   showLocalNotification,
+  subscribeToPushNotifications,
 } from '@/src/utils/pushNotification';
 
 export default function OrderNotificationManager() {
@@ -25,11 +26,10 @@ export default function OrderNotificationManager() {
   // 1. Auto-verify push subscription on admin startup if permission is granted
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      import('@/src/utils/pushNotification').then(({ subscribeToPushNotifications }) => {
-        subscribeToPushNotifications({ role: 'admin' }).catch(() => {});
-      });
+      subscribeToPushNotifications({ role: 'admin' }).catch(() => {});
     }
   }, []);
+
 
   // 2. Listen for Service Worker Web Push events
   useEffect(() => {
